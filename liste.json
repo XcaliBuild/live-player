@@ -1,14 +1,14 @@
 {
   "matchs": [
     {
-      "nom": "Manchester City vs Palace",
-      "logo": "https://upload.wikimedia.org/wikipedia/fr/a/a1/Manchester_City_FC_logo.svg",
-      "webpage": "https://tvivu.com/watch/bein-sports-xtra-us"
+      "nom": "After Foot RMC",
+      "logo": "https://upload.wikimedia.org/wikipedia/fr/c/c5/RMC_logo_2022.svg",
+      "webpage": "https://tvivu.com/watch/after-foot-tv-fr"
     },
     {
-      "nom": "Real Madrid vs Barca",
-      "logo": "https://upload.wikimedia.org/wikipedia/fr/c/c7/Logo_Real_Madrid.svg",
-      "url": "https://tvivu.com/embed/after-foot-tv-fr"
+      "nom": "Lien Direct Test",
+      "logo": "https://via.placeholder.com/100",
+      "url": "https://test-streams.mux.dev/x36xhzz/main.m3u8"
     }
   ]
 }
