@@ -6,29 +6,21 @@
     <title>WebWise Stream</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        /* Désactivation du contour orange par défaut des navigateurs TV */
         * { -webkit-tap-highlight-color: transparent; outline: none !important; }
-        body { margin: 0; background: #121212; color: white; font-family: 'Segoe UI', Tahoma, sans-serif; overflow-x: hidden; }
+        body { margin: 0; background: #121212; color: white; font-family: sans-serif; overflow-x: hidden; }
         #menu { padding: 20px; text-align: center; }
-        h1 { font-weight: 300; margin-bottom: 30px; letter-spacing: 2px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: #1e1e1e; border-radius: 15px; padding: 20px; transition: all 0.3s ease; cursor: pointer; border: 4px solid transparent; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        /* Style de focus personnalisé pour la navigation à la télécommande */
+        .card { background: #1e1e1e; border-radius: 15px; padding: 20px; transition: 0.3s; cursor: pointer; border: 4px solid transparent; display: flex; flex-direction: column; align-items: center; }
         .card:focus { transform: scale(1.1); border-color: #e50914; background: #252525; box-shadow: 0 0 20px rgba(229, 9, 20, 0.5); }
         .card img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px; pointer-events: none; }
-        .card p { margin: 0; font-size: 16px; font-weight: 500; pointer-events: none; text-align: center; }
         #player-container { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 100; }
-        video { width: 100%; height: 100%; }
-        .back-btn { position: absolute; top: 20px; left: 20px; z-index: 110; background: #e50914; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .back-btn:focus { border: 2px solid white; transform: scale(1.1); }
+        .back-btn { position: absolute; top: 20px; left: 20px; z-index: 110; background: #e50914; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
     <div id="menu">
         <h1>WEBWISE STREAM</h1>
-        <div id="match-grid" class="grid">
-            <p id="status">Chargement de la liste...</p>
-        </div>
+        <div id="match-grid" class="grid"><p id="status">Chargement de la liste...</p></div>
     </div>
     <div id="player-container"></div>
     <script src="script.js"></script>
