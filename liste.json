@@ -1,0 +1,16 @@
+{
+  "matchs": [
+    {
+      "nom": "Manchester City vs Crystal Palace",
+      "logo": "https://upload.wikimedia.org/wikipedia/fr/a/a1/Manchester_City_FC_logo.svg",
+      "url": "https://a94.azplay33.me/hls/streama259150/index.m3u8?cst=TON_TOKEN_ICI",
+      "referer": "https://emb.apl411.me/"
+    },
+    {
+      "nom": "Real Madrid vs Barcelone",
+      "logo": "https://upload.wikimedia.org/wikipedia/fr/c/c7/Logo_Real_Madrid.svg",
+      "url": "https://autre-lien-m3u8.com/live.m3u8",
+      "referer": ""
+    }
+  ]
+}
