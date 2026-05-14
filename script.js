@@ -1,21 +1,26 @@
 window.onload = function() {
     const grid = document.getElementById('match-grid');
+    const status = document.getElementById('status');
     const playerContainer = document.getElementById('player-container');
     let hls = new Hls();
 
-    // Chargement du JSON avec anti-cache pour GitHub
+    // Utilisation d'un paramètre temporel pour forcer la mise à jour du cache GitHub
     fetch('liste.json?v=' + Date.now())
         .then(res => {
-            if (!res.ok) throw new Error("Erreur " + res.status + " : liste.json introuvable");
+            if (!res.ok) throw new Error("Fichier liste.json introuvable (Erreur " + res.status + ")");
             return res.json();
         })
         .then(data => {
-            grid.innerHTML = ""; // On vide le message de chargement
+            if (!data.matchs || data.matchs.length === 0) {
+                status.innerText = "Aucun match trouvé dans la liste.";
+                return;
+            }
+            grid.innerHTML = ""; // Efface le message de chargement
             data.matchs.forEach((match, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.tabIndex = 0; 
-                card.innerHTML = `<img src="${match.logo}"><p>${match.nom}</p>`;
+                card.innerHTML = `<img src="${match.logo}" onerror="this.src='https://via.placeholder.com/100?text=TV'"><p>${match.nom}</p>`;
                 
                 const launch = () => handleSelection(match);
                 card.onclick = launch;
@@ -26,8 +31,8 @@ window.onload = function() {
             });
         })
         .catch(err => {
-            document.getElementById('status').innerHTML = "Erreur : " + err.message;
-            document.getElementById('status').style.color = "red";
+            status.innerText = "Erreur : " + err.message;
+            status.style.color = "red";
         });
 
     async function handleSelection(match) {
@@ -45,6 +50,7 @@ window.onload = function() {
             const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(match.webpage)}`;
             const res = await fetch(proxy);
             const data = await res.json();
+            // Recherche de liens vidéos courants dans le code source de la page
             const found = data.contents.match(/["'](https?:\/\/[^"']+\.(m3u8|ts|mp4|mpd)[^"']*)["']/i);
             if (found) startPlayer(found[1].replace(/\\/g, ''), match.webpage);
             else forceIframe(match.webpage);
