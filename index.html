@@ -2,104 +2,60 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>WebWise - Liste des Matchs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebWise Player</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
+        /* Style spécial Android TV & Mobile */
         * { -webkit-tap-highlight-color: transparent; outline: none !important; }
-        body { margin: 0; background: #121212; color: white; font-family: sans-serif; }
+        body { margin: 0; background: #121212; color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
-        /* Conteneur de la liste */
-        #menu { padding: 40px; display: flex; flex-direction: column; align-items: center; }
-        h1 { margin-bottom: 30px; font-weight: 300; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; }
-
-        /* Style des cartes de match */
-        .card { 
-            background: #1e1e1e; border-radius: 12px; padding: 20px; text-align: center;
-            cursor: pointer; transition: 0.3s; border: 3px solid transparent;
+        #menu { padding: 20px; text-align: center; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto;
         }
-        .card img { height: 80px; margin-bottom: 15px; pointer-events: none; }
-        .card p { margin: 0; font-size: 14px; pointer-events: none; }
 
-        /* Focus pour Android TV */
-        .card:focus { transform: scale(1.05); border-color: #e50914; background: #2a2a2a; }
+        /* Cartes des matchs */
+        .card { 
+            background: #1e1e1e; border-radius: 15px; padding: 15px; 
+            transition: 0.3s; cursor: pointer; border: 3px solid transparent;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .card:focus { transform: scale(1.08); border-color: #e50914; background: #252525; }
+        .card img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 10px; pointer-events: none; }
+        .card p { margin: 5px 0 0; font-size: 14px; font-weight: bold; pointer-events: none; }
 
-        /* Lecteur plein écran caché au début */
-        #player-container { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 100; }
+        /* Lecteur plein écran */
+        #player-container { 
+            display: none; position: fixed; top: 0; left: 0; 
+            width: 100vw; height: 100vh; background: #000; z-index: 100; 
+        }
         video { width: 100%; height: 100%; }
+        
+        .back-btn {
+            position: absolute; top: 20px; left: 20px; z-index: 110;
+            background: rgba(229, 9, 20, 0.8); color: white; border: none;
+            padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <!-- SECTION MENU -->
     <div id="menu">
-        <h1>Événements en Direct</h1>
+        <h1>WebWise Stream</h1>
         <div id="match-grid" class="grid">
-            <!-- Les matchs s'afficheront ici -->
+            <!-- Les matchs s'afficheront ici via script.js -->
         </div>
     </div>
 
-    <!-- SECTION LECTEUR -->
     <div id="player-container">
+        <button class="back-btn" onclick="closePlayer()">↩ RETOUR</button>
         <video id="video" controls playsinline></video>
     </div>
 
-    <script>
-        const grid = document.getElementById('match-grid');
-        const playerContainer = document.getElementById('player-container');
-        const video = document.getElementById('video');
-        let hls = new Hls();
-
-        // 1. Charger la liste JSON
-        fetch('liste.json')
-            .then(response => response.json())
-            .then(data => {
-                data.matchs.forEach((match, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.tabIndex = 0; // Rend la carte sélectionnable au D-pad
-                    card.innerHTML = `
-                        <img src="${match.logo}" onerror="this.src='https://via.placeholder.com/80?text=Match'">
-                        <p>${match.nom}</p>
-                    `;
-                    
-                    // Au clic ou "OK" sur la télécommande
-                    const action = () => launchMatch(match);
-                    card.onclick = action;
-                    card.onkeydown = (e) => { if(e.keyCode === 13) action(); };
-                    
-                    grid.appendChild(card);
-                    if(index === 0) card.focus(); // Focus le premier match au chargement
-                });
-            })
-            .catch(err => console.error("Erreur chargement JSON:", err));
-
-        // 2. Fonction pour lancer le match
-        function launchMatch(match) {
-            playerContainer.style.display = 'block';
-            
-            if (Hls.isSupported()) {
-                hls.destroy();
-                hls = new Hls({
-                    xhrSetup: (xhr) => { if(match.referer) xhr.setRequestHeader('Referer', match.referer); }
-                });
-                hls.loadSource(match.url);
-                hls.attachMedia(video);
-            } else {
-                video.src = match.url;
-            }
-
-            video.play();
-            video.muted = false;
-            
-            // Gestion du retour (Android TV Back Button)
-            window.onpopstate = function() {
-                playerContainer.style.display = 'none';
-                video.pause();
-            };
-            history.pushState(null, null, null);
-        }
-    </script>
+    <!-- On appelle le fichier Javascript séparé -->
+    <script src="script.js"></script>
 </body>
 </html>
