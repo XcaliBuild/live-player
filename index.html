@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>WebWise Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; outline: none !important; }
+        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        
+        /* Infos de la chaîne (Logo + Nom) */
+        #header-info {
+            position: absolute; top: 20px; left: 20px; display: flex; align-items: center;
+            z-index: 11; transition: opacity 0.5s; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px;
+        }
+        #header-info img { height: 50px; margin-right: 15px; }
+        #header-info h1 { font-size: 1.2rem; margin: 0; }
+
+        #video { width: 100vw; height: 100vh; background: #000; }
+
+        #overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 20;
+        }
+
+        .play-button { 
+            padding: 20px 40px; font-size: 24px; background: #e50914; border: 4px solid transparent;
+            color: white; border-radius: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .play-button:focus { transform: scale(1.1); border-color: white; box-shadow: 0 0 20px #e50914; }
+    </style>
+</head>
+<body>
+
+    <div id="header-info">
+        <img id="chan-logo" src="" alt="">
+        <h1 id="chan-name">Chargement...</h1>
+    </div>
+
+    <div id="overlay">
+        <button id="startBtn" class="play-button" autofocus>LANCER LE FLUX</button>
+    </div>
+
+    <video id="video" playsinline></video>
+
+    <script>
+        // Configuration par défaut (sera remplacée par les paramètres URL ou JSON)
+        const config = {
+            name: "Flux Live",
+            logo: "https://via.placeholder.com/50",
+            url: "",
+            referer: "",
+            userAgent: ""
+        };
+
+        // Extraction des paramètres de l'URL (?url=...&name=...&logo=...)
+        const params = new URLSearchParams(window.location.search);
+        config.url = params.get('url') || "METS_TON_LIEN_PAR_DEFAUT_ICI";
+        config.name = params.get('name') || "Match en Direct";
+        config.logo = params.get('logo') || "";
+
+        // Mise à jour de l'interface
+        document.getElementById('chan-name').innerText = config.name;
+        document.getElementById('chan-logo').src = config.logo;
+
+        const video = document.getElementById('video');
+        const startBtn = document.getElementById('startBtn');
+
+        // Initialisation HLS avec support des Referers (si possible via Hls.js)
+        let hls = new Hls({
+            xhrSetup: function(xhr, url) {
+                // Note : Modifier le Referer en JS pur est souvent bloqué par le navigateur
+                // Mais certains serveurs acceptent ces headers personnalisés
+                if(config.referer) xhr.setRequestHeader('Referer', config.referer);
+            }
+        });
+
+        if (Hls.isSupported()) {
+            hls.loadSource(config.url);
+            hls.attachMedia(video);
+        }
+
+        function startPlayer() {
+            document.getElementById('overlay').style.display = 'none';
+            video.controls = true;
+            video.play();
+            
+            // Auto-hide les infos après 5 secondes
+            setTimeout(() => {
+                document.getElementById('header-info').style.opacity = '0';
+            }, 5000);
+
+            if (video.requestFullscreen) video.requestFullscreen();
+        }
+
+        startBtn.addEventListener('click', startPlayer);
+        startBtn.addEventListener('keydown', (e) => { if(e.keyCode === 13) startPlayer(); });
+
+    </script>
+</body>
+</html>
