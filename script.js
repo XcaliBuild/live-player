@@ -4,6 +4,7 @@ window.onload = function() {
     const playerContainer = document.getElementById('player-container');
     let hls = new Hls();
 
+    // Chargement de la liste
     fetch('liste.json?v=' + Date.now())
         .then(res => res.json())
         .then(data => {
@@ -12,63 +13,72 @@ window.onload = function() {
                 const card = document.createElement('div');
                 card.className = 'card'; card.tabIndex = 0;
                 card.innerHTML = `<img src="${match.logo}"><p>${match.nom}</p>`;
-                card.onclick = () => handleSelection(match);
-                card.onkeydown = (e) => { if(e.keyCode === 13) handleSelection(match); };
+                
+                const action = () => resolverUniversel(match);
+                card.onclick = action;
+                card.onkeydown = (e) => { if(e.keyCode === 13) action(); };
+                
                 grid.appendChild(card);
                 if(index === 0) card.focus();
             });
-        }).catch(err => { status.innerText = "Erreur : " + err.message; });
+        }).catch(err => { status.innerText = "Erreur JSON : " + err.message; });
 
-    async function handleSelection(match) {
-        if (match.url && (match.url.includes('.m3u8') || match.url.includes('.ts'))) {
-            startPlayer(match.url, match.referer);
-        } else { await snifferUniversel(match); }
-    }
-
-    async function snifferUniversel(match) {
+    // --- LE RÉSOLVEUR "SERVO" ---
+    async function resolverUniversel(match) {
         playerContainer.style.display = 'block';
-        playerContainer.innerHTML = "<div style='color:white;padding:20px;'>Extraction du flux sécurisé...</div>";
+        playerContainer.innerHTML = "<div style='color:white;padding:20px;'>Analyse du lien (Mode Sniffer)...</div>";
         
+        const targetUrl = match.webpage || match.url;
+
         try {
-            // Utilisation du proxy AllOrigins pour contourner le blocage de tvivu
-            const targetUrl = match.webpage || match.url;
+            // Utilisation d'un proxy pour lire le code source sans blocage CORS
             const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
             const res = await fetch(proxy);
             const data = await res.json();
-            
-            // On cherche le lien vidéo et les éventuels tokens de session
-            const found = data.contents.match(/["'](https?:\/\/[^"']+\.(m3u8|ts|mp4|mpd)[^"']*)["']/i);
-            
+            const html = data.contents;
+
+            // REGEX PUISSANTE : Cherche m3u8, ts, mpd, mp4 et les liens de serveurs edge/stream
+            const masterRegex = /["'](https?:\/\/[^"']+\.(m3u8|ts|mpd|mp4)[^"']*)["']|file:\s*["']([^"']+)["']/i;
+            const found = html.match(masterRegex);
+
             if (found) {
-                const streamUrl = found[1].replace(/\\/g, '');
-                // On force le Referer du site d'origine dans le lecteur
+                const streamUrl = (found[1] || found[3]).replace(/\\/g, '');
+                console.log("Flux extrait : " + streamUrl);
                 startPlayer(streamUrl, targetUrl);
             } else {
+                // Si le sniffer échoue, on tente l'affichage direct de la page
                 forceIframe(targetUrl);
             }
-        } catch (e) { forceIframe(match.webpage); }
+        } catch (e) {
+            forceIframe(targetUrl);
+        }
     }
 
     function startPlayer(source, ref) {
         playerContainer.innerHTML = `<button class="back-btn" onclick="location.reload()">↩ RETOUR</button><video id="video" controls autoplay playsinline style="width:100%;height:100%;"></video>`;
         const v = document.getElementById('video');
         
-        if (Hls.isSupported()) {
+        if (Hls.isSupported() && (source.includes('.m3u8') || source.includes('.ts'))) {
             hls.destroy();
             hls = new Hls({
                 xhrSetup: (xhr) => {
-                    // On tente de simuler le Referer pour tvivu
+                    // Simulation du referer pour passer les barrières de tvivu
                     if(ref) xhr.setRequestHeader('Referer', ref);
-                    xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+                    xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (Linux; Android 10; TV) AppleWebKit/537.36');
                 }
             });
             hls.loadSource(source);
             hls.attachMedia(v);
-        } else { v.src = source; v.play(); }
+        } else {
+            v.src = source;
+            v.play();
+        }
     }
 
     function forceIframe(url) {
-        // Plan B si le flux direct est trop protégé par X-Frame-Options
-        playerContainer.innerHTML = `<button class="back-btn" onclick="location.reload()">↩ RETOUR</button><iframe src="${url}" style="width:100%;height:100%;border:none;background:#000;" allowfullscreen allow="autoplay"></iframe>`;
+        // Pour AppCreator24, l'iframe est souvent la meilleure chance si le sniffer bloque
+        playerContainer.innerHTML = `
+            <button class="back-btn" onclick="location.reload()">↩ RETOUR</button>
+            <iframe src="${url}" style="width:100%;height:100%;border:none;background:#000;" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
     }
 };
