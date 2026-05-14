@@ -2,101 +2,104 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>WebWise Player</title>
+    <title>WebWise - Liste des Matchs</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         * { -webkit-tap-highlight-color: transparent; outline: none !important; }
-        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        body { margin: 0; background: #121212; color: white; font-family: sans-serif; }
         
-        /* Infos de la chaîne (Logo + Nom) */
-        #header-info {
-            position: absolute; top: 20px; left: 20px; display: flex; align-items: center;
-            z-index: 11; transition: opacity 0.5s; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px;
-        }
-        #header-info img { height: 50px; margin-right: 15px; }
-        #header-info h1 { font-size: 1.2rem; margin: 0; }
+        /* Conteneur de la liste */
+        #menu { padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        h1 { margin-bottom: 30px; font-weight: 300; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; }
 
-        #video { width: 100vw; height: 100vh; background: #000; }
-
-        #overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 20;
+        /* Style des cartes de match */
+        .card { 
+            background: #1e1e1e; border-radius: 12px; padding: 20px; text-align: center;
+            cursor: pointer; transition: 0.3s; border: 3px solid transparent;
         }
+        .card img { height: 80px; margin-bottom: 15px; pointer-events: none; }
+        .card p { margin: 0; font-size: 14px; pointer-events: none; }
 
-        .play-button { 
-            padding: 20px 40px; font-size: 24px; background: #e50914; border: 4px solid transparent;
-            color: white; border-radius: 8px; cursor: pointer; transition: 0.2s;
-        }
-        .play-button:focus { transform: scale(1.1); border-color: white; box-shadow: 0 0 20px #e50914; }
+        /* Focus pour Android TV */
+        .card:focus { transform: scale(1.05); border-color: #e50914; background: #2a2a2a; }
+
+        /* Lecteur plein écran caché au début */
+        #player-container { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 100; }
+        video { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
 
-    <div id="header-info">
-        <img id="chan-logo" src="" alt="">
-        <h1 id="chan-name">Chargement...</h1>
+    <!-- SECTION MENU -->
+    <div id="menu">
+        <h1>Événements en Direct</h1>
+        <div id="match-grid" class="grid">
+            <!-- Les matchs s'afficheront ici -->
+        </div>
     </div>
 
-    <div id="overlay">
-        <button id="startBtn" class="play-button" autofocus>LANCER LE FLUX</button>
+    <!-- SECTION LECTEUR -->
+    <div id="player-container">
+        <video id="video" controls playsinline></video>
     </div>
-
-    <video id="video" playsinline></video>
 
     <script>
-        // Configuration par défaut (sera remplacée par les paramètres URL ou JSON)
-        const config = {
-            name: "Flux Live",
-            logo: "https://via.placeholder.com/50",
-            url: "",
-            referer: "",
-            userAgent: ""
-        };
-
-        // Extraction des paramètres de l'URL (?url=...&name=...&logo=...)
-        const params = new URLSearchParams(window.location.search);
-        config.url = params.get('url') || "METS_TON_LIEN_PAR_DEFAUT_ICI";
-        config.name = params.get('name') || "Match en Direct";
-        config.logo = params.get('logo') || "";
-
-        // Mise à jour de l'interface
-        document.getElementById('chan-name').innerText = config.name;
-        document.getElementById('chan-logo').src = config.logo;
-
+        const grid = document.getElementById('match-grid');
+        const playerContainer = document.getElementById('player-container');
         const video = document.getElementById('video');
-        const startBtn = document.getElementById('startBtn');
+        let hls = new Hls();
 
-        // Initialisation HLS avec support des Referers (si possible via Hls.js)
-        let hls = new Hls({
-            xhrSetup: function(xhr, url) {
-                // Note : Modifier le Referer en JS pur est souvent bloqué par le navigateur
-                // Mais certains serveurs acceptent ces headers personnalisés
-                if(config.referer) xhr.setRequestHeader('Referer', config.referer);
-            }
-        });
+        // 1. Charger la liste JSON
+        fetch('liste.json')
+            .then(response => response.json())
+            .then(data => {
+                data.matchs.forEach((match, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.tabIndex = 0; // Rend la carte sélectionnable au D-pad
+                    card.innerHTML = `
+                        <img src="${match.logo}" onerror="this.src='https://via.placeholder.com/80?text=Match'">
+                        <p>${match.nom}</p>
+                    `;
+                    
+                    // Au clic ou "OK" sur la télécommande
+                    const action = () => launchMatch(match);
+                    card.onclick = action;
+                    card.onkeydown = (e) => { if(e.keyCode === 13) action(); };
+                    
+                    grid.appendChild(card);
+                    if(index === 0) card.focus(); // Focus le premier match au chargement
+                });
+            })
+            .catch(err => console.error("Erreur chargement JSON:", err));
 
-        if (Hls.isSupported()) {
-            hls.loadSource(config.url);
-            hls.attachMedia(video);
-        }
-
-        function startPlayer() {
-            document.getElementById('overlay').style.display = 'none';
-            video.controls = true;
-            video.play();
+        // 2. Fonction pour lancer le match
+        function launchMatch(match) {
+            playerContainer.style.display = 'block';
             
-            // Auto-hide les infos après 5 secondes
-            setTimeout(() => {
-                document.getElementById('header-info').style.opacity = '0';
-            }, 5000);
+            if (Hls.isSupported()) {
+                hls.destroy();
+                hls = new Hls({
+                    xhrSetup: (xhr) => { if(match.referer) xhr.setRequestHeader('Referer', match.referer); }
+                });
+                hls.loadSource(match.url);
+                hls.attachMedia(video);
+            } else {
+                video.src = match.url;
+            }
 
-            if (video.requestFullscreen) video.requestFullscreen();
+            video.play();
+            video.muted = false;
+            
+            // Gestion du retour (Android TV Back Button)
+            window.onpopstate = function() {
+                playerContainer.style.display = 'none';
+                video.pause();
+            };
+            history.pushState(null, null, null);
         }
-
-        startBtn.addEventListener('click', startPlayer);
-        startBtn.addEventListener('keydown', (e) => { if(e.keyCode === 13) startPlayer(); });
-
     </script>
 </body>
 </html>
