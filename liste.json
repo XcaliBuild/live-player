@@ -1,16 +1,14 @@
 {
   "matchs": [
     {
-      "nom": "Manchester City vs Crystal Palace",
+      "nom": "Manchester City vs Palace",
       "logo": "https://upload.wikimedia.org/wikipedia/fr/a/a1/Manchester_City_FC_logo.svg",
-      "url": "https://emb.apl411.me/player/live.php?id=259150&w=728&h=480",
-      "referer": "https://emb.apl411.me/"
+      "webpage": "https://emb.apl411.me/player/live.php?id=259150&w=728&h=480"
     },
     {
-      "nom": "Real Madrid vs Barcelone",
+      "nom": "Real Madrid vs Barca",
       "logo": "https://upload.wikimedia.org/wikipedia/fr/c/c7/Logo_Real_Madrid.svg",
-      "url": "https://autre-lien-m3u8.com/live.m3u8",
-      "referer": ""
+      "url": "https://lien-direct-si-tu-las.com/index.m3u8"
     }
   ]
 }
