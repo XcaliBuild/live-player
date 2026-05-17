@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="" tvg-name="Castr Live" tvg-logo="" group-title="Streaming",Castr Live
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Mobile Safari/537.36
+#EXTVLCOPT:http-referrer=https://player.castr.com/
+https://stream.castr.com/5c0e464dc140f155a330edb5/live_9f9b1560ea3211ef9413c99e9bca976f/tracks-v1/index.fmp4.m3u8|User-Agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Mobile Safari/537.36&Referer=https://player.castr.com/
