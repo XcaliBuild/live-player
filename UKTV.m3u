@@ -1,16 +1,8 @@
 #EXTM3U
-#EXTINF:-1 channel-id="GBAK3504500A-gb" tvg-id="GBAK3504500A-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBAK3504500A_20250107T022508SQUARE.png" group-title="SamsungTVPlus - United Kingdom",5 Cops
-https://jmp2.uk/stvp-GBAK3504500A
-#EXTINF:-1 channel-id="GBAK3504501A-gb" tvg-id="GBAK3504501A-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBAK3504501A_20250107T022511SQUARE.png" group-title="SamsungTVPlus - United Kingdom",5 Exploring Britain
-https://jmp2.uk/stvp-GBAK3504501A
-#EXTINF:-1 channel-id="GB1800002FA-gb" tvg-id="GB1800002FA-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB1800002FA_20250211T013901SQUARE.png" group-title="SamsungTVPlus - United Kingdom",8 Out Of 10 Cats
-https://jmp2.uk/stvp-GB1800002FA
-#EXTINF:-1 channel-id="GB1000002RV-gb" tvg-id="GB1000002RV-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB1000002RV_20260407T041311SQUARE.png" group-title="SamsungTVPlus - United Kingdom",60 Days in Jail
-https://jmp2.uk/stvp-GB1000002RV
 #EXTINF:-1 channel-id="GB2600015OS-gb" tvg-id="GB2600015OS-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB2600015OS_20240924T050854SQUARE.png" group-title="SamsungTVPlus - United Kingdom",Action Movies - Rakuten TV
-https://jmp2.uk/stvp-GB2600015OS
+https://action-rakuten-tv-uk.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6065/master.m3u8?ads.app_bundle=G15147002586&ads.app_name=%7BAPP_NAME%7D&ads.app_store_url=%7BAPP_DOMAIN%7D&ads.content_livestream=0&ads.device_lmt=%7BTARGETOPT%7D&ads.did=%7BPSID%7D&ads.gdpr_consent=%7BTC_STRING%7D&ads.ifa_type=tifa&ads.inv_partner_domain=rakuten.tv&ads.market=uk&ads.platform=samsung_tvplus&ads.pod_type=playerpage_midroll&ads.rtv_channel_name=action-rakuten-tv_uk&ads.rtv_content_id=6065&ads.rtv_language=en&channel_id=6065&publishing_platform_id=1&tenant_identifier=rtv
 #EXTINF:-1 channel-id="GBBC900015D3-gb" tvg-id="GBBC900015D3-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBBC900015D3_20250107T022812SQUARE.png" group-title="SamsungTVPlus - United Kingdom",Adventure Earth
-https://jmp2.uk/stvp-GBBC900015D3
+https://f8bdb8a4d6774c0ba30ca5b7653c92d3.mediatailor.us-east-1.amazonaws.com/v1/master/f4e8c53a8367a5b58e20ce054ea3ce25a3e904d3/Samsung-gb_AdventureEarth/playlist.m3u8?ads.wurl_channel=1299&ads.wurl_name=AdventureEarth&ads.coppa=0&ads.psid=%7BPSID%7D&ads.targetopt=%7BTARGETOPT%7D&ads.app_domain=%7BAPP_DOMAIN%7D&ads.app_name=%7BAPP_NAME%7D&ads.consent=%7BTC_STRING%7D
 #EXTINF:-1 channel-id="GB2300005ML-gb" tvg-id="GB2300005ML-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB2300005ML_20251118T015422SQUARE.png" group-title="SamsungTVPlus - United Kingdom",Al Jazeera
 https://jmp2.uk/stvp-GB2300005ML
 #EXTINF:-1 channel-id="GB2000955S-gb" tvg-id="GB2000955S-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB2000955S_20260210T040016SQUARE.png" group-title="SamsungTVPlus - United Kingdom",AMC Cupid
