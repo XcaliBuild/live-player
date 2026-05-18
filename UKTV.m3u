@@ -4,13 +4,9 @@ https://action-rakuten-tv-uk.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b74
 #EXTINF:-1 channel-id="GBBC900015D3-gb" tvg-id="GBBC900015D3-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBBC900015D3_20250107T022812SQUARE.png" group-title="SamsungTVPlus - United Kingdom",Adventure Earth
 https://f8bdb8a4d6774c0ba30ca5b7653c92d3.mediatailor.us-east-1.amazonaws.com/v1/master/f4e8c53a8367a5b58e20ce054ea3ce25a3e904d3/Samsung-gb_AdventureEarth/playlist.m3u8?ads.wurl_channel=1299&ads.wurl_name=AdventureEarth&ads.coppa=0&ads.psid=%7BPSID%7D&ads.targetopt=%7BTARGETOPT%7D&ads.app_domain=%7BAPP_DOMAIN%7D&ads.app_name=%7BAPP_NAME%7D&ads.consent=%7BTC_STRING%7D
 #EXTINF:-1 channel-id="GB2300005ML-gb" tvg-id="GB2300005ML-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB2300005ML_20251118T015422SQUARE.png" group-title="SamsungTVPlus - United Kingdom",Al Jazeera
-https://jmp2.uk/stvp-GB2300005ML
+https://amg00222-amg00222c4-amgplt0002.playout.now3.amagi.tv/aljazeera-noscte/playlist.m3u8
 #EXTINF:-1 channel-id="GB2000955S-gb" tvg-id="GB2000955S-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB2000955S_20260210T040016SQUARE.png" group-title="SamsungTVPlus - United Kingdom",AMC Cupid
-https://jmp2.uk/stvp-GB2000955S
-#EXTINF:-1 channel-id="GB200096O2-gb" tvg-id="GB200096O2-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB200096O2_20260210T040020SQUARE.png" group-title="SamsungTVPlus - United Kingdom",AMC Reality
-https://jmp2.uk/stvp-GB200096O2
-#EXTINF:-1 channel-id="GBBC2300001X5-gb" tvg-id="GBBC2300001X5-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBBC2300001X5_20260512T060041SQUARE.png" group-title="SamsungTVPlus - United Kingdom",American Idol
-https://jmp2.uk/stvp-GBBC2300001X5
+https://a9c2affc.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9BTUNDdXBpZF9ITFM/playlist.m3u8?ads.wurl_channel=2073&ads.wurl_name=AMCCupid&ads.coppa=0&ads.psid=%7BPSID%7D&ads.targetopt=%7BTARGETOPT%7D&ads.app_domain=%7BAPP_DOMAIN%7D&ads.app_name=%7BAPP_NAME%7D&ads.consent=%7BTC_STRING%7D#EXTINF:-1 channel-id="GBBC2300001X5-gb" tvg-id="GBBC2300001X5-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBBC2300001X5_20260512T060041SQUARE.png" group-title="SamsungTVPlus - United Kingdom",American Idol
 #EXTINF:-1 channel-id="GBBC2300002GG-gb" tvg-id="GBBC2300002GG-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBBC2300002GG_20251013T054248SQUARE.png" group-title="SamsungTVPlus - United Kingdom",America's Got Talent
 https://jmp2.uk/stvp-GBBC2300002GG
 #EXTINF:-1 channel-id="GB60000381-gb" tvg-id="GB60000381-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB60000381_20260512T060038SQUARE.png" group-title="SamsungTVPlus - United Kingdom",A New Life In The Sun
