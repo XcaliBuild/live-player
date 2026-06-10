@@ -11,7 +11,7 @@
             --accent-neon: #39ff14; /* Vert Fluo */
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
-            --glass-bg: rgba(255, 255, 255, 0.12); /* Cristal transparent net */
+            --glass-bg: rgba(255, 255, 255, 0.12);
             --black-70: rgba(0, 0, 0, 0.7);
         }
 
@@ -64,7 +64,7 @@
             transform: translateX(-100%);
         }
 
-        /* CURSEUR FIXE AU CENTRE (CRISTAL ULTRA-NET SANS FLOU) */
+        /* CURSEUR FIXE AU CENTRE (CRISTAL ULTRA-NET) */
         #fixed-cursor {
             position: absolute;
             left: 10px;
@@ -110,7 +110,7 @@
             opacity: 0.4; 
             cursor: pointer;
             color: var(--text-secondary);
-            z-index: 6; /* Reste au-dessus du fond pour être super net */
+            z-index: 6; 
         }
 
         .channel-card img {
@@ -255,7 +255,7 @@
             border-top-color: var(--accent-neon);
             animation: spin 1s linear infinite;
             z-index: 3;
-            display: block;
+            display: none;
         }
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
     </style>
@@ -280,7 +280,7 @@
     </div>
 
     <div id="bottom-info" class="ui-element">
-        <div id="bottom-title">Chargement...</div>
+        <div id="bottom-title">Initialisation...</div>
         <div id="bottom-epg">Veuillez patienter...</div>
         <div class="progress-bar-bg">
             <div class="progress-bar-fill"></div>
@@ -295,9 +295,231 @@
     </div>
 
     <script>
-        // TOKN
-        const m3uUrl = "https://www.dropbox.com/scl/fi/0ikt67w26qfxf49uhjxrd/LiveStreamTv.m3u?rlkey=5pqujh4hea678f26dqbzqs072&st=atqaqdcf&dl=1";
-        
+        // INTÉGRATION DIRECTE DE LA LISTE M3U (Plus de blocage Dropbox)
+        const m3uData = `#EXTM3U
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38043971_ico.png?ts=1781086837",top tv mauritius
+http://197.225.146.16/hls/stream.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38198224_ico.png?ts=1781089687",Tele.Novela
+https://d1qf1fnbo60xec.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-arjkqtr3hyot6/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38198358_ico.png?ts=1781089752",Televisa Telenovela
+https://40413a8d4fab4568b22187b5d7cd15c9.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/Samsung-fr_Televisa/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38078725_ico.png?ts=1781086993",STAR+ NOVELAS
+https://video1.getstreamhosting.com:1936/8320/8320/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38078893_ico.png?ts=1781087216",TOP NOVELAS
+https://stream.berosat.live:19360/top-novelas/top-novelas.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38078976_ico.png?ts=1781087285",Novelas-1
+https://televisa-telenovelas-3-eu.rakuten.wurl.tv/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38198196_ico.png?ts=1781089600",Passion Novelas
+https://d18gemy7v2tebj.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-0n7p3ckq9ethd/PassionNovelas_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38198162_ico.png?ts=1781089483",Passion bollywood
+https://d30nk0rfmci3c2.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-t0spvfjnrozo2/PassionBollywood_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365365_ico.png?ts=1781090425",Zee One
+https://7689426c.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1mcl9aZWVNYWdpY19ITFM/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38080843_ico.png?ts=1781088152",johda akbar tv
+https://c2cc7eb5.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1mcl9Kb2RoYUFrYmFyX0hMUw/playlist.m3u8?ads.wurl_channel=2123
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38128033_ico.png?ts=1781088282",ANTENNE REUNION
+https://live-antenne-reunion.zeop.tv/live/c3eds/antreunihd/hls_fta/antreunihd.m3u8?location=ZEOP01
+#EXTINF:-1 tvg-logo="https://www.monpetitforfait.com/comparateur-box-internet/chaines-tv/comedie-plus",Comédie+
+http://151.80.18.177:86/Comedie+_HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38135492_ico.png?ts=1781088427",Ca c'est drole
+https://d2s8iafdyzconc.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-6x2p3ho0vw00a/Noovo_Comedies_Home.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365114_ico.png?ts=1781103918",Téléralités
+https://d29qczaufx5vc3.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-dxg2k6h0o2l6i/Noovo_Telerealites.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38323714_ico.png?ts=1781103989",CINEMA
+https://dk4ogs46bjxcw.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-xr1ct045l70mz/Noovo_Cinema.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Fichier:Serieclub_%282012%29.svg",SerieClub
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/29.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38096779_ico.png?ts=1781087672",BBC Series
+https://amg00793-amg00793c28-samsung-fr-4957.playouts.now.amagi.tv/playlist/amg00793-bbcstudios-bbcdramafrancesamsungfrance-samsungfr/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38277751_ico.png?ts=1781089857",Emotion'L
+https://amg00711-zylo-france-zylo-emotional-rakuten-frukp.amagi.tv/hls/amagi_hls_data_rakutenAA-zylo-emotional-rakuten/CDN/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38135928_ico.png?ts=1781088478",RTBF La une
+https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L22/6d35e26e/1bffdaaf.isml/.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38135941_ico.png?ts=1781088537",RTBF TIPIK
+https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L22/425fb6b1/8a250afc.isml/.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Fichier:TF1_logo_2006.svg",TF1
+http://151.80.18.177:86/TF1_HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://1000logos.net/france-2-logo/",France 2
+http://151.80.18.177:86/France_2_HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Fichier:France_3_2018.svg",France 3
+http://151.80.18.177:86/France_3_HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Fichier:France_5_2018.svg",France 5
+http://151.80.18.177:86/France_5_HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359034_ico.png?ts=1781102435",La_Maison_France_5
+https://d6n7ne3hzi1p.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-ijlr3nmzh7cue/LaMaisonFrance5_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38323637_ico.png?ts=1781103075",Echappées belles & Co
+https://amg02232-botravail-amg02232c1-samsung-fr-308.playouts.now.amagi.tv/playlist/amg02232-botravail-echappeesbelles-samsungfr/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359467_ico.png?ts=1781102581",France TV (docs)
+https://tvradiozap.eu/tools/ft-m3u8.php/docs_1.m3u8#tvrz=natif&direct
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365313_ico.png?ts=1781102626",France TV (SERIES)
+https://tvradiozap.eu/tools/ft-m3u8.php/series_1.m3u8#tvrz=natif&direct
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38135688_ico.png?ts=1781088385",OUTRE-MER 1er
+https://tvradiozap.eu/tools/ft-m3u8.php/outremer_1.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38134786_ico.png?ts=1781088339",TV5 MONDE FBS
+https://ott.tv5monde.com/Content/HLS/Live/channel(fbs)/index.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38323690_ico.png?ts=1781102708",TV5 MONDE VOYAGE
+https://d1qvkge2x4ev90.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-8q6p9i1t9dw2k/tvfvo.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365126_ico.png?ts=1781102755",TV5 MONDE CHEFS
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=16223
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38124133_ico.png?ts=1781090907",ARTE
+https://artesimulcast.akamaized.net/hls/live/2031003/artelive_fr/index.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38323623_ico.png?ts=1781102506",arte Invitation au Voyage
+https://d3223vg0o80ccf.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-xn2vfltkhli08/Invitationauvoyage_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38198405_ico.png?ts=1781102997",voyages +
+https://streams2.sofast.tv/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/ff8d1526-e572-4bb5-8c93-560eb80115bf/manifest.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365139_ico.png?ts=1781105079",Voyages et Saveurs
+https://amg01821-amg01821c24-samsung-fr-5157.playouts.now.amagi.tv/playlist/amg01821-lovetvfast-voyagesandsaveurs-samsungfr/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38323697_ico.png?ts=1781103206",Travel XP
+https://travelxp-travelxp-4-fr.rakuten.wurl.tv/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38323656_ico.png?ts=1781103145",Echos du Monde
+https://d1bl6tskrpq9ze.cloudfront.net/hls/master.m3u8?ads.xumo_channelId=99994449
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38135820_ico.png?ts=1781088585",T18
+https://raw.githubusercontent.com/Paradise-91/ParaTV/main/streams/t18/t18-dm.m3u8
+#EXTINF:-1 tvg-logo="https://commons.wikimedia.org/wiki/File:Logo_CStar_2016.svg",CSTAR
+https://raw.githubusercontent.com/Paradise-91/ParaTV/main/streams/canalplus/cstar-dm.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38345412_ico.png?ts=1781090570",RMC Story
+https://d15aro46bnpfm8.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-fqkqiax1078up/RMC_Story_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359025_ico.png?ts=1781090302",RMC life
+https://d3dcdjv6dx07iz.cloudfront.net/m1/media.m3u8
+#EXTINF:-1 tvg-logo="https://www.monpetitforfait.com/comparateur-box-internet/chaines-tv/paris-premiere",Paris Première
+http://151.80.18.177:86/Paris_Premiere_HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Fichier:T%C3%A9va.svg",Téva
+http://151.80.18.177:86/Teva_HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/AB1",AB1
+http://151.80.18.177:86/AB1/index.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/RTL9",RTL9
+http://151.80.18.177:86/RTL9/index.m3u8
+#EXTINF:-1 tvg-logo="https://blog.solidsignal.com/news/syfy-channel-changes-logo-something-prison-like/",Sci-fi
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/12.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38253756_ico.png?ts=1781089964",NEXT TV ENT HD
+https://video1.getstreamhosting.com:1936/8312/8312/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38145484_ico.png?ts=1781088624",CARAC 1
+https://rougetv.vedge.infomaniak.com/livecast/rougetv/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38145525_ico.png?ts=1781088701",CARAC 2
+https://onefmmd.vedge.infomaniak.com/livecast/onefmmd/manifest.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38147104_ico.png?ts=1781088744",CARAC 3
+https://lfmmd.vedge.infomaniak.com/livecast/lfmmd/manifest.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38147114_ico.png?ts=1781088787",CARAC 4
+https://edge12.vedge.infomaniak.com/livecast/ik:compack_media_1/manifest.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38147231_ico.png?ts=1781088831",CARAC 5
+https://carac5.vedge.infomaniak.com/livecast/ik:carac5/manifest.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365387_ico.png?ts=1781105623",Love Trailers
+https://amg01821-lovetvchannels-lovemagazinefr-samsungfr-3s8nt.amagi.tv/playlist/amg01821-lovetvchannels-lovemagazinefr-samsungfr/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://en.wikipedia.org/wiki/Turner_Classic_Movies_%28Asia%29",TCM
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/14.m3u8
+#EXTINF:-1 tvg-logo="https://www.monpetitforfait.com/comparateur-box-internet/chaines-tv/cine-western-plus",Cine Western+
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/18.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Fichier:CanalPlus.svg",Canal+
+http://151.80.18.177:86/Canal+_HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Canal%2B_Cin%C3%A9ma%28s%29",Canal+ Cinéma
+http://151.80.18.177:86/Canal+_cinema_HD/index.m3u
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38197589_ico.png?ts=1781101086",RAKUTEN TV ACTION
+https://01ac9352fbfa4204998783d41f9b1a2e.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6068/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38197615_ico.png?ts=1781101293",RAKUTEN TV TOP FILM
+https://93ed06eba1ef4cf783b66dc6ea7c4f28.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5986/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38197701_ico.png?ts=1781101336",RAKUTEN TV THRILLERS
+https://thriller-rakuten-tv-fr.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6479/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38197770_ico.png?ts=1781101379",RAKUTEN TV SCi-Fi
+https://sci-fi-rakuten-tv-fr.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-7161/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38197781_ico.png?ts=1781101417",RAKUTEN TV COMEDIE
+https://cc9f70371e7144e7acae4de8b5832d7a.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6183/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359573_ico.png?ts=1781101941",Rakuten TV Famille
+https://b3088e48baab418a9a95dc8110a1b736.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6206/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38197784_ico.png?ts=1781101471",RAKUTEN TV DRAMES
+https://f396f4db84a54f7bb496b2541477b626.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6095/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38197808_ico.png?ts=1781101518",RAKUTEN TV ROMANCE
+https://9affb6144c4c4cdca25d58908cb55a64.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6195/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38276519_ico.png?ts=1781101595",100% Cinema
+https://amg02162-amg02162c3-samsung-fr-8106.playouts.now.amagi.tv/playlist/amg02162-newenconnect-cinemachannel-samsungfr/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/a/a8/Histoire_tv_logo_V2-RVB.jpg",Histoire
+http://151.80.18.177:86/Histoire/index.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Chasse_%26_P%C3%AAche_%28cha%C3%AEne_de_t%C3%A9l%C3%A9vision%29",Chasse et pechêche
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/38.m3u8
+#EXTINF:-1 tvg-logo="https://bbcearth.ca/wp-content/uploads/2018/09/BBC_EARTH_RGB_GRAD_L.jpg",BBC EARTH
+https://amg00793-amg00793c22-samsung-fr-4776.playouts.now.amagi.tv/playlist/amg00793-bbcstudios-bbcearthfrance-samsungfr/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.monpetitforfait.com/comparateur-box-internet/chaines-tv/animaux",Animaux
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/37.m3u8
+#EXTINF:-1 tvg-logo="https://logos.fandom.com/vi/wiki/National_Geographic_Wild_%28%C4%90%C3%B4ng_Nam_%C3%81%29",Nat Geo Wild
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/16.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/Fichier:Nat_Geo_HD.png",Nat Geo Channel
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/17.m3u8
+#EXTINF:-1 tvg-logo="https://www.megazap.fr/photo/art/grande/93589319-65384551.jpg?v=1767866186",Discovery Channel
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/25.m3u8
+#EXTINF:-1 tvg-logo="https://fr.wikipedia.org/wiki/RMC_D%C3%A9couverte",RMC Découverte
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/23.m3u8
+#EXTINF:-1 tvg-logo="https://www.monpetitforfait.com/comparateur-box-internet/chaines-tv/rmc-alerte-secours",RMC Alerte Secours
+https://d18py9aevgxe9g.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-7m4nvp688td5a/RMC_alerte_secours_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365250_ico.png?ts=1781102060",RMC Mystère
+https://d2mey07nrym09f.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-zzv8u40ihzmq2/RMC_MYSTERE_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38323684_ico.png?ts=1781102113",RMC j'irai dormir chez vous
+https://dltlq2xit8olv.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-htbn65lnpv00c/Jirai_dormir_chez_vous_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365272_ico.png?ts=1781102160",RMC WOW
+https://d225rs9gbjxb5j.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-bdlabwqcrqc2n/RMC_Wow_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365266_ico.png?ts=1781102204",RMC Mecanic
+https://d31lyfwi8gzfyr.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-ebepfdmg74kzh/RMC_MECANIC_FR.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365261_ico.png?ts=1781102240",BFM Grands Reportages
+https://cbv1-cdn-edge-live04.pfd.sfr.net/bfm-ncdn-live-pal1.pfd.sfr.net/sid=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIwMnFkZXAyYW9wbDVybWQ5cjU3MCIsImlzcyI6Im1pdDEtY2RuLXNyMDAiLCJpcCI6IjIwMDE6ODYxOjNjYzA6MjVhMDpjZGRiOjk5NTA6Y2EzYzoxMTM0Iiwic3ViIjoiQkZNX0dSQU5EU1JFUE9SVEFHRVMiLCJleHAiOjE3Nzk4NDc2NjcsImlhdCI6MTc3OTgwNDQ2N30.r9IxBOVGKWq__LwXDN70VsSE9XxTYqaslQKZoZltThg/shls/LIVE$BFM_GRANDSREPORTAGES/index.m3u8?start=LIVE&end=END
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359861_ico.png?ts=1781103405",Enquetes-de-choc
+https://amg01796-fastmediabackbo-enquetes-de-choc-plex-rasaw.amagi.tv/playlist/amg01796-fastmediabackbo-enquetes-de-choc-plex/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359900_ico.png?ts=1781103447",HOMICIDE
+https://amg01796-fastmediabackbo-homicide-plex-xlwam.amagi.tv/playlist/amg01796-fastmediabackbo-homicide-plex/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365256_ico.png?ts=1781102320",DocStory
+https://amg01796-amg01796c4-samsung-fr-3183.playouts.now.amagi.tv/playlist/amg01796-fastmediafast-docstory-samsungfr/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359044_ico.png?ts=1781103283",Rustica
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=7761
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359308_ico.png?ts=1781103340",Systeme - D
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=12587
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38363767_ico.png?ts=1781104247",C'est Pas Sorcier! TV
+https://jmp2.uk/plu-63b579961bdba100071214cb.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364131_ico.png?ts=1781104369",Esprit Sorcier TV
+https://edge16.vedge.infomaniak.com/livecast/ik:bazikafrica/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364063_ico.png?ts=1781104411",Epicurieux
+https://d1dzvywp5tcxbn.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-ryq1as86j3gxc/epic.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364168_ico.png?ts=1781104599",Savoir Media
+https://hls.savoir.media/live/stream.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364136_ico.png?ts=1781104444",FUTURA
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=10243
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364144_ico.png?ts=1781104487",Science&Vie TV
+https://cluone.dad:443/live/99F7CFCD396779DC13E1FEF9BA9F9AE8/24.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364154_ico.png?ts=1781104557",TECH&Co
+https://cbv1-cdn-edge-live05.pfd.sfr.net/bfm-ncdn-live-pal1.pfd.sfr.net/sid=eyJpYXQiOjE3Nzk3OTM3MzUsImp0aSI6IjAycWFzc3ZhcjlscmRocHNmNmkwIiwic3ViIjoiQkZNX1RFQ0hBTkRDTyIsImlwIjoiMjAwMTo4NjE6M2NjMDoyNWEwOjM5MmM6ZmQzMDo2ZjY0Ojg1YWMiLCJleHAiOjE3Nzk4MzY5MzUsImlzcyI6Im1pdDEtY2RuLXNyMDAifQ.yKmdKrW0GUbfL4FPTNjQJXYDY7xW4JNWiwblWYRa77A/shls/LIVE$BFM_TECHANDCO/index.m3u8?start=LIVE&end=END
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38147288_ico.png?ts=1781105133",SKYROCK
+https://amg01796-amg01796c37-amgplt0011.playout.now3.amagi.tv/ts-eu-w1-n2/playlist/amg01796-amg01796c37-amgplt0011/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38147245_ico.png?ts=1781104643",TRACE URBAN UK
+https://amg01131-tracetv-traceurbanuk-samsunguk-6r213.amagi.tv/playlist/amg01131-tracetv-traceurbanuk-samsunguk/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38147260_ico.png?ts=1781104681",TRACE UK
+https://epg.provider.plex.tv/library/parts/6430aa45fc3be5947780904e-66be8cd4871131188099527e.m3u8?includeAllStreams=1
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38147266_ico.png?ts=1781104723",TRACE LATINA
+https://api-wrapper-tracking.imaginereplay.com/api/v1/stream/63c8cb4c28fcc49ecd5c6fff/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38147281_ico.png?ts=1781104760",TRACE BRASIL
+https://trace-brazuca-lg-fr.amagi.tv/hls/amagi_hls_data_tracetvAA-trace-brazuca-lg-fr/CDN/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38358688_ico.png?ts=1781104813",Trace TOCA
+https://channels.trace.plus/Traceprod/TOCA/.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38358704_ico.png?ts=1781104862",Trace Muzika
+https://channels.trace.plus/Traceprod/MUZIKA/.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38358696_ico.png?ts=1781104904",Trace Caribbean
+https://channels.trace.plus/Traceprod/CARIBBEAN/.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38358672_ico.png?ts=1781104948",Trace Vanilla
+https://channels.trace.plus/Traceprod/VANILLA/.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38358733_ico.png?ts=1781104984",Trace Africa
+https://channels.trace.plus/Traceprod/AFRICA_FR/.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38358720_ico.png?ts=1781105020",Trace Gospel
+https://channels.trace.plus/Traceprod/GOSPEL_FR/.m3u8
+#EXTINF:-1 tvg-logo="https://www.dbmtv.fr/wp-content/uploads/2017/12/logo-dbm.png",DBM
+https://edge12.vedge.infomaniak.com/livecast/dbmtv/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364505_ico.png?ts=1781105371",Qello Concerts 1
+https://lotus.stingray.com/manifest/qello-qello001-montreal/samsungtvplus/master.m3u8
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364529_ico.png?ts=1781105407",Qello Concerts 2
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=3039
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38364542_ico.png?ts=1781105448",Stingray Movie Music
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=3034
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365082_ico.png?ts=1781105492",Stingray Jazz
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=3037
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38365086_ico.png?ts=1781105525",Stingray Classica
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=3038
+#EXTINF:-1 tvg-logo="https://www.appcreator24.com/srv/imgs/seccs/38359646_ico.png?ts=1781105568",emotion
+https://amg01736-harmonysecomgro-harmonymelody-samsungfr-n25pe.amagi.tv/playlist/amg01736-harmonysecomgro-harmonymelody-samsungfr/playlist.m3u8`;
+
         let channels = [];
         let currentIndex = 0;
         let hideTimeout;
@@ -315,7 +537,10 @@
         async function init() {
             updateClock();
             setInterval(updateClock, 1000);
-            await loadM3U();
+            
+            // On charge directement la variable interne, fini le fetch externe !
+            loadM3U();
+            
             resetHideTimeout();
             
             video.addEventListener('waiting', () => loader.style.display = 'block');
@@ -352,11 +577,10 @@
         window.addEventListener('mousemove', resetHideTimeout);
         window.addEventListener('touchstart', resetHideTimeout);
 
-        async function loadM3U() {
+        function loadM3U() {
             try {
-                const res = await fetch(m3uUrl);
-                const text = await res.text();
-                const lines = text.split('\n');
+                // Utilisation de la liste incluse dans le code
+                const lines = m3uData.split('\n');
                 let currentChannel = null;
 
                 lines.forEach(line => {
@@ -383,11 +607,12 @@
                     buildUI();
                     adjustScrollPadding();
                     setFocus(0, true);
+                } else {
+                    document.getElementById('bottom-title').innerText = "Aucune chaîne trouvée";
+                    document.getElementById('bottom-epg').innerText = "Vérifiez le format M3U.";
                 }
             } catch (err) {
-                console.error("Erreur de chargement M3U Dropbox:", err);
-                document.getElementById('bottom-title').innerText = "Erreur de chargement";
-                document.getElementById('bottom-epg').innerText = "Impossible de récupérer le fichier Dropbox.";
+                console.error("Erreur de traitement M3U:", err);
             }
         }
 
@@ -444,7 +669,7 @@
             document.getElementById('center-channel-indicator').innerText = `CH.${chNum}`;
             document.getElementById('top-channel').innerText = `CHAINE ${chNum}`;
             document.getElementById('bottom-title').innerText = channel.name;
-            document.getElementById('bottom-epg').innerText = channel.group || "Aucune information de programme";
+            document.getElementById('bottom-epg').innerText = channel.group || "Prêt";
 
             clearTimeout(autoplayTimeout);
             if (immediatePlay) {
@@ -468,7 +693,7 @@
 
             if (hls) { hls.destroy(); }
 
-            // Force le son à s'activer d'office
+            // Son activé d'office !
             video.muted = false;
 
             if (Hls.isSupported()) {
@@ -481,7 +706,7 @@
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     video.play().catch((err) => {
-                        console.log("Lecture bloquée, contournement Autoplay activé.");
+                        console.log("Lecture bloquée par le navigateur, forçage avec le son coupé temporairement.");
                         video.muted = true; 
                         video.play().then(() => {
                             setTimeout(() => { video.muted = false; }, 100);
