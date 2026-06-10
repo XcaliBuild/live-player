@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B Play TV - Premium Crystal Loop</title>
+    <title>B Play TV - Premium Crystal Sound Loop</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
     <style>
         :root {
@@ -11,7 +11,7 @@
             --accent-neon: #39ff14; /* Vert Fluo */
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
-            --glass-bg: rgba(255, 255, 255, 0.12); /* Fond cristal transparent */
+            --glass-bg: rgba(255, 255, 255, 0.12);
             --black-70: rgba(0, 0, 0, 0.7);
         }
 
@@ -64,7 +64,7 @@
             transform: translateX(-100%);
         }
 
-        /* CURSEUR FIXE AU CENTRE (CORRIGÉ : CRISTAL NET SANS FLOU BLOQUANT) */
+        /* CURSEUR FIXE AU CENTRE */
         #fixed-cursor {
             position: absolute;
             left: 10px;
@@ -73,12 +73,12 @@
             width: 330px;
             height: 70px;
             border: 2px solid var(--accent-neon);
-            background: var(--glass-bg); /* Transparent net */
+            background: var(--glass-bg);
             border-radius: 14px;
             pointer-events: none;
-            z-index: 5; /* Ajusté pour laisser passer les éléments de manière fluide */
+            z-index: 5;
             box-shadow: 0 0 25px rgba(57, 255, 20, 0.45), 
-                        inset 0 0 15px rgba(255, 255, 255, 0.3); /* Effet relief vitre 3D */
+                        inset 0 0 15px rgba(255, 255, 255, 0.3);
             transition: opacity 0.3s ease;
         }
 
@@ -96,7 +96,7 @@
         }
         #channels-container::-webkit-scrollbar { display: none; }
 
-        /* STYLE DES LIGNES PAR DÉFAUT (PETITES) */
+        /* STYLE DES LIGNES PAR DÉFAUT */
         .channel-card {
             display: flex;
             align-items: center;
@@ -110,7 +110,7 @@
             opacity: 0.4; 
             cursor: pointer;
             color: var(--text-secondary);
-            z-index: 6; /* Passe au-dessus du fond du curseur pour rester 100% net */
+            z-index: 6;
         }
 
         .channel-card img {
@@ -129,16 +129,16 @@
             text-overflow: ellipsis;
         }
 
-        /* --- L'EFFET MAGNIFIER (GROSSE LOUPE PARFAITEMENT NETTE) --- */
+        /* EFFET MAGNIFIER */
         .channel-card.focused {
-            transform: scale(1.25); /* Grossissement loupe */
+            transform: scale(1.25);
             transform-origin: left center;
             opacity: 1;
             color: #ffffff;
             font-weight: bold;
         }
         .channel-card.focused img {
-            width: 44px; height: 30px; /* Logo agrandi net */
+            width: 44px; height: 30px;
             box-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
@@ -157,7 +157,7 @@
             text-shadow: 2px 2px 4px #000;
         }
 
-        /* --- HAUT DROITE : HEURE ET CHAINE --- */
+        /* HAUT DROITE */
         #top-right-info {
             position: absolute;
             top: 25px; right: 35px;
@@ -170,7 +170,7 @@
         #clock { font-size: 26px; font-weight: bold; }
         #top-channel { font-size: 14px; color: var(--text-secondary); margin-top: 2px; }
 
-        /* --- DROITE : JAUGE DE VOLUME INDÉPENDANTE --- */
+        /* DROITE : JAUGE DE VOLUME */
         #volume-container {
             position: absolute;
             right: 40px; top: 50%;
@@ -216,7 +216,7 @@
             transition: height 0.1s ease;
         }
 
-        /* --- BAS : INFO BAR --- */
+        /* BAS : INFO BAR */
         #bottom-info {
             position: absolute;
             bottom: 40px; left: 50%;
@@ -453,6 +453,7 @@
             }
         }
 
+        // --- CORRECTION AUDIO ICI ---
         function playChannel(index) {
             const channel = channels[index];
             if (!channel) return;
@@ -465,6 +466,9 @@
 
             if (hls) { hls.destroy(); }
 
+            // Désactive le mode sourdine d'office à chaque changement de chaîne
+            video.muted = false;
+
             if (Hls.isSupported()) {
                 hls = new Hls({
                     maxBufferLength: 15,
@@ -474,9 +478,14 @@
                 hls.loadSource(channel.url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(() => {
-                        video.muted = true;
-                        video.play();
+                    video.play().catch((err) => {
+                        console.log("Lecture bloquée avec son, tentative de secours forcée.");
+                        // Secours ultime si le navigateur bloque vraiment le démarrage automatique
+                        video.muted = true; 
+                        video.play().then(() => {
+                            // On tente de remettre le son juste après le démarrage réussi
+                            setTimeout(() => { video.muted = false; }, 100);
+                        });
                     });
                 });
                 
@@ -497,7 +506,12 @@
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = channel.url;
-                video.addEventListener('loadedmetadata', () => { video.play(); });
+                video.addEventListener('loadedmetadata', () => { 
+                    video.play().catch(() => {
+                        video.muted = true;
+                        video.play();
+                    });
+                });
             }
         }
 
@@ -536,6 +550,7 @@
             } 
             else if (e.key === '+' || e.key === 'ArrowRight') {
                 triggerVolumeUI();
+                video.muted = false; // Réactive le son si on monte le volume
                 video.volume = Math.min(video.volume + 0.05, 1);
                 updateVolumeUI();
                 e.preventDefault();
