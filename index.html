@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B Play TV</title>
+    <title>B Play TV - Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
     <style>
         :root {
@@ -11,7 +11,7 @@
             --accent-neon: #39ff14; /* Vert Fluo */
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
-            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.12);
             --black-70: rgba(0, 0, 0, 0.7);
         }
 
@@ -38,7 +38,7 @@
             background: #000000;
         }
 
-        /* --- LOGIQUE AUTO-HIDE INTERFACE GLOBALE --- */
+        /* --- INTERFACE AUTO-HIDE GLOBALE --- */
         .ui-element {
             transition: opacity 0.4s ease, transform 0.4s ease;
             opacity: 1;
@@ -49,75 +49,107 @@
             pointer-events: none;
         }
 
-        /* --- GAUCHE : LISTE DES CHAINES STYLE CROQUIS --- */
-        #channels-container {
+        /* --- ZONE DE NAVIGATION GAUCHE --- */
+        #sidebar-wrapper {
             position: absolute;
             top: 0; left: 0;
-            width: 320px; height: 100%;
-            background: var(--black-70); /* Bande noire transparente à 70% */
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 30px 15px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            transform: translateX(0);
+            width: 340px; height: 100%;
+            background: var(--black-70); /* Bande noire 70% */
+            z-index: 10;
+            overflow: hidden;
+            transition: transform 0.4s ease, opacity 0.4s ease;
         }
 
-        #channels-container.ui-hidden {
+        #sidebar-wrapper.ui-hidden {
             transform: translateX(-100%);
         }
 
+        /* CURSEUR FIXE AU CENTRE (EFFET MAGNIFIER) */
+        #fixed-cursor {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 320px;
+            height: 60px; /* Taille parfaite pour accueillir la ligne zoomée */
+            border: 2px solid var(--accent-neon);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 15;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+            transition: opacity 0.3s ease;
+        }
+
+        /* CONTENEUR DE LA LISTE (DÉFILE DERRIÈRE LE CURSEUR) */
+        #channels-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0px; /* Aligné proprement pour le scroll */
+            padding-left: 15px;
+            padding-right: 15px;
+            box-sizing: border-box;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+        }
         #channels-container::-webkit-scrollbar { display: none; }
 
+        /* STYLE DES LIGNES (PETIT LOGO + TEXTE PAR DÉFAUT) */
         .channel-card {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px;
+            gap: 15px;
+            min-height: 50px;
+            height: 50px;
+            padding: 5px 10px;
+            box-sizing: border-box;
             border-radius: 8px;
-            border: 2px solid transparent;
-            transition: all 0.2s ease;
+            transition: transform 0.25s ease, opacity 0.25s ease, color 0.25s ease;
+            opacity: 0.5; /* Légèrement estompé quand pas centré */
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.03);
         }
 
         .channel-card img {
-            width: 45px; height: 32px;
+            width: 32px; height: 22px; /* Logo très petit par défaut */
             object-fit: contain;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-        }
-
-        .card-info {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            white-space: nowrap;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            transition: all 0.25s ease;
         }
 
         .channel-name {
             font-size: 12px; /* Petite police */
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- L'EFFET LOUPE (MAGNIFIER) LORSQUE LA CHAINE EST CENTRÉE --- */
+        .channel-card.focused {
+            transform: scale(1.18); /* Zoom Loupe */
+            transform-origin: left center;
+            opacity: 1;
+            color: #ffffff;
             font-weight: bold;
         }
-
-        /* EFFET ZOOM ET VITRÉ AU FOCUS DE LA TELECOMMANDE */
-        .channel-card.focused {
-            transform: scale(1.08); /* Zoom */
-            background: var(--glass-bg);
-            backdrop-filter: blur(8px); /* Effet Vitré */
-            border-color: var(--accent-neon);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        .channel-card.focused img {
+            width: 42px; height: 28px; /* Le logo grandit aussi dans la loupe */
+            box-shadow: 0 0 8px rgba(255,255,255,0.2);
         }
 
-        .channel-card.active .channel-name {
+        /* Indicateur de lecture active */
+        .channel-card.active-playing .channel-name {
             color: var(--accent-neon);
         }
 
         /* Indicateur central CH.XX */
         #center-channel-indicator {
             position: absolute;
-            left: 350px;
+            left: 360px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 26px;
@@ -155,11 +187,11 @@
             box-sizing: border-box;
             z-index: 100;
             transition: opacity 0.3s ease;
-            opacity: 0; /* Totalement masqué par défaut */
+            opacity: 0;
             pointer-events: none;
         }
         #volume-container.volume-visible {
-            opacity: 1; /* Apparaît uniquement lors des touches de volume */
+            opacity: 1;
         }
         #volume-text {
             font-size: 13px;
@@ -190,7 +222,7 @@
             bottom: 40px; left: 50%;
             transform: translateX(-50%);
             width: 75%;
-            background: transparent; /* Arrière-plan transparent */
+            background: transparent;
             text-align: left;
         }
         #bottom-title {
@@ -207,7 +239,7 @@
             border-radius: 3px;
         }
         .progress-bar-fill {
-            width: 40%; /* Simulation de progression */
+            width: 40%;
             height: 100%;
             background: var(--accent-neon);
             border-radius: 3px;
@@ -235,7 +267,11 @@
         <video id="video" autoplay playsinline></video>
     </div>
 
-    <div id="channels-container" class="ui-element"></div>
+    <div id="sidebar-wrapper" class="ui-element">
+        <div id="fixed-cursor"></div>
+        <div id="channels-container"></div>
+    </div>
+    
     <div id="center-channel-indicator" class="ui-element">CH.1</div>
 
     <div id="top-right-info" class="ui-element">
@@ -265,17 +301,19 @@
         let currentIndex = 0;
         let hideTimeout;
         let volumeTimeout;
+        let autoplayTimeout; // Gère le zapping automatique sans OK
         let hls = null;
         
         const video = document.getElementById('video');
         const container = document.getElementById('channels-container');
+        const wrapper = document.getElementById('sidebar-wrapper');
         const loader = document.getElementById('loader');
         const uiElements = document.querySelectorAll('.ui-element');
         const volumeContainer = document.getElementById('volume-container');
 
         async function init() {
             updateClock();
-            setInterval(updateClock, 1000); // Horloge en temps réel fixe
+            setInterval(updateClock, 1000);
             await loadM3U();
             resetHideTimeout();
             
@@ -283,7 +321,6 @@
             video.addEventListener('playing', () => loader.style.display = 'none');
             video.addEventListener('loadstart', () => loader.style.display = 'block');
             
-            // Initialisation audio sécurisée
             video.volume = 0.5;
             updateVolumeUI();
         }
@@ -301,16 +338,13 @@
             hideTimeout = setTimeout(() => { hideUI(); }, 4000);
         }
 
-        function showUI() { uiElements.forEach(el => el.classList.remove('ui-hidden')); }
-        function hideUI() { uiElements.forEach(el => el.classList.add('ui-hidden')); }
+        function showUI() { wrapper.classList.remove('ui-hidden'); uiElements.forEach(el => { if(el !== wrapper) el.classList.remove('ui-hidden'); }); }
+        function hideUI() { wrapper.classList.add('ui-hidden'); uiElements.forEach(el => { if(el !== wrapper) el.classList.add('ui-hidden'); }); }
 
-        // Affichage exclusif de la jauge de volume
         function triggerVolumeUI() {
             volumeContainer.classList.add('volume-visible');
             clearTimeout(volumeTimeout);
-            volumeTimeout = setTimeout(() => {
-                volumeContainer.classList.remove('volume-visible');
-            }, 2000); // Disparaît après 2 secondes d'inactivité sur le volume
+            volumeTimeout = setTimeout(() => { volumeContainer.classList.remove('volume-visible'); }, 2000);
         }
 
         window.addEventListener('click', resetHideTimeout);
@@ -346,11 +380,12 @@
 
                 if (channels.length > 0) {
                     buildUI();
-                    setFocus(0);
-                    playChannel(0);
+                    // Ajouter des espaces vides en haut et en bas pour permettre au premier et dernier élément d'atteindre parfaitement le centre fixe
+                    adjustScrollPadding();
+                    setFocus(0, true); // True pour forcer la lecture immédiate de la première chaîne
                 }
             } catch (err) {
-                console.error("Erreur de parsing M3U:", err);
+                console.error("Erreur M3U:", err);
             }
         }
 
@@ -361,7 +396,7 @@
                 card.className = `channel-card`;
                 card.id = `channel-${index}`;
                 
-                const logoHtml = channel.logo ? `<img src="${channel.logo}" onerror="this.style.display='none'">` : `<div style="width:45px;height:32px;background:rgba(255,255,255,0.08);border-radius:4px;"></div>`;
+                const logoHtml = channel.logo ? `<img src="${channel.logo}" onerror="this.style.display='none'">` : `<div style="width:32px;height:22px;background:rgba(255,255,255,0.08);border-radius:3px;"></div>`;
 
                 card.innerHTML = `
                     ${logoHtml}
@@ -372,8 +407,7 @@
 
                 card.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    setFocus(index);
-                    playChannel(index);
+                    setFocus(index, true);
                     resetHideTimeout();
                 });
 
@@ -381,7 +415,16 @@
             });
         }
 
-        function setFocus(index) {
+        function adjustScrollPadding() {
+            // Calcule la moitié de la hauteur du conteneur moins la moitié de la taille d'une ligne pour caler le scroll parfaitement
+            const halfContainerHeight = container.clientHeight / 2;
+            const halfCardHeight = 25; 
+            const paddingValue = halfContainerHeight - halfCardHeight;
+            container.style.paddingTop = `${paddingValue}px`;
+            container.style.paddingBottom = `${paddingValue}px`;
+        }
+
+        function setFocus(index, immediatePlay = false) {
             const cards = document.querySelectorAll('.channel-card');
             if(cards[currentIndex]) cards[currentIndex].classList.remove('focused');
             
@@ -389,7 +432,11 @@
             const activeCard = cards[currentIndex];
             if(activeCard) {
                 activeCard.classList.add('focused');
-                activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Aligne la chaîne sélectionnée au centre exact du conteneur (derrière le curseur fixe)
+                const containerHalfHeight = container.clientHeight / 2;
+                const cardHalfHeight = activeCard.clientHeight / 2;
+                container.scrollTop = (activeCard.offsetTop - container.offsetTop) - containerHalfHeight + cardHalfHeight;
             }
 
             const channel = channels[index];
@@ -398,6 +445,17 @@
             document.getElementById('top-channel').innerText = `CHAINE ${chNum}`;
             document.getElementById('bottom-title').innerText = channel.name;
             document.getElementById('bottom-epg').innerText = channel.group || "Aucune information de programme";
+
+            // LOGIQUE DE LECTURE AUTOMATIQUE (ZAPPING FLUIDE)
+            clearTimeout(autoplayTimeout);
+            if (immediatePlay) {
+                playChannel(index);
+            } else {
+                // Attend 500ms d'arrêt sur la chaîne avant de lancer le flux automatiquement
+                autoplayTimeout = setTimeout(() => {
+                    playChannel(index);
+                }, 500);
+            }
         }
 
         function playChannel(index) {
@@ -406,31 +464,27 @@
 
             loader.style.display = 'block';
 
-            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active-playing'));
             const currentCard = document.getElementById(`channel-${index}`);
-            if(currentCard) currentCard.classList.add('active');
+            if(currentCard) currentCard.classList.add('active-playing');
 
             if (hls) { hls.destroy(); }
 
-            // Script HLS renforcé pour contourner les erreurs réseau/décodage
             if (Hls.isSupported()) {
                 hls = new Hls({
                     maxBufferLength: 15,
                     maxMaxBufferLength: 30,
-                    lowLatencyMode: true,
-                    backBufferLength: 60
+                    lowLatencyMode: true
                 });
                 hls.loadSource(channel.url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     video.play().catch(() => {
-                        // Forcer la lecture si le navigateur bloque l'audio initialement
                         video.muted = true;
                         video.play();
                     });
                 });
                 
-                // Système Auto-Recover face aux erreurs de flux m3u8
                 hls.on(Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
                         switch (data.type) {
@@ -460,23 +514,24 @@
             txt.innerText = `${pct}%`;
         }
 
-        // --- COMMANDES CLAVIER & TÉLÉCOMMANDE ANDROID TV ---
+        // Réajuste le padding central si la fenêtre change de taille (changement de résolution TV)
+        window.addEventListener('resize', adjustScrollPadding);
+
+        // --- MANETTE ANDROID TV & TOUCHES CLAVIER ---
         window.addEventListener('keydown', (e) => {
-            // Flèches Haut/Bas contrôlent la navigation des chaînes
             if (e.key === 'ArrowUp') {
                 resetHideTimeout();
-                if (currentIndex > 0) { setFocus(currentIndex - 1); }
+                if (currentIndex > 0) { setFocus(currentIndex - 1, false); }
                 e.preventDefault();
             } else if (e.key === 'ArrowDown') {
                 resetHideTimeout();
-                if (currentIndex < channels.length - 1) { setFocus(currentIndex + 1); }
+                if (currentIndex < channels.length - 1) { setFocus(currentIndex + 1, false); }
                 e.preventDefault();
             } else if (e.key === 'Enter') {
                 resetHideTimeout();
-                playChannel(currentIndex);
+                playChannel(currentIndex); // Force le rechargement immédiat au clic
                 e.preventDefault();
             } 
-            // Flèches Gauche/Droite contrôlent exclusivement le Volume (sans afficher le reste)
             else if (e.key === '+' || e.key === 'ArrowRight') {
                 triggerVolumeUI();
                 video.volume = Math.min(video.volume + 0.05, 1);
