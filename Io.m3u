@@ -1,10 +1,10 @@
 #EXTM3U
 #EXTINF:-1 channel-id="GBAK3504500A-gb" tvg-id="GBAK3504500A-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBAK3504500A_20250107T022508SQUARE.png" group-title="SamsungTVPlus - United Kingdom",5 Cops
-https://jmp2.uk/stvp-GBAK3504500A
+https://jmp2.uk/stvp-GBAK3504500A.m3u8
 #EXTINF:-1 channel-id="GBAK3504501A-gb" tvg-id="GBAK3504501A-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GBAK3504501A_20250107T022511SQUARE.png" group-title="SamsungTVPlus - United Kingdom",5 Exploring Britain
-https://jmp2.uk/stvp-GBAK3504501A
+https://jmp2.uk/stvp-GBAK3504501A.m3u8
 #EXTINF:-1 channel-id="GB1800002FA-gb" tvg-id="GB1800002FA-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB1800002FA_20250211T013901SQUARE.png" group-title="SamsungTVPlus - United Kingdom",8 Out Of 10 Cats
-https://jmp2.uk/stvp-GB1800002FA
+https://jmp2.uk/stvp-GB1800002FA.m3u8
 #EXTINF:-1 channel-id="GB1000002RV-gb" tvg-id="GB1000002RV-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB1000002RV_20260407T041311SQUARE.png" group-title="SamsungTVPlus - United Kingdom",60 Days in Jail
 https://jmp2.uk/stvp-GB1000002RV
 #EXTINF:-1 channel-id="GB2600015OS-gb" tvg-id="GB2600015OS-gb" tvg-logo="https://tvpnlogopeu.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/GB2600015OS_20240924T050854SQUARE.png" group-title="SamsungTVPlus - United Kingdom",Action Movies - Rakuten TV
