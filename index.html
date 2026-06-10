@@ -3,341 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Play TV</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.0.0"></script>
+    <title>B Play TV - Lecteur Premium</title>
+    
+    <!-- Importation de HLS.js pour la lecture des flux -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
     <style>
-        :root {
-            --bg-color: #000000;
-            --card-bg: rgba(25, 25, 30, 0.7);
-            --card-hover: rgba(40, 40, 50, 0.85);
-            --accent-neon: #39ff14; /* Vert Fluo */
-            --text-color: #ffffff;
-            --text-secondary: #aaaaaa;
+        /* Réinitialisation et style de base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        body, html {
-            margin: 0; padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: sans-serif;
-            overflow: hidden;
-            height: 100%; width: 100%;
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Empêche le défilement sur TV */
         }
 
-        #video-container {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            background: #000000;
+        /* Conteneur principal du lecteur */
+        .video-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: #000;
         }
 
         video {
-            width: 100%; height: 100%;
-            object-fit: contain;
-            background: #000000;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Garde le ratio de l'image */
         }
 
-        #loader {
+        /* Barre de contrôles style Chrome/Netflix */
+        .controls-overlay {
             position: absolute;
-            width: 50px; height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--accent-neon);
-            animation: spin 1s linear infinite;
-            z-index: 3;
-            display: block;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #epg-overlay {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            border-radius: 15px;
-            border-right: 4px solid var(--accent-neon);
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-            z-index: 10;
-            max-width: 300px;
-            opacity: 0;
-        }
-        #epg-overlay h2 { margin: 0 0 4px 0; font-size: 16px; font-weight: bold; }
-        #epg-overlay p { margin: 0; color: var(--text-secondary); font-size: 12px; }
-
-        #channels-container {
-            position: absolute;
-            top: 0; left: 0;
-            width: 290px; height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.95) 80%, rgba(0,0,0,0));
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            padding: 20px 15px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            z-index: 5;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            transform: translateX(0);
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Afficher les contrôles au mouvement ou au focus */
+        .video-container:hover .controls-overlay,
+        .controls-overlay.active {
             opacity: 1;
         }
 
-        #channels-container.hidden {
-            transform: translateX(-100%);
-            opacity: 0;
+        /* Barre de progression */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
         }
 
-        #channels-container::-webkit-scrollbar { display: none; }
+        .progress-bar {
+            height: 100%;
+            background: #e50914; /* Accent rouge style moderne */
+            border-radius: 3px;
+            width: 0%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
 
-        .channel-card {
+        /* Boutons de contrôle */
+        .buttons-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .left-controls, .right-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: var(--card-bg);
-            border: 2px solid transparent;
-            border-radius: 16px;
-            padding: 10px 12px;
+            gap: 20px;
+        }
+
+        button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
+            transition: transform 0.2s, color 0.2s;
+            outline: none;
+            padding: 10px;
+            border-radius: 50%;
         }
 
-        .channel-card img {
-            width: 50px; height: 35px;
-            object-fit: contain;
-            border-radius: 6px;
-            background: rgba(255,255,255,0.1);
+        /* STYLE FOCUS POUR LA TÉLÉCOMMANDE ANDROID TV */
+        button:focus, button.tv-focus {
+            transform: scale(1.2);
+            color: #e50914;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.5);
         }
 
-        .card-info {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            white-space: nowrap;
+        .time-display {
+            font-size: 14px;
+            font-weight: 500;
+            user-select: none;
         }
 
-        .channel-name {
-            font-size: 13px;
-            font-weight: bold;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        .channel-group {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-overflow: ellipsis;
-            overflow: hidden;
-            margin-top: 2px;
-        }
-
-        .channel-card.focused, .channel-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: var(--card-hover);
-        }
-
-        .channel-card.active {
-            background: rgba(57, 255, 20, 0.15);
-            border-color: var(--accent-neon);
-        }
-        .channel-card.active .channel-name {
-            color: var(--accent-neon);
+        /* Notification de chargement/erreur */
+        #status-message {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 10;
         }
     </style>
 </head>
 <body>
 
-    <div id="video-container">
-        <div id="loader"></div>
-        <video id="video" autoplay playsinline loop muted></video>
-        
-        <div id="epg-overlay">
-            <h2 id="overlay-channel">-</h2>
-            <p id="overlay-program">-</p>
+    <div class="video-container" id="videoContainer">
+        <div id="status-message">Chargement du flux...</div>
+        <video id="tvPlayer" crossorigin="anonymous"></video>
+
+        <div class="controls-overlay" id="controlsOverlay">
+            <div class="progress-container" id="progressContainer" tabindex="0">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div class="buttons-row">
+                <div class="left-controls">
+                    <button id="playPauseBtn" tabindex="1">▶</button>
+                    <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+                </div>
+                
+                <div class="right-controls">
+                    <button id="muteBtn" tabindex="2">🔊</button>
+                    <button id="fullscreenBtn" tabindex="3">⛶</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="channels-container"></div>
-
     <script>
-        const m3uUrl = "https://raw.githubusercontent.com/XcaliBuild/live-player/refs/heads/main/FreeSportTV.m3u";
-        
-        let channels = [];
-        let currentIndex = 0;
-        let hideTimeout;
-        
-        const video = document.getElementById('video');
-        const container = document.getElementById('channels-container');
-        const overlay = document.getElementById('epg-overlay');
-        const loader = document.getElementById('loader');
-        let hls = null;
-
-        async function init() {
-            await loadM3U();
-            resetHideTimeout();
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('tvPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const muteBtn = document.getElementById('muteBtn');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const progressBar = document.getElementById('progressBar');
+            const timeDisplay = document.getElementById('timeDisplay');
+            const controlsOverlay = document.getElementById('controlsOverlay');
+            const statusMessage = document.getElementById('status-message');
             
-            video.addEventListener('waiting', () => loader.style.display = 'block');
-            video.addEventListener('playing', () => {
-                loader.style.display = 'none';
-                video.muted = false;
-            });
-            video.addEventListener('loadstart', () => loader.style.display = 'block');
-        }
-
-        function resetHideTimeout() {
-            showSidebar();
-            clearTimeout(hideTimeout);
-            hideTimeout = setTimeout(() => { hideSidebar(); }, 3500);
-        }
-
-        function showSidebar() { container.classList.remove('hidden'); }
-        function hideSidebar() { container.classList.add('hidden'); }
-
-        window.addEventListener('click', resetHideTimeout);
-        window.addEventListener('touchstart', resetHideTimeout);
-
-        // Analyse directe et propre du M3U de GitHub
-        async function loadM3U() {
-            try {
-                const res = await fetch(m3uUrl);
-                const text = await res.text();
-                const lines = text.split('\n');
-                let currentChannel = null;
-
-                lines.forEach(line => {
-                    line = line.trim();
-                    if (line.startsWith('#EXTINF:')) {
-                        const name = line.split(',')[1] || "";
-                        const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-                        const groupMatch = line.match(/group-title="([^"]+)"/);
-
-                        currentChannel = {
-                            name: name.trim(),
-                            logo: logoMatch ? logoMatch[1] : "",
-                            group: groupMatch ? groupMatch[1] : "",
-                            url: ""
-                        };
-                    } else if (line.startsWith('http') && currentChannel) {
-                        currentChannel.url = line;
-                        channels.push(currentChannel);
-                        currentChannel = null;
-                    }
-                });
-
-                if (channels.length > 0) {
-                    buildUI();
-                    playChannel(0);
-                }
-            } catch (err) {
-                console.error("Erreur de chargement M3U:", err);
-            }
-        }
-
-        function buildUI() {
-            container.innerHTML = '';
-            channels.forEach((channel, index) => {
-                const card = document.createElement('div');
-                card.className = `channel-card ${index === 0 ? 'focused' : ''}`;
-                
-                const logoHtml = channel.logo ? `<img src="${channel.logo}" onerror="this.style.display='none'">` : `<div style="width:50px;height:35px;background:rgba(255,255,255,0.08);border-radius:6px;"></div>`;
-
-                card.innerHTML = `
-                    ${logoHtml}
-                    <div class="card-info">
-                        <div class="channel-name">${channel.name}</div>
-                        <div class="channel-group">${channel.group}</div>
-                    </div>
-                `;
-
-                card.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    setFocus(index);
-                    playChannel(index);
-                    resetHideTimeout();
-                });
-
-                container.appendChild(card);
-            });
-        }
-
-        function setFocus(index) {
-            const cards = document.querySelectorAll('.channel-card');
-            if(cards[currentIndex]) cards[currentIndex].classList.remove('focused');
-            
-            currentIndex = index;
-            const activeCard = cards[currentIndex];
-            if(activeCard) {
-                activeCard.classList.add('focused');
-                activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        function playChannel(index) {
-            const channel = channels[index];
-            if (!channel) return;
-
-            loader.style.display = 'block';
-
-            document.getElementById('overlay-channel').innerText = channel.name;
-            
-            if (channel.group) {
-                document.getElementById('overlay-program').innerText = channel.group;
-                overlay.style.opacity = "1";
-                clearTimeout(window.overlayTimeout);
-                window.overlayTimeout = setTimeout(() => { overlay.style.opacity = "0"; }, 4000);
-            } else {
-                overlay.style.opacity = "0";
-            }
-
-            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-            const currentCard = document.querySelectorAll('.channel-card')[index];
-            if(currentCard) currentCard.classList.add('active');
-
-            if (hls) { hls.destroy(); }
+            // --- 1. CONFIGURATION DU FLUX (Remplace l'URL par ton lien JSON/M3U parsé si besoin) ---
+            const streamUrl = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"; // URL de test
 
             if (Hls.isSupported()) {
-                hls = new Hls({
-                    maxBufferLength: 10,
-                    maxMaxBufferLength: 20,
-                    enableWorker: false,
-                    lowLatencyMode: true
+                const hls = new Hls({
+                    maxBufferLength: 30, // Optimisation pour TV
                 });
-                hls.loadSource(channel.url);
+                hls.loadSource(streamUrl);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => {}); });
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    statusMessage.innerText = "";
+                    video.play().catch(() => {
+                        console.log("Autoplay bloqué par le navigateur.");
+                    });
+                });
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        statusMessage.innerText = "Erreur de chargement du flux.";
+                    }
+                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = channel.url;
-                video.addEventListener('loadedmetadata', () => { video.play(); });
+                // Support natif (Safari / certains navigateurs mobiles)
+                video.src = streamUrl;
+                video.addEventListener('loadedmetadata', function () {
+                    video.play();
+                });
             }
-        }
 
-        window.addEventListener('keydown', (e) => {
-            resetHideTimeout();
-            if (e.key === 'ArrowUp') {
-                if (currentIndex > 0) { setFocus(currentIndex - 1); playChannel(currentIndex); }
-                e.preventDefault();
-            } else if (e.key === 'ArrowDown') {
-                if (currentIndex < channels.length - 1) { setFocus(currentIndex + 1); playChannel(currentIndex); }
-                e.preventDefault();
-            } else if (e.key === 'ArrowLeft') {
-                showSidebar();
-                e.preventDefault();
-            } else if (e.key === 'Enter') {
-                playChannel(currentIndex);
-                e.preventDefault();
+            // --- 2. LOGIQUE DES CONTRÔLES VISUELS ---
+            
+            function togglePlay() {
+                if (video.paused) {
+                    video.play();
+                    playPauseBtn.innerText = "⏸";
+                } else {
+                    video.pause();
+                    playPauseBtn.innerText = "▶";
+                }
             }
+
+            function updateProgress() {
+                if (!video.duration) return;
+                const percent = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = `${percent}%`;
+                
+                let currentMins = Math.floor(video.currentTime / 60);
+                let currentSecs = Math.floor(video.currentTime % 60);
+                let durationMins = Math.floor(video.duration / 60);
+                let durationSecs = Math.floor(video.duration % 60);
+                
+                if (currentSecs < 10) currentSecs = "0" + currentSecs;
+                if (durationSecs < 10) durationSecs = "0" + durationSecs;
+                
+                timeDisplay.innerText = `${currentMins}:${currentSecs} / ${durationMins}:${durationSecs}`;
+            }
+
+            function toggleMute() {
+                video.muted = !video.muted;
+                muteBtn.innerText = video.muted ? "🔇" : "🔊";
+            }
+
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            }
+
+            // Clics à la souris
+            playPauseBtn.addEventListener('click', togglePlay);
+            muteBtn.addEventListener('click', toggleMute);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            video.addEventListener('timeupdate', updateProgress);
+            video.addEventListener('click', togglePlay);
+
+            // Gestion de l'affichage de la barre de contrôle (disparaît après 3s d'inactivité)
+            let hideControlsTimeout;
+            function showControls() {
+                controlsOverlay.classList.add('active');
+                clearTimeout(hideControlsTimeout);
+                hideControlsTimeout = setTimeout(() => {
+                    controlsOverlay.classList.remove('active');
+                }, 3000);
+            }
+            document.addEventListener('mousemove', showControls);
+            document.addEventListener('keydown', showControls);
+
+            // --- 3. NAVIGATION TÉLÉCOMMANDE (ANDROID TV) ---
+            
+            // On définit les éléments navigables
+            const focusableElements = [playPauseBtn, muteBtn, fullscreenBtn];
+            let currentFocusIndex = 0;
+            
+            // Focus initial
+            focusableElements[currentFocusIndex].focus();
+
+            document.addEventListener('keydown', (e) => {
+                showControls(); // Fait apparaître l'interface à la moindre touche
+
+                switch (e.key) {
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        // Navigation dans les boutons
+                        currentFocusIndex = (currentFocusIndex + 1) % focusableElements.length;
+                        focusableElements[currentFocusIndex].focus();
+                        break;
+                        
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        currentFocusIndex = (currentFocusIndex - 1 + focusableElements.length) % focusableElements.length;
+                        focusableElements[currentFocusIndex].focus();
+                        break;
+                        
+                    case 'Enter':
+                    case 'OK': // Certaines télécommandes envoient 'OK'
+                        e.preventDefault();
+                        document.activeElement.click(); // Clique sur l'élément focus
+                        break;
+                        
+                    case 'MediaPlayPause': // Touche physique Play/Pause
+                        e.preventDefault();
+                        togglePlay();
+                        break;
+
+                    // Ajout pour avancer/reculer dans la vidéo (Optionnel)
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        video.currentTime = Math.min(video.currentTime + 30, video.duration); // Avance de 30s
+                        break;
+                        
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        video.currentTime = Math.max(video.currentTime - 30, 0); // Recule de 30s
+                        break;
+                }
+            });
+            
+            // Fixer le focus initial au démarrage
+            setTimeout(() => { playPauseBtn.focus(); showControls(); }, 500);
         });
-
-        init();
     </script>
 </body>
 </html>
