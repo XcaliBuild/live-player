@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>B Play TV - Premium Crystal Loop</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
     <style>
         :root {
             --bg-color: #000000;
@@ -12,7 +11,7 @@
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
             --glass-bg: rgba(255, 255, 255, 0.12); /* Fond cristal transparent */
-            --black-35: rgba(0, 0, 0, 0.35); /* Fond liste noir transparent à 35% */
+            --black-15: rgba(0, 0, 0, 0.15); /* Fond liste noir transparent passé à 15% */
         }
 
         body, html {
@@ -36,21 +35,13 @@
             width: 100%; height: 100%;
             object-fit: contain;
             background: #000000;
-            pointer-events: none; /* Empêche les clics accidentels de faire apparaître l'icône play native */
+            pointer-events: none;
         }
 
-        /* --- SUPPRESSION RADICALE DU GROS ICÔNE PLAY DES NAVIGATEURS --- */
-        video::-webkit-media-controls {
-            display:none !important;
-        }
-        video::-webkit-media-controls-start-playback-button {
-            display: none !important;
-            -webkit-appearance: none;
-        }
-        video::-webkit-media-controls-overlay-play-button {
-            display: none !important;
-            -webkit-appearance: none;
-        }
+        /* Suppression de l'icône play native */
+        video::-webkit-media-controls { display:none !important; }
+        video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
+        video::-webkit-media-controls-overlay-play-button { display: none !important; -webkit-appearance: none; }
 
         /* --- INTERFACE AUTO-HIDE GLOBALE --- */
         .ui-element {
@@ -68,7 +59,7 @@
             position: absolute;
             top: 0; left: 0;
             width: 350px; height: 100%;
-            background: var(--black-35); /* Transparence à 35% */
+            background: var(--black-15); /* Transparence réduite à 15% */
             z-index: 10;
             overflow: hidden;
             transition: transform 0.4s ease, opacity 0.4s ease;
@@ -110,7 +101,6 @@
         }
         #channels-container::-webkit-scrollbar { display: none; }
 
-        /* STYLE DES LIGNES PAR DÉFAUT */
         .channel-card {
             display: flex;
             align-items: center;
@@ -151,7 +141,7 @@
             text-overflow: ellipsis;
         }
 
-        /* --- L'EFFET MAGNIFIER ZOOM UNIQUEMENT AU CENTRE --- */
+        /* --- L'EFFET MAGNIFIER ZOOM --- */
         .channel-card.focused {
             transform: scale(1.25);
             transform-origin: left center;
@@ -179,20 +169,21 @@
             text-shadow: 2px 2px 4px #000;
         }
 
-        /* --- HAUT DROITE : HEURE AND CHAINE --- */
+        /* --- RECTANGLE HORLOGE PLUS PETIT ET ENCADRÉ --- */
         #top-right-info {
             position: absolute;
             top: 25px; right: 35px;
             text-align: right;
-            background: rgba(0,0,0,0.6);
-            padding: 10px 20px;
-            border-radius: 8px;
-            border-right: 4px solid var(--accent-neon);
+            background: rgba(0,0,0,0.75);
+            padding: 6px 14px; /* Taille réduite */
+            border-radius: 4px; /* Moins arrondi pour look rectangulaire */
+            border: 1px solid rgba(255,255,255,0.15);
+            border-right: 3px solid var(--accent-neon);
         }
-        #clock { font-size: 26px; font-weight: bold; }
-        #top-channel { font-size: 14px; color: var(--text-secondary); margin-top: 2px; }
+        #clock { font-size: 20px; font-weight: bold; } /* Horloge plus petite */
+        #top-channel { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
 
-        /* --- BAS : INFO BAR --- */
+        /* --- BAS : INFO BAR & PROGRESS BAR CONDITIONNELLE --- */
         #bottom-info {
             position: absolute;
             bottom: 40px; left: 50%;
@@ -209,19 +200,29 @@
             font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;
             text-shadow: 1px 1px 3px #000;
         }
+        
+        /* Caché par défaut, géré en JS sur appui de OK */
+        #progress-wrapper {
+            width: 100%;
+            height: 6px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #progress-wrapper.show-progress {
+            opacity: 1;
+        }
         .progress-bar-bg {
-            width: 100%; height: 6px;
+            width: 100%; height: 100%;
             background: rgba(255,255,255,0.25);
             border-radius: 3px;
         }
         .progress-bar-fill {
-            width: 40%;
-            height: 100%;
+            width: 40%; height: 100%;
             background: var(--accent-neon);
             border-radius: 3px;
         }
 
-        /* LOADER AU CENTRE STRICT */
+        /* LOADER AU CENTRE */
         #loader {
             position: absolute;
             top: 50%; left: 50%;
@@ -231,7 +232,7 @@
             border-radius: 50%;
             border-top-color: var(--accent-neon);
             animation: spin 1s linear infinite;
-            z-index: 30; /* Passe au dessus de tout pour rester visible au centre */
+            z-index: 30;
             display: block;
         }
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
@@ -241,7 +242,8 @@
 
     <div id="video-container">
         <div id="loader"></div>
-        <video id="video" autoplay playsinline muted></video> </div>
+        <video id="video" autoplay playsinline muted></video>
+    </div>
 
     <div id="sidebar-wrapper" class="ui-element">
         <div id="fixed-cursor"></div>
@@ -258,19 +260,21 @@
     <div id="bottom-info" class="ui-element">
         <div id="bottom-title">Chargement...</div>
         <div id="bottom-epg">Veuillez patienter...</div>
-        <div class="progress-bar-bg">
-            <div class="progress-bar-fill"></div>
+        <div id="progress-wrapper">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        const m3uUrl = "https://gist.githubusercontent.com/XcaliBuild/06a1373a62a174289f3ea0805e9c4da7/raw/bad59ce7fcf3e5170141f2498573f12f28ec034f/gistfile1.txt";
+        const m3uUrl = "https://gist.githubusercontent.com/XcaliBuild/06a1373a62a174289f3ea0805e9c4da7/raw/0ce0333eda87d6f9d56cb030a9eb013f15aba86a/gistfile1.txt";
         
         let channels = [];
         let originalLength = 0;
         let currentIndex = 0;
         let hideTimeout;
-        let hls = null;
+        let progressTimeout;
         let autoplayTimeout;
         
         const video = document.getElementById('video');
@@ -278,13 +282,13 @@
         const wrapper = document.getElementById('sidebar-wrapper');
         const loader = document.getElementById('loader');
         const uiElements = document.querySelectorAll('.ui-element');
+        const progressWrapper = document.getElementById('progress-wrapper');
 
         async function init() {
             updateClock();
             setInterval(updateClock, 1000);
             await loadM3U();
             
-            // Gestion du Loader
             video.addEventListener('waiting', () => loader.style.display = 'block');
             video.addEventListener('playing', () => loader.style.display = 'none');
             video.addEventListener('loadstart', () => loader.style.display = 'block');
@@ -312,8 +316,16 @@
             uiElements.forEach(el => el.classList.add('ui-hidden')); 
         }
 
+        function flashProgressBar() {
+            progressWrapper.classList.add('show-progress');
+            clearTimeout(progressTimeout);
+            progressTimeout = setTimeout(() => {
+                progressWrapper.classList.remove('show-progress');
+            }, 3000); // Reste visible 3 secondes après l'appui sur OK
+        }
+
         window.addEventListener('click', () => {
-            video.muted = false; // Démute dès le premier clic de l'utilisateur
+            video.muted = false;
             resetHideTimeout();
         });
         window.addEventListener('mousemove', resetHideTimeout);
@@ -348,7 +360,7 @@
 
                 if (channels.length > 0) {
                     originalLength = channels.length;
-                    channels = [...channels, ...channels, ...channels]; // Triplage boucle infinie
+                    channels = [...channels, ...channels, ...channels];
 
                     buildUI();
                     adjustScrollPadding();
@@ -429,6 +441,7 @@
             }
         }
 
+        /* --- FONCTION PLAYER HLS NATIF OPTIMISÉE --- */
         function playChannel(index) {
             const channel = channels[index];
             if (!channel) return;
@@ -439,24 +452,16 @@
             const currentCard = document.getElementById(`channel-${index}`);
             if(currentCard) currentCard.classList.add('active-playing');
 
-            if (hls) { hls.destroy(); }
-
-            if (Hls.isSupported()) {
-                hls = new Hls({ maxBufferLength: 10, lowLatencyMode: true });
-                hls.loadSource(channel.url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(e => console.log("Play bloqué:", e));
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = channel.url;
-            }
+            // Intégration Native pure (sans hls.js)
+            video.src = channel.url;
+            video.load();
+            video.play().catch(e => console.log("Play bloqué nativement ou flux non géré par ce navigateur:", e));
         }
 
         window.addEventListener('resize', adjustScrollPadding);
 
         window.addEventListener('keydown', (e) => {
-            video.muted = false; // Désactive le mute dès que l'utilisateur utilise la télécommande / clavier
+            video.muted = false; 
             if (e.key === 'ArrowUp') {
                 setFocus(currentIndex - 1, false);
                 e.preventDefault();
@@ -465,6 +470,7 @@
                 e.preventDefault();
             } else if (e.key === 'Enter') {
                 playChannel(currentIndex);
+                flashProgressBar(); // Affiche la barre uniquement lors de la validation
                 e.preventDefault();
             }
         });
