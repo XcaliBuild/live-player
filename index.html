@@ -11,7 +11,7 @@
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
             --glass-bg: rgba(255, 255, 255, 0.12); /* Fond cristal transparent */
-            --black-15: rgba(0, 0, 0, 0.15); /* Fond liste noir transparent passé à 15% */
+            --black-15: rgba(0, 0, 0, 0.15); /* Fond liste noir transparent à 15% */
         }
 
         body, html {
@@ -59,7 +59,7 @@
             position: absolute;
             top: 0; left: 0;
             width: 350px; height: 100%;
-            background: var(--black-15); /* Transparence réduite à 15% */
+            background: var(--black-15);
             z-index: 10;
             overflow: hidden;
             transition: transform 0.4s ease, opacity 0.4s ease;
@@ -169,21 +169,21 @@
             text-shadow: 2px 2px 4px #000;
         }
 
-        /* --- RECTANGLE HORLOGE PLUS PETIT ET ENCADRÉ --- */
+        /* --- RECTANGLE HORLOGE --- */
         #top-right-info {
             position: absolute;
             top: 25px; right: 35px;
             text-align: right;
             background: rgba(0,0,0,0.75);
-            padding: 6px 14px; /* Taille réduite */
-            border-radius: 4px; /* Moins arrondi pour look rectangulaire */
+            padding: 6px 14px;
+            border-radius: 4px;
             border: 1px solid rgba(255,255,255,0.15);
             border-right: 3px solid var(--accent-neon);
         }
-        #clock { font-size: 20px; font-weight: bold; } /* Horloge plus petite */
+        #clock { font-size: 20px; font-weight: bold; }
         #top-channel { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
 
-        /* --- BAS : INFO BAR & PROGRESS BAR CONDITIONNELLE --- */
+        /* --- BAS : ESSENTIEL ET SANS EPG --- */
         #bottom-info {
             position: absolute;
             bottom: 40px; left: 50%;
@@ -193,15 +193,10 @@
             text-align: left;
         }
         #bottom-title {
-            font-size: 22px; font-weight: bold; margin-bottom: 5px;
+            font-size: 22px; font-weight: bold; margin-bottom: 12px;
             text-shadow: 2px 2px 4px #000;
         }
-        #bottom-epg {
-            font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;
-            text-shadow: 1px 1px 3px #000;
-        }
         
-        /* Caché par défaut, géré en JS sur appui de OK */
         #progress-wrapper {
             width: 100%;
             height: 6px;
@@ -259,7 +254,6 @@
 
     <div id="bottom-info" class="ui-element">
         <div id="bottom-title">Chargement...</div>
-        <div id="bottom-epg">Veuillez patienter...</div>
         <div id="progress-wrapper">
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill"></div>
@@ -321,7 +315,7 @@
             clearTimeout(progressTimeout);
             progressTimeout = setTimeout(() => {
                 progressWrapper.classList.remove('show-progress');
-            }, 3000); // Reste visible 3 secondes après l'appui sur OK
+            }, 3000);
         }
 
         window.addEventListener('click', () => {
@@ -343,12 +337,10 @@
                     if (trimmed.startsWith('#EXTINF:')) {
                         const name = trimmed.split(',').pop() || "";
                         const logoMatch = trimmed.match(/tvg-logo="([^"]+)"/);
-                        const groupMatch = trimmed.match(/group-title="([^"]+)"/);
 
                         tempChannel = {
                             name: name.trim(),
                             logo: logoMatch ? logoMatch[1] : "",
-                            group: groupMatch ? groupMatch[1] : "Aucune information",
                             url: ""
                         };
                     } else if (tempChannel && trimmed.startsWith('http')) {
@@ -429,7 +421,6 @@
             document.getElementById('center-channel-indicator').innerText = `CH.${chNum}`;
             document.getElementById('top-channel').innerText = `CHAINE ${chNum}`;
             document.getElementById('bottom-title').innerText = channel.name;
-            document.getElementById('bottom-epg').innerText = channel.group;
 
             resetHideTimeout();
 
@@ -441,7 +432,6 @@
             }
         }
 
-        /* --- FONCTION PLAYER HLS NATIF OPTIMISÉE --- */
         function playChannel(index) {
             const channel = channels[index];
             if (!channel) return;
@@ -452,25 +442,37 @@
             const currentCard = document.getElementById(`channel-${index}`);
             if(currentCard) currentCard.classList.add('active-playing');
 
-            // Intégration Native pure (sans hls.js)
             video.src = channel.url;
             video.load();
-            video.play().catch(e => console.log("Play bloqué nativement ou flux non géré par ce navigateur:", e));
+            video.play().catch(e => console.log("Play bloqué nativement :", e));
         }
 
         window.addEventListener('resize', adjustScrollPadding);
 
+        /* --- REMAP CLAVIER / TÉLÉCOMMANDE --- */
         window.addEventListener('keydown', (e) => {
             video.muted = false; 
+            resetHideTimeout();
+
             if (e.key === 'ArrowUp') {
-                setFocus(currentIndex - 1, false);
+                // ZAP DIRECT : Change de chaîne et joue immédiatement (true)
+                setFocus(currentIndex - 1, true);
                 e.preventDefault();
             } else if (e.key === 'ArrowDown') {
-                setFocus(currentIndex + 1, false);
+                // ZAP DIRECT : Change de chaîne et joue immédiatement (true)
+                setFocus(currentIndex + 1, true);
+                e.preventDefault();
+            } else if (e.key === 'ArrowLeft') {
+                // VOLUME MOINS
+                video.volume = Math.max(0, video.volume - 0.1);
+                e.preventDefault();
+            } else if (e.key === 'ArrowRight') {
+                // VOLUME PLUS
+                video.volume = Math.min(1, video.volume + 0.1);
                 e.preventDefault();
             } else if (e.key === 'Enter') {
-                playChannel(currentIndex);
-                flashProgressBar(); // Affiche la barre uniquement lors de la validation
+                // TOUCHE OK : Juste le flash de la barre d'info / progression
+                flashProgressBar();
                 e.preventDefault();
             }
         });
