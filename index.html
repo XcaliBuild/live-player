@@ -36,10 +36,17 @@
             width: 100%; height: 100%;
             object-fit: contain;
             background: #000000;
+            pointer-events: none; /* Empêche les clics accidentels de faire apparaître l'icône play native */
         }
 
-        /* Supprime l'icône de lecture/cercle gris par défaut sur certains navigateurs */
-        video::-webkit-media-controls-start-playback-button,
+        /* --- SUPPRESSION RADICALE DU GROS ICÔNE PLAY DES NAVIGATEURS --- */
+        video::-webkit-media-controls {
+            display:none !important;
+        }
+        video::-webkit-media-controls-start-playback-button {
+            display: none !important;
+            -webkit-appearance: none;
+        }
         video::-webkit-media-controls-overlay-play-button {
             display: none !important;
             -webkit-appearance: none;
@@ -214,6 +221,7 @@
             border-radius: 3px;
         }
 
+        /* LOADER AU CENTRE STRICT */
         #loader {
             position: absolute;
             top: 50%; left: 50%;
@@ -223,7 +231,7 @@
             border-radius: 50%;
             border-top-color: var(--accent-neon);
             animation: spin 1s linear infinite;
-            z-index: 3;
+            z-index: 30; /* Passe au dessus de tout pour rester visible au centre */
             display: block;
         }
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
@@ -233,8 +241,7 @@
 
     <div id="video-container">
         <div id="loader"></div>
-        <video id="video" autoplay playsinline></video>
-    </div>
+        <video id="video" autoplay playsinline muted></video> </div>
 
     <div id="sidebar-wrapper" class="ui-element">
         <div id="fixed-cursor"></div>
@@ -264,6 +271,7 @@
         let currentIndex = 0;
         let hideTimeout;
         let hls = null;
+        let autoplayTimeout;
         
         const video = document.getElementById('video');
         const container = document.getElementById('channels-container');
@@ -276,12 +284,11 @@
             setInterval(updateClock, 1000);
             await loadM3U();
             
-            // Gestion intelligente du Loader
+            // Gestion du Loader
             video.addEventListener('waiting', () => loader.style.display = 'block');
             video.addEventListener('playing', () => loader.style.display = 'none');
             video.addEventListener('loadstart', () => loader.style.display = 'block');
-            
-            video.volume = 0.5;
+            video.addEventListener('canplay', () => loader.style.display = 'none');
         }
 
         function updateClock() {
@@ -305,7 +312,10 @@
             uiElements.forEach(el => el.classList.add('ui-hidden')); 
         }
 
-        window.addEventListener('click', resetHideTimeout);
+        window.addEventListener('click', () => {
+            video.muted = false; // Démute dès le premier clic de l'utilisateur
+            resetHideTimeout();
+        });
         window.addEventListener('mousemove', resetHideTimeout);
         window.addEventListener('touchstart', resetHideTimeout);
 
@@ -338,8 +348,7 @@
 
                 if (channels.length > 0) {
                     originalLength = channels.length;
-                    // Triplage pour boucle infinie
-                    channels = [...channels, ...channels, ...channels];
+                    channels = [...channels, ...channels, ...channels]; // Triplage boucle infinie
 
                     buildUI();
                     adjustScrollPadding();
@@ -372,6 +381,7 @@
 
                 card.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    video.muted = false;
                     setFocus(index, true);
                 });
 
@@ -391,7 +401,6 @@
             
             currentIndex = index;
             
-            // Sécurité boucle infinie
             if (currentIndex < originalLength) currentIndex += originalLength;
             if (currentIndex >= originalLength * 2) currentIndex -= originalLength;
 
@@ -419,7 +428,6 @@
                 autoplayTimeout = setTimeout(() => { playChannel(currentIndex); }, 600);
             }
         }
-        let autoplayTimeout;
 
         function playChannel(index) {
             const channel = channels[index];
@@ -438,7 +446,7 @@
                 hls.loadSource(channel.url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(e => console.log("Play blocké:", e));
+                    video.play().catch(e => console.log("Play bloqué:", e));
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = channel.url;
@@ -448,6 +456,7 @@
         window.addEventListener('resize', adjustScrollPadding);
 
         window.addEventListener('keydown', (e) => {
+            video.muted = false; // Désactive le mute dès que l'utilisateur utilise la télécommande / clavier
             if (e.key === 'ArrowUp') {
                 setFocus(currentIndex - 1, false);
                 e.preventDefault();
