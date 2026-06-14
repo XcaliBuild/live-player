@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Play TV</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>B Play TV - Premium Crystal Loop</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
     <style>
         :root {
             --bg-color: #000000;
-            --card-bg: rgba(25, 25, 30, 0.7);
-            --card-hover: rgba(40, 40, 50, 0.85);
-            --accent-neon: #39ff14;
+            --accent-neon: #39ff14; /* Vert Fluo */
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
+            --glass-bg: rgba(255, 255, 255, 0.12); /* Fond cristal transparent */
+            --black-35: rgba(0, 0, 0, 0.35); /* Fond liste noir transparent à 35% */
         }
 
         body, html {
@@ -30,9 +30,6 @@
             width: 100%; height: 100%;
             z-index: 1;
             background: #000000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         video {
@@ -41,9 +38,187 @@
             background: #000000;
         }
 
+        /* Supprime l'icône de lecture/cercle gris par défaut sur certains navigateurs */
+        video::-webkit-media-controls-start-playback-button,
+        video::-webkit-media-controls-overlay-play-button {
+            display: none !important;
+            -webkit-appearance: none;
+        }
+
+        /* --- INTERFACE AUTO-HIDE GLOBALE --- */
+        .ui-element {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            opacity: 1;
+            z-index: 10;
+        }
+        .ui-hidden {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        /* --- ZONE DE NAVIGATION GAUCHE --- */
+        #sidebar-wrapper {
+            position: absolute;
+            top: 0; left: 0;
+            width: 350px; height: 100%;
+            background: var(--black-35); /* Transparence à 35% */
+            z-index: 10;
+            overflow: hidden;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        #sidebar-wrapper.ui-hidden {
+            transform: translateX(-100%);
+        }
+
+        /* CURSEUR FIXE AU CENTRE STATIC */
+        #fixed-cursor {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 330px;
+            height: 70px;
+            border: 2px solid var(--accent-neon);
+            background: var(--glass-bg);
+            border-radius: 14px;
+            pointer-events: none;
+            z-index: 5;
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.45), 
+                        inset 0 0 15px rgba(255, 255, 255, 0.3);
+            transition: opacity 0.3s ease;
+        }
+
+        /* CONTENEUR DE LA LISTE */
+        #channels-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding-left: 20px;
+            padding-right: 20px;
+            box-sizing: border-box;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+        }
+        #channels-container::-webkit-scrollbar { display: none; }
+
+        /* STYLE DES LIGNES PAR DÉFAUT */
+        .channel-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-height: 54px;
+            height: 54px;
+            padding: 5px 10px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            background: transparent !important; 
+            border: none !important; 
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease, color 0.25s ease;
+            opacity: 0.4; 
+            cursor: pointer;
+            color: var(--text-secondary);
+            z-index: 6;
+        }
+
+        .channel-card img {
+            width: 30px; height: 20px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            transition: all 0.25s ease;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .channel-name {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- L'EFFET MAGNIFIER ZOOM UNIQUEMENT AU CENTRE --- */
+        .channel-card.focused {
+            transform: scale(1.25);
+            transform-origin: left center;
+            opacity: 1;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .channel-card.focused img {
+            width: 44px; height: 30px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .channel-card.active-playing .channel-name {
+            color: var(--accent-neon);
+        }
+
+        /* Indicateur central CH.XX */
+        #center-channel-indicator {
+            position: absolute;
+            left: 370px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 26px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        /* --- HAUT DROITE : HEURE AND CHAINE --- */
+        #top-right-info {
+            position: absolute;
+            top: 25px; right: 35px;
+            text-align: right;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border-right: 4px solid var(--accent-neon);
+        }
+        #clock { font-size: 26px; font-weight: bold; }
+        #top-channel { font-size: 14px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* --- BAS : INFO BAR --- */
+        #bottom-info {
+            position: absolute;
+            bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            width: 75%;
+            background: transparent;
+            text-align: left;
+        }
+        #bottom-title {
+            font-size: 22px; font-weight: bold; margin-bottom: 5px;
+            text-shadow: 2px 2px 4px #000;
+        }
+        #bottom-epg {
+            font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;
+            text-shadow: 1px 1px 3px #000;
+        }
+        .progress-bar-bg {
+            width: 100%; height: 6px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 3px;
+        }
+        .progress-bar-fill {
+            width: 40%;
+            height: 100%;
+            background: var(--accent-neon);
+            border-radius: 3px;
+        }
+
         #loader {
             position: absolute;
-            width: 50px; height: 50px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55px; height: 55px;
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             border-top-color: var(--accent-neon);
@@ -51,159 +226,87 @@
             z-index: 3;
             display: block;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #epg-overlay {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            border-radius: 15px;
-            border-right: 4px solid var(--accent-neon);
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-            z-index: 10;
-            max-width: 300px;
-            opacity: 0;
-        }
-        #epg-overlay h2 { margin: 0 0 4px 0; font-size: 16px; font-weight: bold; }
-        #epg-overlay p { margin: 0; color: var(--text-secondary); font-size: 12px; }
-
-        #channels-container {
-            position: absolute;
-            top: 0; left: 0;
-            width: 290px; height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.95) 80%, rgba(0,0,0,0));
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 20px 15px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            z-index: 5;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        #channels-container.hidden {
-            transform: translateX(-100%);
-            opacity: 0;
-        }
-
-        #channels-container::-webkit-scrollbar { display: none; }
-
-        .channel-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--card-bg);
-            border: 2px solid transparent;
-            border-radius: 16px;
-            padding: 10px 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .channel-card img {
-            width: 50px; height: 35px;
-            object-fit: contain;
-            border-radius: 6px;
-            background: rgba(255,255,255,0.1);
-        }
-
-        .card-info {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        .channel-name {
-            font-size: 13px;
-            font-weight: bold;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        .channel-group {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-overflow: ellipsis;
-            overflow: hidden;
-            margin-top: 2px;
-        }
-
-        .channel-card.focused, .channel-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: var(--card-hover);
-        }
-
-        .channel-card.active {
-            background: rgba(57, 255, 20, 0.15);
-            border-color: var(--accent-neon);
-        }
-        .channel-card.active .channel-name {
-            color: var(--accent-neon);
-        }
+        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="video-container">
         <div id="loader"></div>
-        <video id="video" autoplay playsinline loop muted></video>
-        
-        <div id="epg-overlay">
-            <h2 id="overlay-channel">-</h2>
-            <p id="overlay-program">-</p>
+        <video id="video" autoplay playsinline></video>
+    </div>
+
+    <div id="sidebar-wrapper" class="ui-element">
+        <div id="fixed-cursor"></div>
+        <div id="channels-container"></div>
+    </div>
+    
+    <div id="center-channel-indicator" class="ui-element">CH.1</div>
+
+    <div id="top-right-info" class="ui-element">
+        <div id="clock">00:00</div>
+        <div id="top-channel">CHAINE 1</div>
+    </div>
+
+    <div id="bottom-info" class="ui-element">
+        <div id="bottom-title">Chargement...</div>
+        <div id="bottom-epg">Veuillez patienter...</div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill"></div>
         </div>
     </div>
 
-    <div id="channels-container"></div>
-
     <script>
-        // URL de ton Gist
-        const m3uUrl = "https://gist.githubusercontent.com/XcaliBuild/06a1373a62a174289f3ea0805e9c4da7/raw/f094fa4a445dca4f60789333c156838a6767f5d1/gistfile1.txt";
+        const m3uUrl = "https://gist.githubusercontent.com/XcaliBuild/06a1373a62a174289f3ea0805e9c4da7/raw/0ce0333eda87d6f9d56cb030a9eb013f15aba86a/gistfile1.txt";
         
         let channels = [];
+        let originalLength = 0;
         let currentIndex = 0;
         let hideTimeout;
+        let hls = null;
         
         const video = document.getElementById('video');
         const container = document.getElementById('channels-container');
-        const overlay = document.getElementById('epg-overlay');
+        const wrapper = document.getElementById('sidebar-wrapper');
         const loader = document.getElementById('loader');
-        let hls = null;
+        const uiElements = document.querySelectorAll('.ui-element');
 
         async function init() {
+            updateClock();
+            setInterval(updateClock, 1000);
             await loadM3U();
-            resetHideTimeout();
             
+            // Gestion intelligente du Loader
             video.addEventListener('waiting', () => loader.style.display = 'block');
-            video.addEventListener('playing', () => {
-                loader.style.display = 'none';
-                video.muted = false;
-            });
+            video.addEventListener('playing', () => loader.style.display = 'none');
             video.addEventListener('loadstart', () => loader.style.display = 'block');
+            
+            video.volume = 0.5;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
         }
 
         function resetHideTimeout() {
-            showSidebar();
+            showUI();
             clearTimeout(hideTimeout);
-            hideTimeout = setTimeout(() => { hideSidebar(); }, 3500);
+            hideTimeout = setTimeout(() => { hideUI(); }, 4000);
         }
 
-        function showSidebar() { container.classList.remove('hidden'); }
-        function hideSidebar() { container.classList.add('hidden'); }
+        function showUI() { 
+            wrapper.classList.remove('ui-hidden'); 
+            uiElements.forEach(el => el.classList.remove('ui-hidden')); 
+        }
+        
+        function hideUI() { 
+            wrapper.classList.add('ui-hidden'); 
+            uiElements.forEach(el => el.classList.add('ui-hidden')); 
+        }
 
         window.addEventListener('click', resetHideTimeout);
+        window.addEventListener('mousemove', resetHideTimeout);
         window.addEventListener('touchstart', resetHideTimeout);
 
         async function loadM3U() {
@@ -211,34 +314,40 @@
                 const res = await fetch(m3uUrl);
                 const text = await res.text();
                 const lines = text.split('\n');
-                let currentChannel = null;
+                let tempChannel = null;
 
                 lines.forEach(line => {
-                    line = line.trim();
-                    if (line.startsWith('#EXTINF:')) {
-                        const name = line.split(',')[1] || "";
-                        const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-                        const groupMatch = line.match(/group-title="([^"]+)"/);
+                    const trimmed = line.trim();
+                    if (trimmed.startsWith('#EXTINF:')) {
+                        const name = trimmed.split(',').pop() || "";
+                        const logoMatch = trimmed.match(/tvg-logo="([^"]+)"/);
+                        const groupMatch = trimmed.match(/group-title="([^"]+)"/);
 
-                        currentChannel = {
+                        tempChannel = {
                             name: name.trim(),
                             logo: logoMatch ? logoMatch[1] : "",
-                            group: groupMatch ? groupMatch[1] : "",
+                            group: groupMatch ? groupMatch[1] : "Aucune information",
                             url: ""
                         };
-                    } else if (line.startsWith('http') && currentChannel) {
-                        currentChannel.url = line;
-                        channels.push(currentChannel);
-                        currentChannel = null;
+                    } else if (tempChannel && trimmed.startsWith('http')) {
+                        tempChannel.url = trimmed;
+                        channels.push(tempChannel);
+                        tempChannel = null;
                     }
                 });
 
                 if (channels.length > 0) {
+                    originalLength = channels.length;
+                    // Triplage pour boucle infinie
+                    channels = [...channels, ...channels, ...channels];
+
                     buildUI();
-                    playChannel(0);
+                    adjustScrollPadding();
+                    currentIndex = originalLength;
+                    setFocus(currentIndex, true);
                 }
             } catch (err) {
-                console.error("Erreur de chargement M3U:", err);
+                console.error("Erreur M3U:", err);
             }
         }
 
@@ -246,40 +355,71 @@
             container.innerHTML = '';
             channels.forEach((channel, index) => {
                 const card = document.createElement('div');
-                card.className = `channel-card ${index === 0 ? 'focused' : ''}`;
+                card.className = `channel-card`;
+                card.id = `channel-${index}`;
                 
-                const logoHtml = channel.logo ? `<img src="${channel.logo}" onerror="this.style.display='none'">` : `<div style="width:50px;height:35px;background:rgba(255,255,255,0.08);border-radius:6px;"></div>`;
+                const realIndex = index % originalLength;
+                const chNum = realIndex + 1;
+                
+                const logoHtml = channel.logo ? `<img src="${channel.logo}" onerror="this.style.display='none'">` : `<div style="width:30px;height:20px;background:rgba(255,255,255,0.08);border-radius:3px;"></div>`;
 
                 card.innerHTML = `
                     ${logoHtml}
                     <div class="card-info">
-                        <div class="channel-name">${channel.name}</div>
-                        <div class="channel-group">${channel.group}</div>
+                        <div class="channel-name">${chNum}. ${channel.name}</div>
                     </div>
                 `;
 
                 card.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    setFocus(index);
-                    playChannel(index);
-                    resetHideTimeout();
+                    setFocus(index, true);
                 });
 
                 container.appendChild(card);
             });
         }
 
-        function setFocus(index) {
+        function adjustScrollPadding() {
+            const paddingValue = (container.clientHeight / 2) - 27;
+            container.style.paddingTop = `${paddingValue}px`;
+            container.style.paddingBottom = `${paddingValue}px`;
+        }
+
+        function setFocus(index, immediatePlay = false) {
             const cards = document.querySelectorAll('.channel-card');
             if(cards[currentIndex]) cards[currentIndex].classList.remove('focused');
             
             currentIndex = index;
+            
+            // Sécurité boucle infinie
+            if (currentIndex < originalLength) currentIndex += originalLength;
+            if (currentIndex >= originalLength * 2) currentIndex -= originalLength;
+
             const activeCard = cards[currentIndex];
             if(activeCard) {
                 activeCard.classList.add('focused');
-                activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                container.scrollTop = (activeCard.offsetTop - container.offsetTop) - (container.clientHeight / 2) + (activeCard.clientHeight / 2);
+            }
+
+            const realIndex = currentIndex % originalLength;
+            const chNum = realIndex + 1;
+            const channel = channels[currentIndex];
+
+            document.getElementById('center-channel-indicator').innerText = `CH.${chNum}`;
+            document.getElementById('top-channel').innerText = `CHAINE ${chNum}`;
+            document.getElementById('bottom-title').innerText = channel.name;
+            document.getElementById('bottom-epg').innerText = channel.group;
+
+            resetHideTimeout();
+
+            if (immediatePlay) {
+                playChannel(currentIndex);
+            } else {
+                clearTimeout(autoplayTimeout);
+                autoplayTimeout = setTimeout(() => { playChannel(currentIndex); }, 600);
             }
         }
+        let autoplayTimeout;
 
         function playChannel(index) {
             const channel = channels[index];
@@ -287,44 +427,32 @@
 
             loader.style.display = 'block';
 
-            document.getElementById('overlay-channel').innerText = channel.name;
-            
-            if (channel.group) {
-                document.getElementById('overlay-program').innerText = channel.group;
-                overlay.style.opacity = "1";
-                clearTimeout(window.overlayTimeout);
-                window.overlayTimeout = setTimeout(() => { overlay.style.opacity = "0"; }, 4000);
-            } else {
-                overlay.style.opacity = "0";
-            }
-
-            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-            const currentCard = document.querySelectorAll('.channel-card')[index];
-            if(currentCard) currentCard.classList.add('active');
+            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active-playing'));
+            const currentCard = document.getElementById(`channel-${index}`);
+            if(currentCard) currentCard.classList.add('active-playing');
 
             if (hls) { hls.destroy(); }
 
             if (Hls.isSupported()) {
-                hls = new Hls();
+                hls = new Hls({ maxBufferLength: 10, lowLatencyMode: true });
                 hls.loadSource(channel.url);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => {}); });
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(e => console.log("Play blocké:", e));
+                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = channel.url;
-                video.addEventListener('loadedmetadata', () => { video.play(); });
             }
         }
 
+        window.addEventListener('resize', adjustScrollPadding);
+
         window.addEventListener('keydown', (e) => {
-            resetHideTimeout();
             if (e.key === 'ArrowUp') {
-                if (currentIndex > 0) { setFocus(currentIndex - 1); playChannel(currentIndex); }
+                setFocus(currentIndex - 1, false);
                 e.preventDefault();
             } else if (e.key === 'ArrowDown') {
-                if (currentIndex < channels.length - 1) { setFocus(currentIndex + 1); playChannel(currentIndex); }
-                e.preventDefault();
-            } else if (e.key === 'ArrowLeft') {
-                showSidebar();
+                setFocus(currentIndex + 1, false);
                 e.preventDefault();
             } else if (e.key === 'Enter') {
                 playChannel(currentIndex);
