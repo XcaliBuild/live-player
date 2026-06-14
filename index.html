@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>B Play TV - Premium Crystal Loop</title>
+    
+    <link href="https://unpkg.com/video.js/dist/video-js.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/video.js/dist/video.min.js"></script>
+
     <style>
         :root {
             --bg-color: #000000;
             --accent-neon: #39ff14; /* Vert Fluo */
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
-            --glass-bg: rgba(255, 255, 255, 0.12); /* Fond cristal transparent */
-            --black-15: rgba(0, 0, 0, 0.15); /* Fond liste noir transparent à 15% */
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --black-15: rgba(0, 0, 0, 0.15);
         }
 
         body, html {
@@ -31,17 +35,12 @@
             background: #000000;
         }
 
-        video {
-            width: 100%; height: 100%;
-            object-fit: contain;
-            background: #000000;
-            pointer-events: none;
+        /* Forcer Video.js à prendre tout l'écran */
+        .video-js {
+            width: 100% !important;
+            height: 100% !important;
+            background-color: #000000;
         }
-
-        /* Suppression de l'icône play native */
-        video::-webkit-media-controls { display:none !important; }
-        video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
-        video::-webkit-media-controls-overlay-play-button { display: none !important; -webkit-appearance: none; }
 
         /* --- INTERFACE AUTO-HIDE GLOBALE --- */
         .ui-element {
@@ -84,7 +83,6 @@
             z-index: 5;
             box-shadow: 0 0 25px rgba(57, 255, 20, 0.45), 
                         inset 0 0 15px rgba(255, 255, 255, 0.3);
-            transition: opacity 0.3s ease;
         }
 
         /* CONTENEUR DE LA LISTE */
@@ -124,7 +122,6 @@
             object-fit: contain;
             background: rgba(255,255,255,0.05);
             border-radius: 3px;
-            transition: all 0.25s ease;
         }
 
         .card-info {
@@ -141,7 +138,6 @@
             text-overflow: ellipsis;
         }
 
-        /* --- L'EFFET MAGNIFIER ZOOM --- */
         .channel-card.focused {
             transform: scale(1.25);
             transform-origin: left center;
@@ -183,18 +179,13 @@
         #clock { font-size: 20px; font-weight: bold; }
         #top-channel { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
 
-        /* --- BAS : ESSENTIEL ET SANS EPG --- */
+        /* --- SOUBASSEMENT BARRE DE PROGRESSION UNIQUEMENT --- */
         #bottom-info {
             position: absolute;
             bottom: 40px; left: 50%;
             transform: translateX(-50%);
             width: 75%;
             background: transparent;
-            text-align: left;
-        }
-        #bottom-title {
-            font-size: 22px; font-weight: bold; margin-bottom: 12px;
-            text-shadow: 2px 2px 4px #000;
         }
         
         #progress-wrapper {
@@ -217,6 +208,22 @@
             border-radius: 3px;
         }
 
+        /* --- HUD SÉPARÉ POUR LE VOLUME --- */
+        #volume-hud {
+            position: absolute;
+            top: 25px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid var(--accent-neon);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 100;
+        }
+
         /* LOADER AU CENTRE */
         #loader {
             position: absolute;
@@ -228,7 +235,7 @@
             border-top-color: var(--accent-neon);
             animation: spin 1s linear infinite;
             z-index: 30;
-            display: block;
+            display: none; /* Géré par Video.js maintenant */
         }
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
     </style>
@@ -237,7 +244,7 @@
 
     <div id="video-container">
         <div id="loader"></div>
-        <video id="video" autoplay playsinline muted></video>
+        <video id="vidVideojs" class="video-js vjs-default-skin" autoplay playsinline></video>
     </div>
 
     <div id="sidebar-wrapper" class="ui-element">
@@ -252,8 +259,9 @@
         <div id="top-channel">CHAINE 1</div>
     </div>
 
-    <div id="bottom-info" class="ui-element">
-        <div id="bottom-title">Chargement...</div>
+    <div id="volume-hud">🔊 Volume: 50%</div>
+
+    <div id="bottom-info">
         <div id="progress-wrapper">
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill"></div>
@@ -269,24 +277,45 @@
         let currentIndex = 0;
         let hideTimeout;
         let progressTimeout;
+        let volumeTimeout;
         let autoplayTimeout;
         
-        const video = document.getElementById('video');
         const container = document.getElementById('channels-container');
         const wrapper = document.getElementById('sidebar-wrapper');
         const loader = document.getElementById('loader');
         const uiElements = document.querySelectorAll('.ui-element');
         const progressWrapper = document.getElementById('progress-wrapper');
+        const volumeHud = document.getElementById('volume-hud');
+
+        let vjsPlayer = null;
 
         async function init() {
             updateClock();
             setInterval(updateClock, 1000);
-            await loadM3U();
             
-            video.addEventListener('waiting', () => loader.style.display = 'block');
-            video.addEventListener('playing', () => loader.style.display = 'none');
-            video.addEventListener('loadstart', () => loader.style.display = 'block');
-            video.addEventListener('canplay', () => loader.style.display = 'none');
+            // Initialisation de Video.js
+            vjsPlayer = videojs('vidVideojs', {
+                controls: false, // On désactive les contrôles de base pour garder ton design
+                autoplay: true,
+                muted: true, // Requis pour l'autoplay sur la plupart des navigateurs
+                preload: 'auto',
+                html5: {
+                    vhs: {
+                        overrideNative: true, // Force le moteur VHS de Video.js (excellent pour l'IPTV)
+                    }
+                }
+            });
+
+            // Gestion du Loader avec les événements Video.js
+            vjsPlayer.on('waiting', () => loader.style.display = 'block');
+            vjsPlayer.on('playing', () => loader.style.display = 'none');
+            vjsPlayer.on('canplay', () => loader.style.display = 'none');
+            vjsPlayer.on('error', () => {
+                loader.style.display = 'none';
+                console.error("Erreur Video.js : Le flux n'a pas pu être chargé.");
+            });
+
+            await loadM3U();
         }
 
         function updateClock() {
@@ -318,8 +347,16 @@
             }, 3000);
         }
 
+        function showVolumeHUD() {
+            if (!vjsPlayer) return;
+            volumeHud.innerText = `🔊 Volume: ${Math.round(vjsPlayer.volume() * 100)}%`;
+            volumeHud.style.opacity = '1';
+            clearTimeout(volumeTimeout);
+            volumeTimeout = setTimeout(() => { volumeHud.style.opacity = '0'; }, 2000);
+        }
+
         window.addEventListener('click', () => {
-            video.muted = false;
+            if(vjsPlayer) vjsPlayer.muted(false);
             resetHideTimeout();
         });
         window.addEventListener('mousemove', resetHideTimeout);
@@ -385,7 +422,7 @@
 
                 card.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    video.muted = false;
+                    if(vjsPlayer) vjsPlayer.muted(false);
                     setFocus(index, true);
                 });
 
@@ -416,11 +453,9 @@
 
             const realIndex = currentIndex % originalLength;
             const chNum = realIndex + 1;
-            const channel = channels[currentIndex];
 
             document.getElementById('center-channel-indicator').innerText = `CH.${chNum}`;
             document.getElementById('top-channel').innerText = `CHAINE ${chNum}`;
-            document.getElementById('bottom-title').innerText = channel.name;
 
             resetHideTimeout();
 
@@ -434,7 +469,7 @@
 
         function playChannel(index) {
             const channel = channels[index];
-            if (!channel) return;
+            if (!channel || !vjsPlayer) return;
 
             loader.style.display = 'block';
 
@@ -442,41 +477,52 @@
             const currentCard = document.getElementById(`channel-${index}`);
             if(currentCard) currentCard.classList.add('active-playing');
 
-            video.src = channel.url;
-            video.load();
-            video.play().catch(e => console.log("Play bloqué nativement :", e));
+            // Lancement du flux avec Video.js
+            vjsPlayer.src({
+                src: channel.url,
+                type: 'application/x-mpegURL' // Type M3U8 pour forcer la lecture HLS
+            });
+            
+            vjsPlayer.play().catch(e => console.log("Lecture Video.js bloquée :", e));
         }
 
         window.addEventListener('resize', adjustScrollPadding);
 
-        /* --- REMAP CLAVIER / TÉLÉCOMMANDE --- */
         window.addEventListener('keydown', (e) => {
-            video.muted = false; 
-            resetHideTimeout();
+            if(vjsPlayer) vjsPlayer.muted(false); 
 
             if (e.key === 'ArrowUp') {
-                // ZAP DIRECT : Change de chaîne et joue immédiatement (true)
                 setFocus(currentIndex - 1, true);
                 e.preventDefault();
-            } else if (e.key === 'ArrowDown') {
-                // ZAP DIRECT : Change de chaîne et joue immédiatement (true)
+            } 
+            else if (e.key === 'ArrowDown') {
                 setFocus(currentIndex + 1, true);
                 e.preventDefault();
-            } else if (e.key === 'ArrowLeft') {
-                // VOLUME MOINS
-                video.volume = Math.max(0, video.volume - 0.1);
+            } 
+            else if (e.key === 'ArrowLeft') {
+                if(vjsPlayer) {
+                    let newVol = Math.max(0, vjsPlayer.volume() - 0.1);
+                    vjsPlayer.volume(newVol);
+                }
+                showVolumeHUD();
                 e.preventDefault();
-            } else if (e.key === 'ArrowRight') {
-                // VOLUME PLUS
-                video.volume = Math.min(1, video.volume + 0.1);
+            } 
+            else if (e.key === 'ArrowRight') {
+                if(vjsPlayer) {
+                    let newVol = Math.min(1, vjsPlayer.volume() + 0.1);
+                    vjsPlayer.volume(newVol);
+                }
+                showVolumeHUD();
                 e.preventDefault();
-            } else if (e.key === 'Enter') {
-                // TOUCHE OK : Juste le flash de la barre d'info / progression
+            } 
+            else if (e.key === 'Enter') {
+                resetHideTimeout();
                 flashProgressBar();
                 e.preventDefault();
             }
         });
 
+        // Démarrage
         init();
     </script>
 </body>
