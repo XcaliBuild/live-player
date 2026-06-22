@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>VIDÉOCLUB v16.1 -Android TV & Touch (Smart Purstream API)</title>
+  <title>VIDÉOCLUB v16.1 - Android TV & Touch (Smart Purstream API + Cast)</title>
   <style>
     :root {
       --primary: #ff0033;
@@ -42,7 +42,6 @@
     #hero-video-wrapper { position: relative; width: 100%; height: 100%; pointer-events: none; }
     .hero-video-iframe {
       position: absolute; top: 50%; left: 50%; width: 100%; height: 100%;
-      /* Éjecte les boutons YouTube hors de l'écran avec scale(1.8) */
       transform: translate(-50%, -50%) scale(1.8);
       border: none; pointer-events: none;
     }
@@ -176,8 +175,16 @@
     .round-player-btn:focus, .round-player-btn.focused { background-color: #fff; border-color: var(--primary); transform: scale(1.12); }
     .round-player-btn:focus svg, .round-player-btn.focused svg { fill: #000; }
     .player-txt-info { display: flex; justify-content: space-between; font-size: 13px; color: #ccc; font-weight: bold; }
+
+    /* CAST BUTTON SPECIFICS */
+    #p-btn-cast { display: none; /* Masqué tant que le Cast n'est pas prêt */ }
+    google-cast-launcher { width: 24px; height: 24px; cursor: pointer; --connected-color: var(--primary); --disconnected-color: #ffffff; }
+
   </style>
+
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+
 </head>
 <body>
 
@@ -265,6 +272,11 @@
         <button class="round-player-btn" id="p-btn-forward" tabindex="0" onclick="playerForward(event)">
           <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path></svg>
         </button>
+        
+        <button class="round-player-btn" id="p-btn-cast" tabindex="0">
+          <google-cast-launcher></google-cast-launcher>
+        </button>
+
         <button class="round-player-btn" id="p-btn-cc" tabindex="0" onclick="playerToggleCC(event)">
           <svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 11H9.5v-1.5h-1.5v-2H9.5V10H11v5zm6 0h-1.5v-1.5h-1.5v-2h1.5V10H17v5z"></path></svg>
         </button>
@@ -304,8 +316,12 @@
     var currentMovieTitle = "";
     var ccActive          = false; 
 
-    // Liste des IDs de boutons du lecteur pour la navigation
-    const PLAYER_BUTTONS = ['p-btn-stop', 'p-btn-rewind', 'p-btn-play', 'p-btn-forward', 'p-btn-cc', 'p-btn-ratio'];
+    // Variables Google Cast
+    var castSession = null;
+    var currentVideoUrlForCast = "";
+
+    // Mise à jour de la liste des boutons pour la navigation télécommande
+    const PLAYER_BUTTONS = ['p-btn-stop', 'p-btn-rewind', 'p-btn-play', 'p-btn-forward', 'p-btn-cast', 'p-btn-cc', 'p-btn-ratio'];
 
     document.addEventListener('DOMContentLoaded', function() {
       detectPurstreamDomain();
@@ -314,6 +330,57 @@
       document.addEventListener('keydown', handleKeydown);
       history.pushState({ page: "home" }, '', location.href);
     });
+
+    /* ─── INITIALISATION GOOGLE CAST ─── */
+    window['__onGCastApiAvailable'] = function(isAvailable) {
+      if (isAvailable) {
+        cast.framework.CastContext.getInstance().setOptions({
+          receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+          autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+        });
+        
+        document.getElementById('p-btn-cast').style.display = 'flex'; // Affiche le bouton si le navigateur est compatible
+
+        var context = cast.framework.CastContext.getInstance();
+        context.addEventListener(cast.framework.CastContextEventType.SESSION_STATE_CHANGED, function(event) {
+          switch (event.sessionState) {
+            case cast.framework.SessionState.SESSION_STARTED:
+            case cast.framework.SessionState.SESSION_RESUMED:
+              castSession = context.getCurrentSession();
+              // Si une vidéo est en cours de lecture localement, on l'envoie direct au Cast
+              if (isPlayerActive && currentVideoUrlForCast) {
+                 sendToChromecast(currentVideoUrlForCast, currentMovieTitle);
+              }
+              break;
+            case cast.framework.SessionState.SESSION_ENDED:
+              castSession = null;
+              break;
+          }
+        });
+      }
+    };
+
+    function sendToChromecast(url, title) {
+      if (!castSession) return;
+      
+      var mediaInfo = new chrome.cast.media.MediaInfo(url, 'application/x-mpegURL');
+      if(url.includes('.mp4')) mediaInfo.contentType = 'video/mp4';
+
+      var metadata = new chrome.cast.media.GenericMediaMetadata();
+      metadata.title = title;
+      mediaInfo.metadata = metadata;
+
+      var request = new chrome.cast.media.LoadRequest(mediaInfo);
+      
+      // Pause la vidéo locale sur le téléphone/TV
+      video.pause();
+      document.getElementById('p-svg-play').innerHTML = '<path d="M8 5v14l11-7z"></path>';
+
+      castSession.loadMedia(request).then(
+        function() { console.log('Flux envoyé au Chromecast avec succès'); },
+        function(errorCode) { console.log('Erreur Chromecast: ' + errorCode); showNotAvailable("Erreur Cast", "Impossible de lire ce flux sur la TV"); }
+      );
+    }
 
     function isPlayerOpen() { return document.getElementById('video-container').style.display === 'block'; }
 
@@ -501,12 +568,10 @@
       wrapper.appendChild(iframe);
     }
     
-    // --- FIX AUDIO YOUTUBE EN ARRIÈRE PLAN ---
     function clearHeroVideo() { 
       var wrapper = document.getElementById('hero-video-wrapper');
       var iframe = wrapper.querySelector('iframe');
       if(iframe) {
-        // Remplacer l'URL force laWebView Android à stopper la vidéo
         iframe.src = "about:blank"; 
         iframe.remove();
       }
@@ -527,8 +592,8 @@
     }
 
     function openMoviePlayer(movie) {
-      clearTimeout(previewDebounceTimer); // Arrêter immédiatement le timer de la bande-annonce
-      clearHeroVideo(); // Tuer la bande annonce existante avec certitude
+      clearTimeout(previewDebounceTimer); 
+      clearHeroVideo(); 
       
       document.getElementById('boot-screen').style.display = 'flex';
       document.querySelector('#boot-screen .boot-text').textContent = "Recherche du flux sécurisé...";
@@ -570,16 +635,25 @@
       document.getElementById('p-btn-cc').style.borderColor = '#fff';
       currentZone = 'player';
       
+      // On sauvegarde l'URL pour le Chromecast
+      currentVideoUrlForCast = url;
+
       var container = document.getElementById('video-container'); container.style.display = 'block';
       document.getElementById('player-movie-title').textContent = title || '';
       document.getElementById('player-loading-overlay').style.display = 'flex';
       document.getElementById('p-svg-play').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>';
 
-      // Pré-sélection du bouton play pour la télécommande
       setTimeout(function() {
          document.getElementById('p-btn-play').focus();
          showPlayerControls();
       }, 100);
+
+      // Si on est déjà connecté à un Chromecast, on envoie directement le flux !
+      if (castSession) {
+          sendToChromecast(url, title);
+          document.getElementById('player-loading-overlay').style.display = 'none';
+          return; // On arrête la lecture locale
+      }
 
       if (hls) { hls.destroy(); hls = null; }
       video.removeAttribute('src');
@@ -628,17 +702,15 @@
       showPlayerControls();
     }
 
-    // --- FIX ARRET COMPLET DU FILM ---
     function closePlayer(e) {
       if (e) e.stopPropagation();
       isPlayerActive = false;
       document.getElementById('video-container').style.display = 'none';
       
-      // Ordre de destruction absolu pour vider le buffer video d'Android
       video.pause();
       if (hls) { hls.destroy(); hls = null; }
       video.removeEventListener('timeupdate', updateProgressBar);
-      video.src = ""; // Obligatoire sur Android TV
+      video.src = ""; 
       video.removeAttribute('src'); 
       video.load();
       clearTimeout(uiControlsTimer);
@@ -647,7 +719,6 @@
       var card = document.getElementById('card-' + activeRowIndex + '-' + activeColIndex);
       if (card) {
           card.focus();
-          // Relancer la bande-annonce de la carte actuellement sélectionnée
           var genres = Object.keys(structuralCatalog);
           if(genres.length > activeRowIndex) {
             schedulePreview(structuralCatalog[genres[activeRowIndex]][activeColIndex]);
@@ -705,7 +776,6 @@
     function handleKeydown(e) {
       var key = e.keyCode;
       
-      // Bouton RETOUR force la fermeture peu importe l'état
       if (key === 27 || key === 10009 || key === 461 || key === 4 || key === 8) {
         if (isPlayerOpen()) { closePlayer(); e.preventDefault(); return; }
         history.pushState({ page: "home" }, '', location.href); e.preventDefault(); return;
@@ -751,42 +821,42 @@
       }
     }
 
-    // --- FIX NAVIGATION DANS LE LECTEUR ---
     function handlePlayerKeys(key) {
       var uiBar = document.getElementById('player-ui-controls');
       var isUIVisible = uiBar.classList.contains('show');
 
-      // Si l'interface est cachée, on peut faire avance/retour rapide direct, ou afficher l'interface
       if (!isUIVisible) {
         if (key === 13 || key === 32 || key === 38 || key === 40) {
            showPlayerControls();
-           document.getElementById('p-btn-play').focus(); // On replace le focus
+           document.getElementById('p-btn-play').focus(); 
         }
         else if (key === 37) playerRewind(null);
         else if (key === 39) playerForward(null);
         return;
       }
 
-      // Si l'interface est visible, on navigue entre les boutons
       var activeId = document.activeElement ? document.activeElement.id : '';
       var currentIndex = PLAYER_BUTTONS.indexOf(activeId);
-      if (currentIndex === -1) currentIndex = 2; // Par défaut sur Play
+      if (currentIndex === -1) currentIndex = 2; 
 
-      if (key === 37) { // Gauche
-        currentIndex = Math.max(0, currentIndex - 1);
+      if (key === 37) {
+        // Ignorer le bouton Cast s'il est masqué lors de la navigation
+        do { currentIndex = Math.max(0, currentIndex - 1); } 
+        while (document.getElementById(PLAYER_BUTTONS[currentIndex]).style.display === 'none' && currentIndex > 0);
         document.getElementById(PLAYER_BUTTONS[currentIndex]).focus();
-        showPlayerControls(); // Garde l'interface allumée
+        showPlayerControls(); 
       } 
-      else if (key === 39) { // Droite
-        currentIndex = Math.min(PLAYER_BUTTONS.length - 1, currentIndex + 1);
+      else if (key === 39) { 
+        do { currentIndex = Math.min(PLAYER_BUTTONS.length - 1, currentIndex + 1); } 
+        while (document.getElementById(PLAYER_BUTTONS[currentIndex]).style.display === 'none' && currentIndex < PLAYER_BUTTONS.length - 1);
         document.getElementById(PLAYER_BUTTONS[currentIndex]).focus();
         showPlayerControls();
       } 
-      else if (key === 13 || key === 32) { // OK / Espace
+      else if (key === 13 || key === 32) { 
         document.getElementById(PLAYER_BUTTONS[currentIndex]).click();
         showPlayerControls();
       } 
-      else if (key === 38 || key === 40) { // Haut / Bas
+      else if (key === 38 || key === 40) { 
         showPlayerControls();
       }
     }
