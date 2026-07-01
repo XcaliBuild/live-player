@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pages. - Liseuse Interactive</title>
+    <!-- 🛠️ TITRE DE L'APPLICATION -->
+    <title>Pages. - Liseuse Base Essentielle</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,39 +12,42 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* 🛠️ COULEURS DU THÈME : Vous pouvez modifier les codes couleurs ici */
+        /* ==========================================
+           🎨 THÈMES & EFFET E-INK RENFORCÉ
+           ========================================== */
         :root[data-theme="e-ink"] {
-            --bg-screen: #f4f6f8; /* Blanc cassé pour ne pas fatiguer les yeux */
-            --text-main: #222222; /* Noir adouci */
-            --text-muted: #666666;
-            --border-color: #d1d5db;
-            /* Texture papier subtile */
-            --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            --bg-screen: #e9eae0; 
+            --text-main: #1a1a1a; 
+            --text-muted: #555555;
+            --border-color: #c4c4c4;
+            /* 🛠️ TEXTURE PAPIER E-INK (Ne pas modifier) */
+            --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
         }
         :root[data-theme="dark-mode"] {
-            --bg-screen: #121212; /* Noir profond */
-            --text-main: #e5e5e5;
-            --text-muted: #888888;
-            --border-color: #333333;
-            --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+            --bg-screen: #0f1115;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
         }
 
-        /* RESET ET PLEIN ÉCRAN POUR MOBILE/APPCREATOR24 */
+        /* 🛠️ RESET ET PLEIN ÉCRAN POUR MOBILE/APPCREATOR24 */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         body, html {
             width: 100%; height: 100%; overflow: hidden;
             background-color: var(--bg-screen); color: var(--text-main);
             font-family: 'Inter', sans-serif;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05); /* Ombre de l'écran */
         }
 
-        /* TEXTURE E-INK GLOBALE */
+        /* APPLICATION DE LA TEXTURE */
         body::before {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: var(--paper-texture); pointer-events: none; z-index: 9999;
         }
 
-        /* EN-TÊTE DE L'APPLICATION (LOGO ET BOUTONS) */
+        /* EN-TÊTE */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 20px 25px; border-bottom: 1px solid var(--border-color); 
@@ -52,7 +56,6 @@
         
         .logo { 
             font-weight: 800; font-size: 24px; letter-spacing: -1px; 
-            display: flex; align-items: center; gap: 5px;
         }
         
         .header-actions { display: flex; gap: 20px; align-items: center; }
@@ -60,31 +63,44 @@
 
         /* ZONE DE LECTURE */
         .reader-container { 
-            height: calc(100vh - 120px); /* Hauteur totale moins le header et le footer */
+            height: calc(100vh - 120px); 
             position: relative; overflow: hidden; 
         }
 
-        /* Le texte du livre */
+        /* 🛠️ GESTION AUTOMATIQUE DES IMAGES */
+        .page-content-wrapper img {
+            width: 100%; max-height: 40vh; object-fit: cover; 
+            border-radius: 6px; margin: 15px 0;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            filter: grayscale(80%) contrast(1.1); /* Effet liseuse */
+        }
+        :root[data-theme="dark-mode"] .page-content-wrapper img { filter: none; }
+
+        .page-content-wrapper h2 { margin-bottom: 15px; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.5px;}
+        .page-content-wrapper h3 { margin-top: 10px; margin-bottom: 5px; font-family: 'Inter', sans-serif; font-size: 16px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
+
         .page-content-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 30px 25px;
-            font-family: 'Merriweather', serif; font-size: 19px; line-height: 1.7; text-align: justify;
+            font-family: 'Merriweather', serif; font-size: 18px; line-height: 1.7; text-align: justify;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow-y: auto; 
         }
 
-        /* ANIMATIONS DE PAGES */
+        /* 🛠️ ANIMATIONS DES PAGES */
         .turn-next-out { transform: translateX(-100%); opacity: 0; }
         .turn-next-in { transform: translateX(100%); opacity: 0; }
         .turn-prev-out { transform: translateX(100%); opacity: 0; }
         .turn-prev-in { transform: translateX(-100%); opacity: 0; }
         .page-active { transform: translateX(0); opacity: 1; }
 
-        /* ZONES TACTILES INVISIBLES POUR TOURNER LA PAGE (À gauche et à droite) */
+        /* ZONES TACTILES INVISIBLES */
         .tap-zone { position: absolute; top: 0; bottom: 0; z-index: 50; cursor: pointer; }
         .zone-prev { left: 0; width: 35%; }
-        .zone-next { right: 0; width: 65%; } /* Zone plus large pour avancer plus facilement */
+        .zone-next { right: 0; width: 65%; } 
 
-        /* PIED DE PAGE (Progression) */
+        /* PIED DE PAGE */
         footer {
             height: 40px; display: flex; justify-content: center; align-items: center;
             font-size: 12px; font-weight: 600; color: var(--text-muted);
@@ -92,7 +108,7 @@
             text-transform: uppercase; letter-spacing: 1px;
         }
 
-        /* MENU DES BOOKMARKS (Caché par défaut) */
+        /* MENU BOOKMARKS */
         #bookmarks-menu {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-screen); z-index: 2000; display: none; flex-direction: column;
@@ -101,7 +117,7 @@
         .bookmarks-list { padding: 20px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
         .bookmark-item { padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
-        /* NOTIFICATIONS (Toast) */
+        /* TOAST NOTIFICATION */
         #toast { 
             position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); 
             background: var(--text-main); color: var(--bg-screen); padding: 12px 24px; 
@@ -109,8 +125,7 @@
             transition: 0.3s; pointer-events: none; z-index: 3000; white-space: nowrap;
         }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
-
-        /* Écran de chargement */
+        
         #loader {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-screen); z-index: 4000; display: flex; flex-direction: column;
@@ -122,48 +137,51 @@
 
     <div id="toast">Message</div>
 
+    <!-- Écran de chargement initial -->
     <div id="loader">
         <div class="logo">Pages.</div>
         <div style="font-size: 12px; color: var(--text-muted);">Chargement de votre livre...</div>
     </div>
 
+    <!-- Barre supérieure -->
     <header>
         <div class="logo">Pages.</div>
         <div class="header-actions">
-            <button class="icon-btn" onclick="openBookmarksMenu()" title="Mes pages sauvées"><i class="fa-solid fa-list-ul"></i></button>
-            <button class="icon-btn" onclick="toggleBookmark()" title="Sauvegarder cette page"><i class="fa-regular fa-bookmark" id="bookmark-icon"></i></button>
-            <button class="icon-btn" onclick="toggleTheme()" title="Mode Nuit/Jour"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
+            <button class="icon-btn" onclick="openBookmarksMenu()"><i class="fa-solid fa-list-ul"></i></button>
+            <button class="icon-btn" onclick="toggleBookmark()"><i class="fa-regular fa-bookmark" id="bookmark-icon"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
         </div>
     </header>
 
+    <!-- Affichage du livre -->
     <div class="reader-container">
         <div class="tap-zone zone-prev" onclick="turnPage('prev')"></div>
         <div class="tap-zone zone-next" onclick="turnPage('next')"></div>
-        
         <div class="page-content-wrapper page-active" id="layer-1"></div>
         <div class="page-content-wrapper" id="layer-2" style="display:none;"></div>
     </div>
 
+    <!-- Barre de pagination inférieure -->
     <footer>
         <span id="page-indicator">Préparation des pages...</span>
     </footer>
 
+    <!-- Overlay Marque-pages -->
     <div id="bookmarks-menu">
         <div class="menu-header">
             <span>Mes Bookmarks</span>
             <button class="icon-btn" onclick="closeBookmarksMenu()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="bookmarks-list" id="bookmarks-list">
-            </div>
+        <div class="bookmarks-list" id="bookmarks-list"></div>
     </div>
 
     <script>
         // ==========================================
-        // 🛠️ CONFIGURATION CLIENT
+        // 🛠️ CONFIGURATION 
+        // Assurez-vous que "livre.txt" est dans le même dossier GitHub que "index.html"
         // ==========================================
-        // Nom de votre fichier texte/json hébergé sur GitHub avec ce code HTML
         const FICHIER_SOURCE = "livre.txt"; 
-        
+
         // ==========================================
         // MOTEUR DU LECTEUR
         // ==========================================
@@ -171,61 +189,59 @@
         let currentIndex = 0;
         let activeLayer = 1;
 
-        // Démarrage
         document.addEventListener("DOMContentLoaded", () => {
-            fetchBookData();
-        });
-
-        // 1. Récupération des données du livre
-        function fetchBookData() {
+            // Lecture du fichier distant
             fetch(FICHIER_SOURCE)
                 .then(response => {
                     if (!response.ok) throw new Error("Fichier introuvable");
-                    return response.json(); // On s'attend à un JSON propre
+                    return response.json();
                 })
-                .then(data => {
-                    processBookData(data);
+                .then(data => { 
+                    processBookData(data); 
                 })
                 .catch(error => {
-                    console.log("Lecture locale (Test) ou erreur :", error);
-                    // 🛠️ DONNÉES DE DÉMO (S'affiche si le fichier n'est pas trouvé ou testé sur PC localement)
-                    const demoData = {
-                        titre: "Manuel de Démo",
-                        contenu: "Bienvenue sur Pages.\n\nCeci est le texte de démonstration.\n\nSi vous voyez ceci, c'est que le fichier 'livre.txt' n'a pas été trouvé, ou que vous ouvrez le fichier HTML directement sur votre PC (ce qui bloque la lecture pour des raisons de sécurité).\n\nPour que cela fonctionne, placez ce fichier HTML et votre 'livre.txt' ensemble sur GitHub Pages, puis reliez l'URL à AppCreator24 !"
-                    };
-                    processBookData(demoData);
+                    // 🛠️ PAGE D'ERREUR SÉCURISÉE (Affichée si le fichier n'est pas trouvé)
+                    console.log("Erreur de chargement :", error);
+                    processBookData({
+                        titre: "Erreur",
+                        pages_pretes: [
+                            "<h2>Oups !</h2><p>Le fichier <strong>livre.txt</strong> n'a pas pu être chargé.</p><br><p>N'oubliez pas que ce fichier doit être hébergé sur votre serveur ou sur GitHub <strong>au même endroit</strong> que ce fichier HTML pour fonctionner sur AppCreator24.</p>"
+                        ]
+                    });
                 });
-        }
+        });
 
-        // 2. Découpage du texte en pages (Pagination intelligente)
         function processBookData(data) {
-            // Remplace les \n par de vrais sauts de ligne HTML
-            let texteBrut = data.contenu.replace(/\n/g, '<br><br>');
-            let mots = texteBrut.split(' ');
+            bookData.titre = data.titre;
             
-            bookData.pages = [];
-            let pageTemporaire = [];
-            let compteCaracteres = 0;
-            
-            // 🛠️ LIMITE DE TEXTE PAR PAGE (Ajustez selon vos préférences)
-            const LIMITE_CARACTERES = 700; 
+            // On charge d'abord "pages_pretes" (s'il y en a) car c'est mieux pour les images
+            if (data.pages_pretes && data.pages_pretes.length > 0) {
+                bookData.pages = data.pages_pretes;
+            } 
+            // Sinon, l'algorithme découpe le long texte tout seul
+            else if (data.contenu) {
+                let texteBrut = data.contenu.replace(/\n/g, '<br><br>');
+                let mots = texteBrut.split(' ');
+                let pageTemporaire = [];
+                let compteCaracteres = 0;
+                const LIMITE_CARACTERES = 700; 
 
-            mots.forEach(mot => {
-                pageTemporaire.push(mot);
-                compteCaracteres += mot.length + 1; // +1 pour l'espace
-                
-                if (compteCaracteres > LIMITE_CARACTERES) {
-                    bookData.pages.push(pageTemporaire.join(' '));
-                    pageTemporaire = [];
-                    compteCaracteres = 0;
-                }
-            });
-            if (pageTemporaire.length > 0) bookData.pages.push(pageTemporaire.join(' '));
+                mots.forEach(mot => {
+                    pageTemporaire.push(mot);
+                    compteCaracteres += mot.length + 1;
+                    if (compteCaracteres > LIMITE_CARACTERES) {
+                        bookData.pages.push(pageTemporaire.join(' '));
+                        pageTemporaire = [];
+                        compteCaracteres = 0;
+                    }
+                });
+                if (pageTemporaire.length > 0) bookData.pages.push(pageTemporaire.join(' '));
+            }
 
-            // Fin du chargement
+            // Fin de la préparation, on cache l'écran de chargement
             document.getElementById('loader').style.display = 'none';
             
-            // Restauration de la dernière page lue (LocalStorage)
+            // Restauration de la sauvegarde (si l'utilisateur avait déjà commencé à lire)
             const pageSauvee = localStorage.getItem(`pages_progression_${data.titre}`);
             currentIndex = pageSauvee ? parseInt(pageSauvee) : 0;
             if (currentIndex >= bookData.pages.length) currentIndex = 0;
@@ -234,7 +250,7 @@
         }
 
         // ==========================================
-        // GESTION DE L'AFFICHAGE ET ANIMATIONS
+        // ANIMATIONS & ACTIONS
         // ==========================================
         function turnPage(direction) {
             if (direction === 'next' && currentIndex < bookData.pages.length - 1) {
@@ -244,7 +260,7 @@
                 currentIndex--;
                 afficherPage('prev');
             } else {
-                showToast(direction === 'next' ? "Fin du livre" : "Début du livre");
+                showToast(direction === 'next' ? "Dernière page" : "Première page");
             }
         }
 
@@ -264,7 +280,7 @@
             if (direction === 'next') {
                 calqueActuel.classList.add('turn-next-out');
                 calqueSuivant.classList.add('turn-next-in');
-                void calqueSuivant.offsetWidth; // Force l'animation
+                void calqueSuivant.offsetWidth; 
                 calqueSuivant.classList.remove('turn-next-in');
                 calqueSuivant.classList.add('page-active');
             } else if (direction === 'prev') {
@@ -284,14 +300,14 @@
             
             activeLayer = activeLayer === 1 ? 2 : 1;
             
-            // Mise à jour de l'interface
+            // Mise à jour de la numérotation et de la sauvegarde
             document.getElementById('page-indicator').innerText = `Page ${currentIndex + 1} / ${bookData.pages.length}`;
             localStorage.setItem(`pages_progression_${bookData.titre}`, currentIndex);
             verifierEtatBookmark();
         }
 
         // ==========================================
-        // SYSTÈME DE BOOKMARKS 🔖
+        // BOOKMARKS ET THÈMES
         // ==========================================
         function toggleBookmark() {
             const cle = `pages_bm_${bookData.titre}_${currentIndex}`;
@@ -299,7 +315,6 @@
                 localStorage.removeItem(cle);
                 showToast("Marque-page retiré");
             } else {
-                // Sauvegarde un petit extrait pour le menu
                 const extrait = bookData.pages[currentIndex].replace(/<[^>]*>?/gm, '').substring(0, 35) + "...";
                 localStorage.setItem(cle, extrait);
                 showToast("Page sauvegardée");
@@ -339,32 +354,17 @@
                     `;
                 }
             }
-            
-            if (!aDesBookmarks) {
-                conteneur.innerHTML = `<div style="text-align:center; padding-top:50px; color:var(--text-muted);">Aucune page sauvegardée.</div>`;
-            }
-            
+            if (!aDesBookmarks) conteneur.innerHTML = `<div style="text-align:center; padding-top:50px; color:var(--text-muted);">Aucune page sauvegardée.</div>`;
             document.getElementById('bookmarks-menu').style.display = 'flex';
         }
 
-        function closeBookmarksMenu() {
-            document.getElementById('bookmarks-menu').style.display = 'none';
-        }
-
+        function closeBookmarksMenu() { document.getElementById('bookmarks-menu').style.display = 'none'; }
         function allerALaPage(index) {
             closeBookmarksMenu();
-            if (index > currentIndex) {
-                currentIndex = index;
-                afficherPage('next');
-            } else if (index < currentIndex) {
-                currentIndex = index;
-                afficherPage('prev');
-            }
+            if (index > currentIndex) { currentIndex = index; afficherPage('next'); } 
+            else if (index < currentIndex) { currentIndex = index; afficherPage('prev'); }
         }
 
-        // ==========================================
-        // FONCTIONS UTILITAIRES (Thème & Toast)
-        // ==========================================
         function toggleTheme() {
             const html = document.documentElement;
             const icon = document.getElementById('theme-icon');
@@ -382,8 +382,7 @@
         let toastTimer;
         function showToast(msg) {
             const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.classList.add('show');
+            t.innerText = msg; t.classList.add('show');
             clearTimeout(toastTimer);
             toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
         }
