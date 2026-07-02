@@ -1,486 +1,757 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="e-ink">
+<html lang="fr" data-theme="creme">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Pages. - Livre de Poche</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root[data-theme="e-ink"] {
-            --bg-screen: #f4f6f8; 
-            --text-main: #111111; 
-            --text-muted: #666666;
-            --border-color: #e5e7eb;
-            --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-        }
-        :root[data-theme="sepia"] {
-            --bg-screen: #f4ecd8; 
-            --text-main: #433422; 
-            --text-muted: #8b7a66;
-            --border-color: #e6d5b8;
-            --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-        }
-        :root[data-theme="dark-mode"] {
-            --bg-screen: #0a0a0a; 
-            --text-main: #d1d5db; 
-            --text-muted: #6b7280;
-            --border-color: #1f2937;
-            --paper-texture: none;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes">
+  <title>Pages. · Livre de Poche 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- THÈMES MODERNES 2026 ----- */
+    :root[data-theme="creme"] {
+      --bg-app: #faf8f5;
+      --bg-page: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #5e5e5e;
+      --text-tertiary: #8a8a8a;
+      --border-subtle: #eae5df;
+      --shadow-page: 0 20px 40px -20px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.03);
+      --accent: #1a1a1a;
+      --accent-soft: #f0ebe4;
+      --overlay-bg: rgba(250,248,245,0.8);
+      --img-filter: none;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+    :root[data-theme="nuit"] {
+      --bg-app: #0c0c0c;
+      --bg-page: #141414;
+      --text-primary: #e0e0e0;
+      --text-secondary: #9a9a9a;
+      --text-tertiary: #6b6b6b;
+      --border-subtle: #2a2a2a;
+      --shadow-page: 0 20px 40px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+      --accent: #f0f0f0;
+      --accent-soft: #2a2a2a;
+      --overlay-bg: rgba(12,12,12,0.8);
+      --img-filter: brightness(0.9) contrast(1.1);
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+    :root[data-theme="papier"] {
+      --bg-app: #f4ecd6;
+      --bg-page: #fef9e6;
+      --text-primary: #3e3a32;
+      --text-secondary: #6b6457;
+      --text-tertiary: #8e8679;
+      --border-subtle: #e0d5bb;
+      --shadow-page: 0 15px 30px -15px rgba(80,60,30,0.2), 0 0 0 1px #e8ddc0;
+      --accent: #3e3a32;
+      --accent-soft: #efe4ce;
+      --overlay-bg: rgba(244,236,214,0.8);
+      --img-filter: sepia(0.3) contrast(1.05);
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+    :root[data-theme="lavande"] {
+      --bg-app: #f7f5fb;
+      --bg-page: #ffffff;
+      --text-primary: #2b2540;
+      --text-secondary: #5e548e;
+      --text-tertiary: #8b83a8;
+      --border-subtle: #e3dfed;
+      --shadow-page: 0 20px 40px -20px rgba(80,60,130,0.15), 0 0 0 1px rgba(100,80,160,0.05);
+      --accent: #2b2540;
+      --accent-soft: #efe9f7;
+      --overlay-bg: rgba(247,245,251,0.8);
+      --img-filter: none;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
-        
-        body, html {
-            width: 100vw; height: 100vh; height: -webkit-fill-available;
-            overflow: hidden; 
-            background-color: var(--bg-screen);
-            font-family: 'Inter', sans-serif;
-            margin: 0; padding: 0;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: var(--paper-texture); pointer-events: none; z-index: 9999;
-        }
+    body, html {
+      width: 100vw;
+      height: 100vh;
+      height: -webkit-fill-available;
+      overflow: hidden;
+      background: var(--bg-app);
+      font-family: var(--font-sans);
+      touch-action: pan-x; 
+      user-select: none;
+      -webkit-user-select: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
 
-        .app-container {
-            width: 100vw; height: 100vh; height: -webkit-fill-available;
-            display: flex; flex-direction: column;
-            background: var(--bg-screen);
-        }
+    .app-frame {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-app);
+      position: relative;
+    }
 
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 20px; 
-            border-bottom: 1px solid var(--border-color);
-            z-index: 100; flex-shrink: 0;
-            height: 55px; 
-        }
-        
-        .logo {
-            font-weight: 800; font-size: 22px; letter-spacing: -1px;
-            color: var(--text-main); font-family: 'Merriweather', serif; font-style: italic;
-        }
-        
-        .header-actions { display: flex; gap: 18px; align-items: center; }
-        .icon-btn {
-            background: none; border: none; color: var(--text-main);
-            cursor: pointer; font-size: 16px; opacity: 0.7; transition: opacity 0.2s;
-            padding: 5px;
-        }
-        .icon-btn:active { opacity: 1; }
+    /* ---- HEADER MINIMAL ---- */
+    .app-header {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: transparent;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 20;
+    }
+    .logo-text {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1.8rem;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+      font-style: italic;
+    }
+    .header-tools {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .tool-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.3rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+      cursor: pointer;
+      background: var(--accent-soft);
+    }
+    .tool-btn:active {
+      background: var(--border-subtle);
+    }
 
-        .reader-container {
-            flex: 1; position: relative;
-            overflow: hidden; 
-            background: var(--bg-screen);
-        }
+    /* ---- ZONE LECTURE CENTRALE ---- */
+    .reader-stage {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 15px 15px 15px;
+      overflow: hidden;
+    }
 
-        .page-content-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 25px 25px 15px 25px; 
-            font-family: 'Merriweather', serif;
-            font-size: 15px; 
-            line-height: 1.6;
-            text-align: justify;
-            hyphens: auto; 
-            -webkit-hyphens: auto;
-            word-spacing: -0.05em;
-            color: var(--text-main);
-            overflow: hidden; 
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
-            will-change: transform;
-        }
+    .page-card {
+      width: 100%;
+      max-width: 480px;
+      height: 100%;
+      background: var(--bg-page);
+      border-radius: 32px;
+      box-shadow: var(--shadow-page);
+      position: absolute;
+      padding: 28px 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.4, 1), opacity 0.4s ease;
+      will-change: transform, opacity;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      border: 1px solid var(--border-subtle);
+    }
+    .page-card::-webkit-scrollbar {
+      display: none;
+    }
 
-        .page-content-wrapper img {
-            display: block; margin: 15px auto;
-            max-width: 100%; max-height: 35vh; 
-            object-fit: contain; 
-            border-radius: 4px;
-            filter: grayscale(100%) contrast(1.1); 
-        }
-        :root[data-theme="dark-mode"] .page-content-wrapper img { filter: brightness(0.85); }
+    /* États des cartes */
+    .page-active {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+      z-index: 5;
+    }
+    .page-before {
+      transform: translateX(-30%) scale(0.96);
+      opacity: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .page-after {
+      transform: translateX(30%) scale(0.96);
+      opacity: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .page-slide-out-left {
+      transform: translateX(-110%) scale(0.92);
+      opacity: 0;
+      z-index: 10;
+    }
+    .page-slide-out-right {
+      transform: translateX(110%) scale(0.92);
+      opacity: 0;
+      z-index: 10;
+    }
 
-        .page-content-wrapper h2 {
-            margin: 5px 0 15px 0; font-family: 'Inter', sans-serif;
-            font-weight: 700; font-size: 20px; letter-spacing: -0.5px;
-            line-height: 1.2;
-        }
-        .page-content-wrapper h3 {
-            margin: 0 0 5px 0; font-family: 'Inter', sans-serif;
-            font-size: 11px; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 1.5px;
-        }
+    /* Contenu page */
+    .page-category {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-tertiary);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .page-title {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1.9rem;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      letter-spacing: -0.3px;
+    }
+    .page-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 18px;
+      filter: var(--img-filter);
+      background: var(--border-subtle);
+    }
+    .page-text {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      flex: 1;
+      word-spacing: 0.02em;
+      font-weight: 420;
+    }
+    .page-text strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .meta-center {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+    }
 
-        .page-active { transform: translateX(0); opacity: 1; z-index: 5; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-        .page-exit-left { transform: translateX(-100%); opacity: 1; z-index: 10; box-shadow: 15px 0 20px rgba(0,0,0,0.08); }
-        .page-exit-right { transform: translateX(100%); opacity: 1; z-index: 10; box-shadow: -15px 0 20px rgba(0,0,0,0.08); }
-        .page-enter-from-right { transform: translateX(20%); opacity: 0; z-index: 1; }
-        .page-enter-from-left { transform: translateX(-20%); opacity: 0; z-index: 1; }
+    /* Pied de page discrets */
+    .reader-footer {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      color: var(--text-tertiary);
+      background: transparent;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
 
-        .swipe-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; cursor: pointer; }
+    /* Menu signets */
+    .bookmark-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--overlay-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      border-radius: 0;
+    }
+    .panel-header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .bookmark-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .bookmark-row {
+      background: var(--bg-page);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+    }
 
-        footer {
-            height: 35px; display: flex; justify-content: center; align-items: center;
-            font-size: 11px; font-weight: 500; color: var(--text-muted);
-            z-index: 100; flex-shrink: 0;
-            font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase;
-        }
+    .toast-message {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-primary);
+      color: var(--bg-page);
+      padding: 8px 22px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      z-index: 200;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .toast-message.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
 
-        #bookmarks-menu {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-screen); z-index: 2000; display: none; flex-direction: column;
-        }
-        .menu-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 700; }
-        .bookmarks-list { padding: 15px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .bookmark-item { padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-
-        #toast {
-            position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%);
-            background: var(--text-main); color: var(--bg-screen); padding: 8px 20px;
-            border-radius: 20px; font-size: 12px; font-weight: 500; opacity: 0;
-            transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 3000; white-space: nowrap;
-        }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
-
-        #loader {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-screen); z-index: 4000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; gap: 10px; color: var(--text-main);
-        }
-    </style>
+    /* Écran chargement */
+    .splash {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-app);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+    }
+  </style>
 </head>
 <body>
+<div class="app-frame" id="appFrame">
+  <div class="splash" id="splashScreen">
+    <div style="font-size: 2.5rem; font-style: italic; font-weight: 600;">Pages.</div>
+    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">Ouverture du livre...</div>
+  </div>
 
-    <div id="toast">Message</div>
-
-    <div class="app-container">
-        <div id="loader">
-            <div class="logo">Pages.</div>
-            <div style="font-size: 12px; color: var(--text-muted); font-family: 'Inter', sans-serif;">Ouverture du livre...</div>
-        </div>
-
-        <header>
-            <div class="logo">Pages.</div>
-            <div class="header-actions">
-                <button class="icon-btn" onclick="openBookmarksMenu()"><i class="fa-solid fa-list-ul"></i></button>
-                <button class="icon-btn" onclick="toggleBookmark()"><i class="fa-regular fa-bookmark" id="bookmark-icon"></i></button>
-                <button class="icon-btn" onclick="toggleTheme()"><i class="fa-solid fa-droplet" id="theme-icon"></i></button>
-            </div>
-        </header>
-
-        <div class="reader-container" id="reader-container">
-            <div class="swipe-layer" id="swipe-layer" onclick="handleScreenTap(event)"></div>
-            <div class="page-content-wrapper page-active" id="layer-1"></div>
-            <div class="page-content-wrapper" id="layer-2" style="display:none;"></div>
-        </div>
-
-        <footer>
-            <span id="page-indicator">-</span>
-        </footer>
-
-        <div id="bookmarks-menu">
-            <div class="menu-header">
-                <span>Marque-pages</span>
-                <button class="icon-btn" onclick="closeBookmarksMenu()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="bookmarks-list" id="bookmarks-list"></div>
-        </div>
+  <header class="app-header">
+    <span class="logo-text">Pages.</span>
+    <div class="header-tools">
+      <button class="tool-btn" id="btnBookmarks" aria-label="Signets"><i class="fas fa-bookmark"></i></button>
+      <button class="tool-btn" id="btnTheme" aria-label="Thème"><i class="fas fa-palette"></i></button>
     </div>
+  </header>
 
-    <script>
-        // ==========================================
-        // 🛠️ FONCTIONS SÉCURISÉES POUR LA MÉMOIRE (ANTI-CRASH)
-        // ==========================================
-        function getMemoire(cle) {
-            try { return localStorage.getItem(cle); } catch(e) { return null; }
+  <div class="reader-stage" id="readerStage">
+    <div class="page-card page-active" id="pageCardA"></div>
+    <div class="page-card" id="pageCardB" style="display:none;"></div>
+  </div>
+
+  <div class="reader-footer">
+    <span id="pageCounter">Page 1</span>
+  </div>
+
+  <div class="bookmark-panel" id="bookmarkPanel">
+    <div class="panel-header">
+      <span>Marque-pages</span>
+      <button class="tool-btn" id="closeBookmarkPanel"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="bookmark-list" id="bookmarkListContainer"></div>
+  </div>
+
+  <div class="toast-message" id="toast"></div>
+</div>
+
+<script>
+  (function() {
+    // ----- DONNÉES DU LIVRE ( optimisé sans scroll excessif ) -----
+    const BOOK_PAGES = [
+      {
+        category: "Roman Noir",
+        title: "L'Ombre de la Nation",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80",
+        text: "La pluie s'abattait violemment sur les pavés de la place de la Nation. Les lampadaires clignotaient, luttant contre l'obscurité grandissante.<br><br>L'inspecteur releva le col de son imperméable. Le corps gisait près de la bouche de métro, un simple bout de papier serré dans la main gauche."
+      },
+      {
+        category: "Recette du chef",
+        title: "Pancakes traditionnels",
+        image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80",
+        text: "<strong>Ingrédients :</strong><br>• 250g de farine de blé<br>• 2 œufs frais<br>• 30 cl de lait entier<br><br><strong>Préparation :</strong> Mélangez la farine et les œufs, incorporez le lait progressivement. Cuisez dans une poêle chaude légèrement beurrée."
+      },
+      {
+        category: "Portfolio Art",
+        title: "Minimalisme Urbain",
+        image: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?w=600&q=80",
+        text: "<em>« Béton et Lumière », Paris 2026.</em><br><br>La photographie d'architecture ne consiste pas seulement à capturer des bâtiments. C'est l'art de figer le dialogue silencieux entre l'homme et la lumière naturelle."
+      },
+      {
+        category: "Conte pour enfants",
+        title: "Le Petit Renard",
+        image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600&q=80",
+        text: "Il était une fois, un petit renard roux qui adorait explorer la grande forêt magique. Un jour, il trouva une étoile tombée du ciel... Elle brillait doucement entre les fougères."
+      },
+      {
+        category: "Archives",
+        title: "Révolution Industrielle",
+        image: "https://images.unsplash.com/photo-1461360228754-6e81c478b882?w=600&q=80",
+        text: "Le XIXe siècle marque un tournant décisif. Avec l'invention de la machine à vapeur, le monde rural bascule brusquement vers une ère de mécanisation intensive."
+      }
+    ];
+
+    const BOOK_TITLE = "Pages.";
+    const STORAGE_KEY_PAGE = "pgs_current_page";
+    const STORAGE_KEY_BM = "pgs_bookmarks";
+
+    // État
+    let currentPageIndex = 0;
+    let activeCard = 'A'; // 'A' ou 'B'
+    let isAnimating = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let swipeHandled = false;
+
+    // Thèmes
+    const themes = ['creme', 'nuit', 'papier', 'lavande'];
+    const themeIcons = ['fa-palette', 'fa-moon', 'fa-sun', 'fa-feather'];
+    let themeIndex = 0;
+
+    // Éléments DOM
+    const pageCardA = document.getElementById('pageCardA');
+    const pageCardB = document.getElementById('pageCardB');
+    const pageCounter = document.getElementById('pageCounter');
+    const toast = document.getElementById('toast');
+    const bookmarkPanel = document.getElementById('bookmarkPanel');
+    const bookmarkListContainer = document.getElementById('bookmarkListContainer');
+    const splashScreen = document.getElementById('splashScreen');
+    const btnBookmarks = document.getElementById('btnBookmarks');
+    const btnTheme = document.getElementById('btnTheme');
+    const closeBookmarkPanel = document.getElementById('closeBookmarkPanel');
+    const readerStage = document.getElementById('readerStage');
+
+    // ----- UTILITAIRES STOCKAGE -----
+    function safeGet(key) {
+      try { return localStorage.getItem(key); } catch(e) { return null; }
+    }
+    function safeSet(key, value) {
+      try { localStorage.setItem(key, value); } catch(e) {}
+    }
+    function safeRemove(key) {
+      try { localStorage.removeItem(key); } catch(e) {}
+    }
+
+    // ----- AFFICHAGE PAGE DANS UNE CARTE -----
+    function renderPageInto(cardElement, pageData) {
+      if (!pageData) return;
+      cardElement.innerHTML = `
+        <div class="page-category">${pageData.category || ''}</div>
+        <div class="page-title">${pageData.title || ''}</div>
+        ${pageData.image ? `<img class="page-image" src="${pageData.image}" alt="illustration">` : ''}
+        <div class="page-text">${pageData.text || ''}</div>
+      `;
+    }
+
+    function getActiveCardElement() {
+      return activeCard === 'A' ? pageCardA : pageCardB;
+    }
+
+    function getInactiveCardElement() {
+      return activeCard === 'A' ? pageCardB : pageCardA;
+    }
+
+    function updatePageDisplay() {
+      const activeEl = getActiveCardElement();
+      renderPageInto(activeEl, BOOK_PAGES[currentPageIndex]);
+      pageCounter.textContent = `Page ${currentPageIndex + 1} / ${BOOK_PAGES.length}`;
+      safeSet(STORAGE_KEY_PAGE, currentPageIndex);
+      updateBookmarkButtonState();
+    }
+
+    // Initialisation des deux cartes
+    function initialRender() {
+      renderPageInto(pageCardA, BOOK_PAGES[currentPageIndex]);
+      pageCardA.className = 'page-card page-active';
+      pageCardB.style.display = 'none';
+      pageCardB.className = 'page-card';
+      activeCard = 'A';
+      pageCounter.textContent = `Page ${currentPageIndex + 1} / ${BOOK_PAGES.length}`;
+    }
+
+    // ----- ANIMATION DE TRANSITION STYLÉE 2026 -----
+    function animateTransition(direction) {
+      if (isAnimating) return;
+      if (direction === 'next' && currentPageIndex >= BOOK_PAGES.length - 1) {
+        showToastMessage('Fin du livre');
+        return;
+      }
+      if (direction === 'prev' && currentPageIndex <= 0) {
+        showToastMessage('Début du livre');
+        return;
+      }
+
+      isAnimating = true;
+      const oldCard = getActiveCardElement();
+      const newCard = getInactiveCardElement();
+
+      const newIndex = direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
+      renderPageInto(newCard, BOOK_PAGES[newIndex]);
+
+      // Préparation des classes
+      oldCard.classList.remove('page-active');
+      newCard.style.display = '';
+      newCard.classList.remove('page-before', 'page-after', 'page-slide-out-left', 'page-slide-out-right');
+
+      if (direction === 'next') {
+        oldCard.classList.add('page-slide-out-left');
+        newCard.classList.add('page-after');
+        void newCard.offsetWidth; // force reflow
+        newCard.classList.remove('page-after');
+        newCard.classList.add('page-active');
+      } else {
+        oldCard.classList.add('page-slide-out-right');
+        newCard.classList.add('page-before');
+        void newCard.offsetWidth;
+        newCard.classList.remove('page-before');
+        newCard.classList.add('page-active');
+      }
+
+      setTimeout(() => {
+        oldCard.style.display = 'none';
+        oldCard.classList.remove('page-slide-out-left', 'page-slide-out-right');
+        activeCard = activeCard === 'A' ? 'B' : 'A';
+        currentPageIndex = newIndex;
+        updatePageDisplay();
+        isAnimating = false;
+      }, 400);
+    }
+
+    function goToNextPage() { animateTransition('next'); }
+    function goToPrevPage() { animateTransition('prev'); }
+
+    // ----- GESTES TACTILES & TAP -----
+    function handleTouchStart(e) {
+      if (isAnimating) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      swipeHandled = false;
+    }
+
+    function handleTouchMove(e) {
+      if (isAnimating || swipeHandled) return;
+      const deltaX = e.touches[0].clientX - touchStartX;
+      const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+      if (deltaY > Math.abs(deltaX)) return; // scroll vertical prioritaire dans la carte
+    }
+
+    function handleTouchEnd(e) {
+      if (isAnimating || swipeHandled) return;
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      const threshold = 45;
+      if (deltaX < -threshold) {
+        swipeHandled = true;
+        goToNextPage();
+      } else if (deltaX > threshold) {
+        swipeHandled = true;
+        goToPrevPage();
+      }
+    }
+
+    function handleClickOnStage(e) {
+      if (isAnimating) return;
+      const rect = readerStage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const width = rect.width;
+      if (x < width * 0.3) {
+        goToPrevPage();
+      } else if (x > width * 0.7) {
+        goToNextPage();
+      }
+    }
+
+    // ----- SIGNETS -----
+    function getBookmarks() {
+      const raw = safeGet(STORAGE_KEY_BM);
+      return raw ? JSON.parse(raw) : [];
+    }
+
+    function saveBookmarks(bookmarks) {
+      safeSet(STORAGE_KEY_BM, JSON.stringify(bookmarks));
+    }
+
+    function isCurrentPageBookmarked() {
+      const bookmarks = getBookmarks();
+      return bookmarks.includes(currentPageIndex);
+    }
+
+    function toggleBookmark() {
+      const bookmarks = getBookmarks();
+      const index = bookmarks.indexOf(currentPageIndex);
+      if (index > -1) {
+        bookmarks.splice(index, 1);
+        showToastMessage('Signet retiré');
+      } else {
+        bookmarks.push(currentPageIndex);
+        showToastMessage('Page marquée');
+      }
+      saveBookmarks(bookmarks);
+      updateBookmarkButtonState();
+    }
+
+    function updateBookmarkButtonState() {
+      const icon = btnBookmarks.querySelector('i');
+      if (isCurrentPageBookmarked()) {
+        icon.className = 'fas fa-bookmark';
+        btnBookmarks.style.color = 'var(--accent)';
+      } else {
+        icon.className = 'far fa-bookmark';
+        btnBookmarks.style.color = '';
+      }
+    }
+
+    function openBookmarkPanel() {
+      const bookmarks = getBookmarks();
+      bookmarkListContainer.innerHTML = '';
+      if (bookmarks.length === 0) {
+        bookmarkListContainer.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-tertiary);">Aucun signet pour le moment.</div>';
+      } else {
+        bookmarks.sort((a,b) => a-b).forEach(idx => {
+          const page = BOOK_PAGES[idx];
+          const div = document.createElement('div');
+          div.className = 'bookmark-row';
+          div.innerHTML = `
+            <div>
+              <div style="font-weight:600; color:var(--text-primary);">Page ${idx+1}</div>
+              <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:4px;">${page.title || 'Sans titre'}</div>
+            </div>
+            <i class="fas fa-chevron-right" style="color:var(--text-tertiary);"></i>
+          `;
+          div.addEventListener('click', () => {
+            navigateToPage(idx);
+            closeBookmarkPanelFn();
+          });
+          bookmarkListContainer.appendChild(div);
+        });
+      }
+      bookmarkPanel.style.display = 'flex';
+    }
+
+    function closeBookmarkPanelFn() {
+      bookmarkPanel.style.display = 'none';
+    }
+
+    function navigateToPage(index) {
+      if (index === currentPageIndex || isAnimating) return;
+      const direction = index > currentPageIndex ? 'next' : 'prev';
+      const oldIndex = currentPageIndex;
+      // On prépare la carte inactive avec la page cible
+      const newCard = getInactiveCardElement();
+      renderPageInto(newCard, BOOK_PAGES[index]);
+      // On force l'animation dans la bonne direction
+      currentPageIndex = index; // temporaire pour que animateTransition utilise le bon index
+      // Petite astuce : on remet l'ancien index pour que la fonction décale correctement
+      currentPageIndex = oldIndex;
+      animateTransition(direction);
+    }
+
+    // ----- THÈMES -----
+    function cycleTheme() {
+      themeIndex = (themeIndex + 1) % themes.length;
+      const theme = themes[themeIndex];
+      document.documentElement.setAttribute('data-theme', theme);
+      btnTheme.querySelector('i').className = `fas ${themeIcons[themeIndex]}`;
+      const themeNames = ['Crème', 'Nuit', 'Papier', 'Lavande'];
+      showToastMessage(`Thème ${themeNames[themeIndex]}`);
+    }
+
+    // ----- TOAST -----
+    function showToastMessage(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    // ----- RESTAURATION SESSION -----
+    function restoreSession() {
+      const saved = safeGet(STORAGE_KEY_PAGE);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < BOOK_PAGES.length) {
+          currentPageIndex = parsed;
         }
-        function setMemoire(cle, valeur) {
-            try { localStorage.setItem(cle, valeur); } catch(e) { console.log("Mémoire bloquée par l'appareil."); }
-        }
-        function supprMemoire(cle) {
-            try { localStorage.removeItem(cle); } catch(e) { }
-        }
+      }
+      initialRender();
+      updateBookmarkButtonState();
+      splashScreen.style.display = 'none';
+    }
 
-        // ==========================================
-        // CONFIGURATION DU LIVRE
-        // ==========================================
-        const LIVRE_DIRECT = {
-            "titre": "Showcase Base Essentielle",
-            "pages_pretes": [
-                `<h3>Roman Noir</h3>
-                 <h2>L'Ombre de la Nation</h2>
-                 <p>La pluie s'abattait violemment sur les pavés de la place de la Nation. Les lampadaires clignotaient, luttant contre l'obscurité grandissante de cette soirée de novembre.</p><br>
-                 <p>L'inspecteur releva le col de son imperméable. Le corps gisait près de la bouche de métro, un simple bout de papier serré dans la main gauche. L'encre sur le papier était encore fraîche.</p>`,
-                
-                `<h3>Recette du chef</h3>
-                 <h2>Pancakes traditionnels</h2>
-                 <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600" alt="Pancakes">
-                 <p style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Temps : 15 min | Parts : 4 personnes</p>
-                 <p><strong>Ingrédients :</strong><br>
-                 • 250g de farine de blé<br>
-                 • 2 oeufs frais<br>
-                 • 30 cl de lait entier</p>`,
+    // ----- ÉVÉNEMENTS -----
+    readerStage.addEventListener('touchstart', handleTouchStart, {passive: true});
+    readerStage.addEventListener('touchmove', handleTouchMove, {passive: true});
+    readerStage.addEventListener('touchend', handleTouchEnd);
+    readerStage.addEventListener('click', handleClickOnStage);
 
-                `<h3>Portfolio Art</h3>
-                 <h2>Minimalisme Urbain</h2>
-                 <img src="https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?w=600" alt="Architecture">
-                 <p style="text-align: center; font-size: 12px; margin-bottom: 15px;"><em>"Béton et Lumière", Paris 2026.</em></p>
-                 <p>La photographie d'architecture ne consiste pas seulement à capturer des bâtiments. C'est l'art de figer le dialogue silencieux entre l'homme et la lumière naturelle.</p>`,
+    btnBookmarks.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openBookmarkPanel();
+    });
 
-                `<h3>Conte pour enfants</h3>
-                 <h2>Le Petit Renard</h2>
-                 <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600" alt="Renard peluche">
-                 <p style="font-size: 18px; line-height: 1.5; text-align: center; margin-top: 15px;">
-                    Il était une fois, un petit renard roux qui adorait explorer la grande forêt magique.<br><br>
-                    Un jour, il trouva une étoile tombée du ciel...
-                 </p>`,
+    closeBookmarkPanel.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeBookmarkPanelFn();
+    });
 
-                `<h3>Archives</h3>
-                 <h2>Révolution Industrielle</h2>
-                 <img src="https://images.unsplash.com/photo-1461360228754-6e81c478b882?w=600" alt="Usine ancienne">
-                 <p>Le XIXe siècle marque un tournant décisif. Avec l'invention de la machine à vapeur, le monde rural bascule brusquement vers une ère de mécanisation intensive.</p>`
-            ]
-        };
+    btnTheme.addEventListener('click', (e) => {
+      e.stopPropagation();
+      cycleTheme();
+    });
 
-        let bookData = { titre: "Pages.", pages: [] };
-        let currentIndex = 0;
-        let activeLayer = 1;
-        let isAnimating = false;
+    // Bouton signet rapide via appui long ou double clic ? On ajoute un listener sur le bouton signet lui-même.
+    btnBookmarks.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      toggleBookmark();
+    });
+    // Alternative: appui long sur le bouton signet
+    let pressTimer;
+    btnBookmarks.addEventListener('touchstart', (e) => {
+      pressTimer = setTimeout(() => {
+        toggleBookmark();
+      }, 600);
+    });
+    btnBookmarks.addEventListener('touchend', () => clearTimeout(pressTimer));
+    btnBookmarks.addEventListener('touchmove', () => clearTimeout(pressTimer));
 
-        let touchStartX = 0; let touchStartY = 0; let touchCurrentX = 0;
-        let isSwiping = false; const SWIPE_THRESHOLD = 40;
+    // Fermer le panneau signets en cliquant en dehors (sur le stage)
+    bookmarkPanel.addEventListener('click', (e) => {
+      if (e.target === bookmarkPanel) closeBookmarkPanelFn();
+    });
 
-        // Lancement immédiat (Anti-freeze)
-        function initApp() {
-            processBookData(LIVRE_DIRECT);
-            setupSwipeListeners();
-        }
-
-        function handleScreenTap(e) {
-            if (isAnimating) return;
-            const screenWidth = window.innerWidth;
-            const tapX = e.clientX;
-            if (tapX < screenWidth * 0.35) turnPage('prev');
-            else if (tapX > screenWidth * 0.35) turnPage('next');
-        }
-
-        function setupSwipeListeners() {
-            const swipeLayer = document.getElementById('swipe-layer');
-            swipeLayer.addEventListener('touchstart', (e) => {
-                if (isAnimating) return;
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-                isSwiping = true;
-            }, { passive: true });
-            
-            swipeLayer.addEventListener('touchmove', (e) => {
-                if (!isSwiping || isAnimating) return;
-                touchCurrentX = e.touches[0].clientX;
-                const deltaX = touchCurrentX - touchStartX;
-                const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
-                if (deltaY > Math.abs(deltaX)) { isSwiping = false; return; } 
-            }, { passive: true });
-            
-            swipeLayer.addEventListener('touchend', () => {
-                if (!isSwiping || isAnimating) { isSwiping = false; return; }
-                const deltaX = touchCurrentX - touchStartX;
-                if (deltaX < -SWIPE_THRESHOLD) turnPage('next');
-                else if (deltaX > SWIPE_THRESHOLD) turnPage('prev');
-                isSwiping = false; touchCurrentX = 0;
-            });
-        }
-
-        function processBookData(data) {
-            bookData.titre = data.titre || "Pages.";
-            
-            if (data.pages_pretes && data.pages_pretes.length > 0) {
-                bookData.pages = data.pages_pretes;
-            } else if (data.contenu) {
-                let texteBrut = data.contenu.replace(/\n/g, '<br><br>');
-                let mots = texteBrut.split(' ');
-                let pageTemp = [];
-                let charCount = 0;
-                const LIMIT = 650; 
-                
-                mots.forEach(mot => {
-                    pageTemp.push(mot);
-                    charCount += mot.length + 1;
-                    if (charCount > LIMIT) {
-                        bookData.pages.push(pageTemp.join(' '));
-                        pageTemp = []; charCount = 0;
-                    }
-                });
-                if (pageTemp.length > 0) bookData.pages.push(pageTemp.join(' '));
-            }
-            
-            // On cache l'écran de chargement quoi qu'il arrive
-            document.getElementById('loader').style.display = 'none';
-            
-            // Restauration sécurisée
-            const savedPage = getMemoire(`pgs_${bookData.titre}`);
-            currentIndex = savedPage ? parseInt(savedPage) : 0;
-            if (currentIndex >= bookData.pages.length) currentIndex = 0;
-            
-            renderPage();
-        }
-
-        function turnPage(direction) {
-            if (isAnimating) return;
-            if (direction === 'next' && currentIndex < bookData.pages.length - 1) {
-                currentIndex++; animatePage('next');
-            } else if (direction === 'prev' && currentIndex > 0) {
-                currentIndex--; animatePage('prev');
-            } else {
-                showToast(direction === 'next' ? "Fin du livre" : "Début du livre");
-            }
-        }
-
-        function animatePage(direction) {
-            isAnimating = true;
-            const layer1 = document.getElementById('layer-1');
-            const layer2 = document.getElementById('layer-2');
-            const currentLayer = activeLayer === 1 ? layer1 : layer2;
-            const nextLayer = activeLayer === 1 ? layer2 : layer1;
-            
-            nextLayer.innerHTML = bookData.pages[currentIndex];
-            nextLayer.style.display = 'block';
-            
-            currentLayer.className = 'page-content-wrapper';
-            nextLayer.className = 'page-content-wrapper';
-            
-            if (direction === 'next') {
-                currentLayer.classList.add('page-exit-left');
-                nextLayer.classList.add('page-enter-from-right');
-                void nextLayer.offsetWidth; 
-                
-                requestAnimationFrame(() => {
-                    nextLayer.classList.remove('page-enter-from-right');
-                    nextLayer.classList.add('page-active');
-                });
-            } else if (direction === 'prev') {
-                currentLayer.classList.add('page-exit-right');
-                nextLayer.classList.add('page-enter-from-left');
-                void nextLayer.offsetWidth;
-                
-                requestAnimationFrame(() => {
-                    nextLayer.classList.remove('page-enter-from-left');
-                    nextLayer.classList.add('page-active');
-                });
-            }
-            
-            setTimeout(() => {
-                currentLayer.style.display = 'none';
-                currentLayer.classList.remove('page-exit-left', 'page-exit-right');
-                activeLayer = activeLayer === 1 ? 2 : 1;
-                isAnimating = false;
-            }, 400); 
-            
-            updateUI();
-        }
-
-        function renderPage() {
-            const layer1 = document.getElementById('layer-1');
-            const layer2 = document.getElementById('layer-2');
-            layer1.innerHTML = bookData.pages[currentIndex] || '';
-            layer1.className = 'page-content-wrapper page-active';
-            layer1.style.display = 'block';
-            layer2.style.display = 'none';
-            activeLayer = 1;
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('page-indicator').innerText = `Page ${currentIndex + 1}`;
-            setMemoire(`pgs_${bookData.titre}`, currentIndex);
-            
-            const icon = document.getElementById('bookmark-icon');
-            const key = `pgs_bm_${bookData.titre}_${currentIndex}`;
-            icon.className = getMemoire(key) ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark";
-        }
-
-        function toggleBookmark() {
-            const key = `pgs_bm_${bookData.titre}_${currentIndex}`;
-            if (getMemoire(key)) {
-                supprMemoire(key); showToast("Signet retiré");
-            } else {
-                const excerpt = bookData.pages[currentIndex].replace(/<[^>]*>?/gm, '').substring(0, 30) + "...";
-                setMemoire(key, excerpt); showToast("Page marquée");
-            }
-            updateUI();
-        }
-
-        function openBookmarksMenu() {
-            const container = document.getElementById('bookmarks-list');
-            container.innerHTML = ''; let hasBookmarks = false;
-            
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key.startsWith(`pgs_bm_${bookData.titre}_`)) {
-                        hasBookmarks = true;
-                        const pageNum = parseInt(key.split('_').pop());
-                        const excerpt = localStorage.getItem(key);
-                        container.innerHTML += `
-                            <div class="bookmark-item" onclick="goToPage(${pageNum})">
-                                <div>
-                                    <div style="font-weight:700; font-size:14px; margin-bottom:4px; font-family:'Inter',sans-serif;">Page ${pageNum + 1}</div>
-                                    <div style="font-size:12px; color:var(--text-muted); font-style:italic;">"${excerpt}"</div>
-                                </div>
-                                <i class="fa-solid fa-chevron-right" style="color:var(--text-muted); font-size: 12px;"></i>
-                            </div>`;
-                    }
-                }
-            } catch(e) {
-                // Si la mémoire est totalement bloquée par AppCreator24
-                container.innerHTML = `<div style="text-align:center; padding-top:40px; font-size:13px; color:var(--text-muted);">Les signets sont désactivés sur cet appareil.</div>`;
-                hasBookmarks = true; 
-            }
-            
-            if (!hasBookmarks) container.innerHTML = `<div style="text-align:center; padding-top:40px; font-size:13px; color:var(--text-muted);">Aucun signet.</div>`;
-            document.getElementById('bookmarks-menu').style.display = 'flex';
-        }
-
-        function closeBookmarksMenu() { document.getElementById('bookmarks-menu').style.display = 'none'; }
-        
-        function goToPage(index) {
-            closeBookmarksMenu();
-            if (index === currentIndex) return;
-            const direction = index > currentIndex ? 'next' : 'prev';
-            currentIndex = index; animatePage(direction);
-        }
-
-        const themes = ['e-ink', 'sepia', 'dark-mode'];
-        const icons = ['fa-droplet', 'fa-book-open', 'fa-moon'];
-        const messages = ['Liseuse E-ink', 'Mode Sépia', 'Mode Nuit'];
-        let currentThemeIndex = 0;
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const icon = document.getElementById('theme-icon');
-            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-            const newTheme = themes[currentThemeIndex];
-            
-            html.setAttribute('data-theme', newTheme);
-            icon.className = `fa-solid ${icons[currentThemeIndex]}`;
-            showToast(messages[currentThemeIndex]);
-        }
-
-        let toastTimer;
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg; t.classList.add('show');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
-        }
-
-        // Lancement immédiat de l'application
-        initApp();
-    </script>
+    // Lancement
+    restoreSession();
+  })();
+</script>
 </body>
 </html>
