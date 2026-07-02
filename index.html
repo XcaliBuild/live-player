@@ -11,65 +11,57 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ==========================================
-           🎨 THÈMES DE LECTURE (PROFESSIONNEL)
-           ========================================== */
         :root[data-theme="e-ink"] {
-            --bg-screen: #f4f6f8; /* Gris très clair, anti-reflet */
-            --text-main: #111111; /* Noir d'encre */
+            --bg-screen: #f4f6f8; 
+            --text-main: #111111; 
             --text-muted: #666666;
             --border-color: #e5e7eb;
             --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
         }
         :root[data-theme="sepia"] {
-            --bg-screen: #f4ecd8; /* Sépia doux, vieux papier */
-            --text-main: #433422; /* Brun foncé */
+            --bg-screen: #f4ecd8; 
+            --text-main: #433422; 
             --text-muted: #8b7a66;
             --border-color: #e6d5b8;
             --paper-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
         }
         :root[data-theme="dark-mode"] {
-            --bg-screen: #0a0a0a; /* Noir absolu OLED */
-            --text-main: #d1d5db; /* Gris clair pour ne pas éblouir */
+            --bg-screen: #0a0a0a; 
+            --text-main: #d1d5db; 
             --text-muted: #6b7280;
             --border-color: #1f2937;
             --paper-texture: none;
         }
 
-        /* RESET TOTAL ET PLEIN ÉCRAN FLUIDE */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
         
         body, html {
             width: 100vw; height: 100vh; height: -webkit-fill-available;
-            overflow: hidden; /* AUCUN SCROLL GLOBAL */
+            overflow: hidden; 
             background-color: var(--bg-screen);
             font-family: 'Inter', sans-serif;
             margin: 0; padding: 0;
         }
 
-        /* TEXTURE GLOBALE */
         body::after {
             content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-image: var(--paper-texture); pointer-events: none; z-index: 9999;
         }
 
-        /* CONTENEUR PRINCIPAL PLEIN ÉCRAN */
         .app-container {
             width: 100vw; height: 100vh; height: -webkit-fill-available;
             display: flex; flex-direction: column;
             background: var(--bg-screen);
         }
 
-        /* EN-TÊTE DISCRET (Moins encombrant) */
         header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 20px; /* Marges réduites */
+            padding: 10px 20px; 
             border-bottom: 1px solid var(--border-color);
             z-index: 100; flex-shrink: 0;
-            height: 55px; /* Hauteur fixe et fine */
+            height: 55px; 
         }
         
-        /* LOGO PAGES. AGRANDI MAIS PROPORTIONNEL */
         .logo {
             font-weight: 800; font-size: 22px; letter-spacing: -1px;
             color: var(--text-main); font-family: 'Merriweather', serif; font-style: italic;
@@ -83,43 +75,37 @@
         }
         .icon-btn:active { opacity: 1; }
 
-        /* ZONE DE LECTURE (Fixe, sans scroll) */
         .reader-container {
             flex: 1; position: relative;
-            overflow: hidden; /* INTERDICTION DE SCROLLER */
+            overflow: hidden; 
             background: var(--bg-screen);
         }
 
-        /* MISE EN PAGE DU TEXTE (Livre de poche) */
         .page-content-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 25px 25px 15px 25px; /* Marges confortables comme un livre */
+            padding: 25px 25px 15px 25px; 
             font-family: 'Merriweather', serif;
-            font-size: 15px; /* Taille standard professionnelle (pas énorme) */
+            font-size: 15px; 
             line-height: 1.6;
             text-align: justify;
-            hyphens: auto; /* Coupe les mots en fin de ligne (césure) */
+            hyphens: auto; 
             -webkit-hyphens: auto;
             word-spacing: -0.05em;
             color: var(--text-main);
-            overflow: hidden; /* C'est ce qui cache le texte qui dépasse */
-            
-            /* Animations */
+            overflow: hidden; 
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
             will-change: transform;
         }
 
-        /* GESTION RESPONSIVE DES IMAGES */
         .page-content-wrapper img {
             display: block; margin: 15px auto;
-            max-width: 100%; max-height: 35vh; /* Ne dépasse jamais 35% de l'écran */
-            object-fit: contain; /* L'image s'adapte sans se déformer ni être rognée */
+            max-width: 100%; max-height: 35vh; 
+            object-fit: contain; 
             border-radius: 4px;
-            filter: grayscale(100%) contrast(1.1); /* Noir et blanc par défaut pour le réalisme */
+            filter: grayscale(100%) contrast(1.1); 
         }
-        :root[data-theme="dark-mode"] .page-content-wrapper img { filter: brightness(0.85); } /* Remet les couleurs en mode nuit mais tamisées */
+        :root[data-theme="dark-mode"] .page-content-wrapper img { filter: brightness(0.85); }
 
-        /* TITRES */
         .page-content-wrapper h2 {
             margin: 5px 0 15px 0; font-family: 'Inter', sans-serif;
             font-weight: 700; font-size: 20px; letter-spacing: -0.5px;
@@ -131,17 +117,14 @@
             text-transform: uppercase; letter-spacing: 1.5px;
         }
 
-        /* ANIMATIONS DU TOUR DE PAGE (Ombres fluides) */
         .page-active { transform: translateX(0); opacity: 1; z-index: 5; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
         .page-exit-left { transform: translateX(-100%); opacity: 1; z-index: 10; box-shadow: 15px 0 20px rgba(0,0,0,0.08); }
         .page-exit-right { transform: translateX(100%); opacity: 1; z-index: 10; box-shadow: -15px 0 20px rgba(0,0,0,0.08); }
         .page-enter-from-right { transform: translateX(20%); opacity: 0; z-index: 1; }
         .page-enter-from-left { transform: translateX(-20%); opacity: 0; z-index: 1; }
 
-        /* ZONES TACTILES */
         .swipe-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; cursor: pointer; }
 
-        /* PIED DE PAGE (Juste le numéro de page) */
         footer {
             height: 35px; display: flex; justify-content: center; align-items: center;
             font-size: 11px; font-weight: 500; color: var(--text-muted);
@@ -149,7 +132,6 @@
             font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase;
         }
 
-        /* MENUS ET TOASTS (Rétrécis et élégants) */
         #bookmarks-menu {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-screen); z-index: 2000; display: none; flex-direction: column;
@@ -178,13 +160,11 @@
     <div id="toast">Message</div>
 
     <div class="app-container">
-        <!-- ÉCRAN DE CHARGEMENT -->
         <div id="loader">
             <div class="logo">Pages.</div>
             <div style="font-size: 12px; color: var(--text-muted); font-family: 'Inter', sans-serif;">Ouverture du livre...</div>
         </div>
 
-        <!-- EN-TÊTE -->
         <header>
             <div class="logo">Pages.</div>
             <div class="header-actions">
@@ -194,21 +174,16 @@
             </div>
         </header>
 
-        <!-- ZONE DE LECTURE VERROUILLÉE -->
         <div class="reader-container" id="reader-container">
-            <!-- Calque invisible gérant les clics et les glissements -->
             <div class="swipe-layer" id="swipe-layer" onclick="handleScreenTap(event)"></div>
-            <!-- Calques des pages pour l'animation -->
             <div class="page-content-wrapper page-active" id="layer-1"></div>
             <div class="page-content-wrapper" id="layer-2" style="display:none;"></div>
         </div>
 
-        <!-- PIED DE PAGE -->
         <footer>
             <span id="page-indicator">-</span>
         </footer>
 
-        <!-- MENU SIGNETS -->
         <div id="bookmarks-menu">
             <div class="menu-header">
                 <span>Marque-pages</span>
@@ -220,13 +195,23 @@
 
     <script>
         // ==========================================
-        // CONFIGURATION (Méthode 2 activée par défaut pour le Showcase)
+        // 🛠️ FONCTIONS SÉCURISÉES POUR LA MÉMOIRE (ANTI-CRASH)
         // ==========================================
-        
+        function getMemoire(cle) {
+            try { return localStorage.getItem(cle); } catch(e) { return null; }
+        }
+        function setMemoire(cle, valeur) {
+            try { localStorage.setItem(cle, valeur); } catch(e) { console.log("Mémoire bloquée par l'appareil."); }
+        }
+        function supprMemoire(cle) {
+            try { localStorage.removeItem(cle); } catch(e) { }
+        }
+
+        // ==========================================
+        // CONFIGURATION DU LIVRE
+        // ==========================================
         const LIVRE_DIRECT = {
             "titre": "Showcase Base Essentielle",
-            // J'ai réduit la longueur du texte dans les pages pour être 100% sûr 
-            // qu'il n'y ait JAMAIS de dépassement (overflow) sur mobile, vu que le scroll est désactivé.
             "pages_pretes": [
                 `<h3>Roman Noir</h3>
                  <h2>L'Ombre de la Nation</h2>
@@ -268,29 +253,23 @@
         let activeLayer = 1;
         let isAnimating = false;
 
-        // Variables Swipe
         let touchStartX = 0; let touchStartY = 0; let touchCurrentX = 0;
         let isSwiping = false; const SWIPE_THRESHOLD = 40;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            // Chargement direct du showcase (Pas de fetch pour éviter les soucis CORS locaux)
+        // Lancement immédiat (Anti-freeze)
+        function initApp() {
             processBookData(LIVRE_DIRECT);
             setupSwipeListeners();
-        });
+        }
 
-        // GESTION DU CLIC ÉCRAN (TAP)
         function handleScreenTap(e) {
             if (isAnimating) return;
             const screenWidth = window.innerWidth;
             const tapX = e.clientX;
-            
-            // Si on clique sur le tiers gauche de l'écran -> page précédente
             if (tapX < screenWidth * 0.35) turnPage('prev');
-            // Si on clique sur le reste (65% droite) -> page suivante
             else if (tapX > screenWidth * 0.35) turnPage('next');
         }
 
-        // GESTION DU GLISSEMENT (SWIPE)
         function setupSwipeListeners() {
             const swipeLayer = document.getElementById('swipe-layer');
             swipeLayer.addEventListener('touchstart', (e) => {
@@ -305,8 +284,7 @@
                 touchCurrentX = e.touches[0].clientX;
                 const deltaX = touchCurrentX - touchStartX;
                 const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
-                
-                if (deltaY > Math.abs(deltaX)) { isSwiping = false; return; } // Annuler si c'est un swipe vertical
+                if (deltaY > Math.abs(deltaX)) { isSwiping = false; return; } 
             }, { passive: true });
             
             swipeLayer.addEventListener('touchend', () => {
@@ -318,21 +296,16 @@
             });
         }
 
-        // TRAITEMENT DES DONNÉES
         function processBookData(data) {
             bookData.titre = data.titre || "Pages.";
             
             if (data.pages_pretes && data.pages_pretes.length > 0) {
                 bookData.pages = data.pages_pretes;
             } else if (data.contenu) {
-                let texteBrut = data.contenu.replace(/
-/g, '<br><br>');
+                let texteBrut = data.contenu.replace(/\n/g, '<br><br>');
                 let mots = texteBrut.split(' ');
                 let pageTemp = [];
                 let charCount = 0;
-                
-                // 🛠️ ALGORITHME DE DÉCOUPAGE ADAPTÉ (ZÉRO SCROLL)
-                // Pour éviter le dépassement de texte sur mobile, on fixe une limite très stricte (environ 650 caractères max)
                 const LIMIT = 650; 
                 
                 mots.forEach(mot => {
@@ -346,15 +319,17 @@
                 if (pageTemp.length > 0) bookData.pages.push(pageTemp.join(' '));
             }
             
+            // On cache l'écran de chargement quoi qu'il arrive
             document.getElementById('loader').style.display = 'none';
-            const savedPage = localStorage.getItem(`pgs_${bookData.titre}`);
+            
+            // Restauration sécurisée
+            const savedPage = getMemoire(`pgs_${bookData.titre}`);
             currentIndex = savedPage ? parseInt(savedPage) : 0;
             if (currentIndex >= bookData.pages.length) currentIndex = 0;
             
             renderPage();
         }
 
-        // CHANGEMENT DE PAGE
         function turnPage(direction) {
             if (isAnimating) return;
             if (direction === 'next' && currentIndex < bookData.pages.length - 1) {
@@ -362,12 +337,10 @@
             } else if (direction === 'prev' && currentIndex > 0) {
                 currentIndex--; animatePage('prev');
             } else {
-                // Pas d'alerte agressive, juste un petit toast
                 showToast(direction === 'next' ? "Fin du livre" : "Début du livre");
             }
         }
 
-        // ANIMATION FLUIDE DES PAGES
         function animatePage(direction) {
             isAnimating = true;
             const layer1 = document.getElementById('layer-1');
@@ -384,7 +357,7 @@
             if (direction === 'next') {
                 currentLayer.classList.add('page-exit-left');
                 nextLayer.classList.add('page-enter-from-right');
-                void nextLayer.offsetWidth; // Force Reflow
+                void nextLayer.offsetWidth; 
                 
                 requestAnimationFrame(() => {
                     nextLayer.classList.remove('page-enter-from-right');
@@ -406,7 +379,7 @@
                 currentLayer.classList.remove('page-exit-left', 'page-exit-right');
                 activeLayer = activeLayer === 1 ? 2 : 1;
                 isAnimating = false;
-            }, 400); // Durée correspondante à la transition CSS
+            }, 400); 
             
             updateUI();
         }
@@ -424,21 +397,20 @@
 
         function updateUI() {
             document.getElementById('page-indicator').innerText = `Page ${currentIndex + 1}`;
-            localStorage.setItem(`pgs_${bookData.titre}`, currentIndex);
+            setMemoire(`pgs_${bookData.titre}`, currentIndex);
             
             const icon = document.getElementById('bookmark-icon');
             const key = `pgs_bm_${bookData.titre}_${currentIndex}`;
-            icon.className = localStorage.getItem(key) ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark";
+            icon.className = getMemoire(key) ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark";
         }
 
-        // SIGNETS (BOOKMARKS)
         function toggleBookmark() {
             const key = `pgs_bm_${bookData.titre}_${currentIndex}`;
-            if (localStorage.getItem(key)) {
-                localStorage.removeItem(key); showToast("Signet retiré");
+            if (getMemoire(key)) {
+                supprMemoire(key); showToast("Signet retiré");
             } else {
                 const excerpt = bookData.pages[currentIndex].replace(/<[^>]*>?/gm, '').substring(0, 30) + "...";
-                localStorage.setItem(key, excerpt); showToast("Page marquée");
+                setMemoire(key, excerpt); showToast("Page marquée");
             }
             updateUI();
         }
@@ -447,22 +419,29 @@
             const container = document.getElementById('bookmarks-list');
             container.innerHTML = ''; let hasBookmarks = false;
             
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith(`pgs_bm_${bookData.titre}_`)) {
-                    hasBookmarks = true;
-                    const pageNum = parseInt(key.split('_').pop());
-                    const excerpt = localStorage.getItem(key);
-                    container.innerHTML += `
-                        <div class="bookmark-item" onclick="goToPage(${pageNum})">
-                            <div>
-                                <div style="font-weight:700; font-size:14px; margin-bottom:4px; font-family:'Inter',sans-serif;">Page ${pageNum + 1}</div>
-                                <div style="font-size:12px; color:var(--text-muted); font-style:italic;">"${excerpt}"</div>
-                            </div>
-                            <i class="fa-solid fa-chevron-right" style="color:var(--text-muted); font-size: 12px;"></i>
-                        </div>`;
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith(`pgs_bm_${bookData.titre}_`)) {
+                        hasBookmarks = true;
+                        const pageNum = parseInt(key.split('_').pop());
+                        const excerpt = localStorage.getItem(key);
+                        container.innerHTML += `
+                            <div class="bookmark-item" onclick="goToPage(${pageNum})">
+                                <div>
+                                    <div style="font-weight:700; font-size:14px; margin-bottom:4px; font-family:'Inter',sans-serif;">Page ${pageNum + 1}</div>
+                                    <div style="font-size:12px; color:var(--text-muted); font-style:italic;">"${excerpt}"</div>
+                                </div>
+                                <i class="fa-solid fa-chevron-right" style="color:var(--text-muted); font-size: 12px;"></i>
+                            </div>`;
+                    }
                 }
+            } catch(e) {
+                // Si la mémoire est totalement bloquée par AppCreator24
+                container.innerHTML = `<div style="text-align:center; padding-top:40px; font-size:13px; color:var(--text-muted);">Les signets sont désactivés sur cet appareil.</div>`;
+                hasBookmarks = true; 
             }
+            
             if (!hasBookmarks) container.innerHTML = `<div style="text-align:center; padding-top:40px; font-size:13px; color:var(--text-muted);">Aucun signet.</div>`;
             document.getElementById('bookmarks-menu').style.display = 'flex';
         }
@@ -476,7 +455,6 @@
             currentIndex = index; animatePage(direction);
         }
 
-        // GESTION DES 3 THÈMES (E-ink -> Sepia -> Dark)
         const themes = ['e-ink', 'sepia', 'dark-mode'];
         const icons = ['fa-droplet', 'fa-book-open', 'fa-moon'];
         const messages = ['Liseuse E-ink', 'Mode Sépia', 'Mode Nuit'];
@@ -493,7 +471,6 @@
             showToast(messages[currentThemeIndex]);
         }
 
-        // UTILITAIRE TOAST
         let toastTimer;
         function showToast(msg) {
             const t = document.getElementById('toast');
@@ -501,6 +478,9 @@
             clearTimeout(toastTimer);
             toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
         }
+
+        // Lancement immédiat de l'application
+        initApp();
     </script>
 </body>
 </html>
