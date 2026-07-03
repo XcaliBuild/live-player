@@ -1,463 +1,638 @@
-<!DOCTYPE html> 
-<html lang="fr" data-theme="creme"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes"> 
-    <title>Pages. · Livre de Poche 2026</title> 
-    <link rel="preconnect" href="https://fonts.googleapis.com"> 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
-    <style> 
-        /* ----- THÈMES MODERNES 2026 ----- */ 
-        :root[data-theme="creme"] { 
-            --bg-app: #faf8f5; --bg-page: #ffffff; --text-primary: #1a1a1a; 
-            --text-secondary: #5e5e5e; --text-tertiary: #8a8a8a; --border-subtle: #eae5df; 
-            --shadow-page: 0 20px 40px -20px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.03); 
-            --accent: #1a1a1a; --accent-soft: #f0ebe4; --overlay-bg: rgba(250,248,245,0.8); 
-            --img-filter: none; --font-serif: 'Newsreader', Georgia, serif; --font-sans: 'Inter', system-ui, sans-serif; 
-        } 
-        :root[data-theme="nuit"] { 
-            --bg-app: #0c0c0c; --bg-page: #141414; --text-primary: #e0e0e0; 
-            --text-secondary: #9a9a9a; --text-tertiary: #6b6b6b; --border-subtle: #2a2a2a; 
-            --shadow-page: 0 20px 40px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05); 
-            --accent: #f0f0f0; --accent-soft: #2a2a2a; --overlay-bg: rgba(12,12,12,0.8); 
-            --img-filter: brightness(0.9) contrast(1.1); --font-serif: 'Newsreader', Georgia, serif; --font-sans: 'Inter', system-ui, sans-serif; 
-        } 
-        :root[data-theme="papier"] { 
-            --bg-app: #f4ecd6; --bg-page: #fef9e6; --text-primary: #3e3a32; 
-            --text-secondary: #6b6457; --text-tertiary: #8e8679; --border-subtle: #e0d5bb; 
-            --shadow-page: 0 15px 30px -15px rgba(80,60,30,0.2), 0 0 0 1px #e8ddc0; 
-            --accent: #3e3a32; --accent-soft: #efe4ce; --overlay-bg: rgba(244,236,214,0.8); 
-            --img-filter: sepia(0.3) contrast(1.05); --font-serif: 'Newsreader', Georgia, serif; --font-sans: 'Inter', system-ui, sans-serif; 
-        } 
-        :root[data-theme="lavande"] { 
-            --bg-app: #f7f5fb; --bg-page: #ffffff; --text-primary: #2b2540; 
-            --text-secondary: #5e548e; --text-tertiary: #8b83a8; --border-subtle: #e3dfed; 
-            --shadow-page: 0 20px 40px -20px rgba(80,60,130,0.15), 0 0 0 1px rgba(100,80,160,0.05); 
-            --accent: #2b2540; --accent-soft: #efe9f7; --overlay-bg: rgba(247,245,251,0.8); 
-            --img-filter: none; --font-serif: 'Newsreader', Georgia, serif; --font-sans: 'Inter', system-ui, sans-serif; 
-        } 
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
-        
-        body, html { 
-            width: 100vw; height: 100vh; height: -webkit-fill-available; overflow: hidden; 
-            background: var(--bg-app); font-family: var(--font-sans); touch-action: pan-x; 
-            user-select: none; -webkit-user-select: none; position: fixed; top: 0; left: 0; 
-        } 
-        
-        .app-frame { 
-            width: 100%; height: 100%; display: flex; flex-direction: column; 
-            background: var(--bg-app); position: relative; 
-        } 
-        
-        /* ---- HEADER MINIMAL ---- */ 
-        .app-header { 
-            padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; 
-            flex-shrink: 0; background: transparent; backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); z-index: 20; 
-        } 
-        .logo-text { font-family: var(--font-serif); font-weight: 600; font-size: 1.8rem; letter-spacing: -0.5px; color: var(--text-primary); font-style: italic; } 
-        .header-tools { display: flex; gap: 16px; align-items: center; } 
-        .tool-btn { 
-            background: transparent; border: none; color: var(--text-primary); font-size: 1.3rem; 
-            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; 
-            justify-content: center; transition: background 0.2s, color 0.2s; cursor: pointer; 
-            background: var(--accent-soft); 
-        } 
-        .tool-btn:active { background: var(--border-subtle); } 
-        
-        /* ---- ZONE LECTURE CENTRALE ---- */ 
-        .reader-stage { 
-            flex: 1; position: relative; display: flex; align-items: center; justify-content: center; 
-            padding: 5px 15px 15px 15px; overflow: hidden; 
-        } 
-        .page-card { 
-            width: 100%; max-width: 480px; height: 100%; background: var(--bg-page); 
-            border-radius: 32px; box-shadow: var(--shadow-page); position: absolute; 
-            padding: 28px 24px 24px 24px; display: flex; flex-direction: column; 
-            transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.4, 1), opacity 0.4s ease; 
-            will-change: transform, opacity; overflow-y: auto; scrollbar-width: none; 
-            -ms-overflow-style: none; border: 1px solid var(--border-subtle); 
-        } 
-        .page-card::-webkit-scrollbar { display: none; } 
-        
-        /* États des cartes */ 
-        .page-active { transform: translateX(0) scale(1); opacity: 1; z-index: 5; } 
-        .page-before { transform: translateX(-30%) scale(0.96); opacity: 0; z-index: 2; pointer-events: none; } 
-        .page-after { transform: translateX(30%) scale(0.96); opacity: 0; z-index: 2; pointer-events: none; } 
-        .page-slide-out-left { transform: translateX(-110%) scale(0.92); opacity: 0; z-index: 10; } 
-        .page-slide-out-right { transform: translateX(110%) scale(0.92); opacity: 0; z-index: 10; } 
-        
-        /* Contenu page */ 
-        .page-category { 
-            font-family: var(--font-sans); font-size: 0.7rem; text-transform: uppercase; 
-            letter-spacing: 2px; color: var(--text-tertiary); margin-bottom: 10px; font-weight: 600; 
-        } 
-        .page-title { 
-            font-family: var(--font-serif); font-weight: 600; font-size: 1.9rem; line-height: 1.15; 
-            color: var(--text-primary); margin-bottom: 20px; letter-spacing: -0.3px; 
-        } 
-        .page-image { 
-            width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 20px; 
-            margin-bottom: 18px; filter: var(--img-filter); background: var(--border-subtle); 
-        } 
-        .page-text { 
-            font-family: var(--font-serif); font-size: 1rem; line-height: 1.55; 
-            color: var(--text-secondary); flex: 1; word-spacing: 0.02em; font-weight: 420; 
-        } 
-        .page-text strong { color: var(--text-primary); font-weight: 600; } 
-        .page-text p { margin-bottom: 15px; }
-        .meta-center { text-align: center; font-size: 0.9rem; color: var(--text-tertiary); margin-bottom: 12px; } 
-        
-        /* Pied de page discrets */ 
-        .reader-footer { 
-            height: 44px; display: flex; align-items: center; justify-content: center; 
-            font-size: 0.8rem; font-weight: 500; letter-spacing: 0.8px; color: var(--text-tertiary); 
-            background: transparent; flex-shrink: 0; text-transform: uppercase; 
-        } 
-        
-        /* Menu signets */ 
-        .bookmark-panel { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay-bg); 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100; display: none; 
-            flex-direction: column; border-radius: 0; 
-        } 
-        .panel-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); font-weight: 600; color: var(--text-primary); } 
-        .bookmark-list { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; } 
-        .bookmark-row { background: var(--bg-page); border-radius: 18px; padding: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-subtle); cursor: pointer; } 
-        
-        .toast-message { 
-            position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); 
-            background: var(--text-primary); color: var(--bg-page); padding: 8px 22px; 
-            border-radius: 40px; font-size: 0.8rem; font-weight: 500; opacity: 0; 
-            transition: opacity 0.25s, transform 0.25s; z-index: 200; white-space: nowrap; 
-            pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-        } 
-        .toast-message.show { opacity: 1; transform: translateX(-50%) translateY(-6px); } 
-        
-        /* Écran chargement */ 
-        .splash { 
-            position: absolute; inset: 0; background: var(--bg-app); display: flex; 
-            flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 999; font-family: var(--font-serif); color: var(--text-primary); 
-        } 
-    </style> 
-</head> 
-<body> 
-    <div class="app-frame" id="appFrame"> 
-        <div class="splash" id="splashScreen"> 
-            <div style="font-size: 2.5rem; font-style: italic; font-weight: 600;">Pages.</div> 
-            <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">Ouverture du livre...</div> 
-        </div> 
-        <header class="app-header"> 
-            <span class="logo-text">Pages.</span> 
-            <div class="header-tools"> 
-                <button class="tool-btn" id="btnBookmarks" aria-label="Signets"><i class="fas fa-bookmark"></i></button> 
-                <button class="tool-btn" id="btnTheme" aria-label="Thème"><i class="fas fa-palette"></i></button> 
-            </div> 
-        </header> 
-        <div class="reader-stage" id="readerStage"> 
-            <div class="page-card page-active" id="pageCardA"></div> 
-            <div class="page-card" id="pageCardB" style="display:none;"></div> 
-        </div> 
-        <div class="reader-footer"> 
-            <span id="pageCounter">Page 1</span> 
-        </div> 
-        <div class="bookmark-panel" id="bookmarkPanel"> 
-            <div class="panel-header"> 
-                <span>Marque-pages</span> 
-                <button class="tool-btn" id="closeBookmarkPanel"><i class="fas fa-times"></i></button> 
-            </div> 
-            <div class="bookmark-list" id="bookmarkListContainer"></div> 
-        </div> 
-        <div class="toast-message" id="toast"></div> 
-    </div> 
-    
-    <script> 
-        (function() { 
-            // ----- DONNÉES DU LIVRE (Les 10 pages intégrées) ----- 
-            const BOOK_PAGES = [ 
-                { 
-                    category: "Roman Noir", 
-                    title: "L'Ombre de la Nation", 
-                    image: null, 
-                    text: "<p>La pluie s'abattait violemment sur les pavés de la place de la Nation. Les lampadaires clignotaient, luttant contre l'obscurité grandissante de cette soirée de novembre.</p><p>L'inspecteur releva le col de son imperméable. Le corps gisait près de la bouche de métro, un simple bout de papier serré dans la main gauche. Il savait que cette affaire ne ressemblait à aucune autre.</p><p>Le lieutenant Vasseur arriva quelques minutes plus tard, essoufflé. « Toujours rien ? » demanda-t-il. L'inspecteur secoua la tête. Trois mots tracés à la hâte sur le papier humide suffisaient pour glacer le sang. Quelque part dans cette ville, quelqu'un savait déjà que le jeu venait de commencer.</p>" 
-                }, 
-                { 
-                    category: "Photographie", 
-                    title: "Lumières d'Art", 
-                    image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&q=80", 
-                    text: "<p>La photographie d'architecture ne consiste pas seulement à capturer des bâtiments. C'est l'art de figer le dialogue silencieux entre les structures créées par l'homme et la lumière naturelle qui les sculpte.</p><p>Chaque cliché de cette série a été pensé comme une composition géométrique, où les lignes du béton dialoguent avec les ombres portées par la lumière rasante du matin. L'absence de couleur permet de révéler les textures brutes et les contrastes saisissants entre le plein et le vide. Chaque image invite le visiteur à ralentir.</p>" 
-                }, 
-                { 
-                    category: "Recette", 
-                    title: "Pancakes au sirop", 
-                    image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80", 
-                    text: "<p><strong>Ingrédients :</strong><br>• 250g de farine de blé<br>• 2 œufs frais<br>• 30 cl de lait entier<br>• 1 sachet de levure</p><p><strong>Préparation :</strong> Dans un grand saladier, mélangez la farine et la levure. Dans un second bol, battez les œufs avec le lait jusqu'à obtenir un mélange homogène, puis versez-le progressivement sur les ingrédients secs en fouettant pour éviter les grumeaux.</p><p>Faites chauffer une poêle légèrement beurrée. Versez une louche de pâte. Laissez cuire 2 minutes, jusqu'à ce que des bulles apparaissent, puis retournez-le. Servez bien chaud avec du sirop d'érable.</p>" 
-                }, 
-                { 
-                    category: "Business", 
-                    title: "Base Essentielle", 
-                    image: null, 
-                    text: "<p>Notre mission est simple : transformer la complexité du développement web en une expérience fluide et accessible. Base Essentielle n'est pas qu'un catalogue de templates, c'est un écosystème conçu pour les créateurs qui refusent de faire des compromis sur le design.</p><p>En utilisant des technologies standards, nous garantissons que chaque interface est légère, rapide et compatible sur n'importe quel support, du smartphone à l'Android TV jusqu'aux liseuses numériques. Nous croyons en la puissance du code pur, épuré, qui laisse toute la place au contenu.</p>" 
-                }, 
-                { 
-                    category: "Enfants", 
-                    title: "Le Petit Renard", 
-                    image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600&q=80", 
-                    text: "<p>Il était une fois un petit renard roux nommé Barnabé qui adorait explorer la forêt magique. Un jour, il trouva une étoile tombée du ciel. Elle scintillait doucement et lui chuchota qu'elle avait besoin d'aide pour retrouver le chemin du cosmos.</p><p>Barnabé traversa la rivière, grimpa la colline et demanda l'aide du hibou sage. Ensemble, ils construisirent une échelle de rêves pour ramener l'étoile là où elle appartenait. Depuis cette nuit, Barnabé veille sur la forêt, sous la bienveillance de sa petite amie étoilée qui brille chaque soir juste pour lui.</p>" 
-                },
-                { 
-                    category: "Autobiographie", 
-                    title: "Regard en arrière", 
-                    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80", 
-                    text: "<p>Le temps passe, les visages changent, mais les souvenirs restent gravés dans les contrastes du noir et blanc. En regardant ces photos, je ne vois pas seulement une personne, je vois un parcours semé d'embûches et de joies.</p><p>J'ai appris que chaque erreur était une leçon, et chaque succès une étape vers la découverte de soi. Ce récit n'est pas une apologie, mais un miroir tendu vers le passé pour mieux comprendre les choix qui ont forgé l'homme que je suis devenu aujourd'hui.</p>" 
-                },
-                { 
-                    category: "Santé", 
-                    title: "Crème Apaisante", 
-                    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&q=80", 
-                    text: "<p><strong>Mode d'emploi :</strong> Appliquez une noisette de crème sur une peau propre et sèche. Massez doucement par mouvements circulaires jusqu'à absorption complète.</p><p>Composée à 95% d'ingrédients naturels, cette formule a été testée dermatologiquement pour respecter l'équilibre du microbiome cutané. En cas de rougeurs persistantes, suspendez l'utilisation et consultez un spécialiste. Pour un résultat optimal, utilisez matin et soir, idéalement après votre routine de nettoyage habituelle.</p>" 
-                },
-                { 
-                    category: "Science", 
-                    title: "L'Univers", 
-                    image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=600&q=80", 
-                    text: "<p>Le cosmos nous réserve des mystères insondables. Des trous noirs supermassifs aux nébuleuses colorées, chaque découverte spatiale remet en question notre compréhension des lois fondamentales de la physique.</p><p>La mission des télescopes modernes a changé notre perception de l'âge de l'univers, nous montrant des galaxies formées il y a des milliards d'années. La recherche de la vie extraterrestre continue d'alimenter les débats scientifiques, transformant peu à peu la science-fiction en une discipline académique rigoureuse : l'exobiologie.</p>" 
-                },
-                { 
-                    category: "Nature", 
-                    title: "Jardinage", 
-                    image: "https://images.unsplash.com/photo-1416879598555-220b8f32bea4?w=600&q=80", 
-                    text: "<p>Le secret d'un jardin florissant réside dans la patience et l'observation. Apprenez à écouter vos plantes : le jaunissement des feuilles indique souvent un excès d'eau, tandis que le flétrissement demande un apport immédiat.</p><p>Le compostage domestique est également essentiel pour enrichir le sol naturellement. En mélangeant habilement vos déchets organiques, vous créez un terreau fertile qui stimulera la croissance de vos fleurs et légumes de manière spectaculaire, et ce, sans l'ajout d'aucun produit chimique industriel.</p>" 
-                },
-                { 
-                    category: "Voyage", 
-                    title: "L'Art de l'Aventure", 
-                    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80", 
-                    text: "<p>Voyager n'est pas seulement se déplacer. C'est accepter de perdre ses repères, de confronter ses préjugés et de s'immerger dans des cultures qui forcent à repenser notre rapport au monde.</p><p>Que ce soit au sommet d'une montagne isolée ou au milieu d'un marché bouillonnant d'Asie, l'aventure commence là où s'arrête notre zone de confort. Ceux qui voyagent vraiment savent que le retour n'est jamais la fin de l'histoire, mais le début d'une nouvelle réflexion intérieure sur tout ce qu'il reste à explorer.</p>" 
-                }
-            ]; 
-            
-            const BOOK_TITLE = "Pages."; 
-            const STORAGE_KEY_PAGE = "pgs_current_page"; 
-            const STORAGE_KEY_BM = "pgs_bookmarks"; 
-            
-            // État 
-            let currentPageIndex = 0; 
-            let activeCard = 'A'; 
-            let isAnimating = false; 
-            let touchStartX = 0; 
-            let touchStartY = 0; 
-            let swipeHandled = false; 
-            
-            // Thèmes 
-            const themes = ['creme', 'nuit', 'papier', 'lavande']; 
-            const themeIcons = ['fa-palette', 'fa-moon', 'fa-sun', 'fa-feather']; 
-            let themeIndex = 0; 
-            
-            // Éléments DOM 
-            const pageCardA = document.getElementById('pageCardA'); 
-            const pageCardB = document.getElementById('pageCardB'); 
-            const pageCounter = document.getElementById('pageCounter'); 
-            const toast = document.getElementById('toast'); 
-            const bookmarkPanel = document.getElementById('bookmarkPanel'); 
-            const bookmarkListContainer = document.getElementById('bookmarkListContainer'); 
-            const splashScreen = document.getElementById('splashScreen'); 
-            const btnBookmarks = document.getElementById('btnBookmarks'); 
-            const btnTheme = document.getElementById('btnTheme'); 
-            const closeBookmarkPanel = document.getElementById('closeBookmarkPanel'); 
-            const readerStage = document.getElementById('readerStage'); 
-            
-            // ----- UTILITAIRES STOCKAGE ----- 
-            function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } } 
-            function safeSet(key, value) { try { localStorage.setItem(key, value); } catch(e) {} } 
-            
-            // ----- AFFICHAGE PAGE DANS UNE CARTE ----- 
-            function renderPageInto(cardElement, pageData) { 
-                if (!pageData) return; 
-                cardElement.innerHTML = ` 
-                    <div class="page-category">${pageData.category || ''}</div> 
-                    <div class="page-title">${pageData.title || ''}</div> 
-                    ${pageData.image ? `<img class="page-image" src="${pageData.image}" alt="illustration">` : ''} 
-                    <div class="page-text">${pageData.text || ''}</div> 
-                `; 
-            } 
-            function getActiveCardElement() { return activeCard === 'A' ? pageCardA : pageCardB; } 
-            function getInactiveCardElement() { return activeCard === 'A' ? pageCardB : pageCardA; } 
-            
-            function updatePageDisplay() { 
-                const activeEl = getActiveCardElement(); 
-                renderPageInto(activeEl, BOOK_PAGES[currentPageIndex]); 
-                pageCounter.textContent = `Page ${currentPageIndex + 1} / ${BOOK_PAGES.length}`; 
-                safeSet(STORAGE_KEY_PAGE, currentPageIndex); 
-                updateBookmarkButtonState(); 
-            } 
-            
-            // Initialisation des deux cartes 
-            function initialRender() { 
-                renderPageInto(pageCardA, BOOK_PAGES[currentPageIndex]); 
-                pageCardA.className = 'page-card page-active'; 
-                pageCardB.style.display = 'none'; 
-                pageCardB.className = 'page-card'; 
-                activeCard = 'A'; 
-                pageCounter.textContent = `Page ${currentPageIndex + 1} / ${BOOK_PAGES.length}`; 
-            } 
-            
-            // ----- ANIMATION DE TRANSITION STYLÉE 2026 ----- 
-            function animateTransition(direction) { 
-                if (isAnimating) return; 
-                if (direction === 'next' && currentPageIndex >= BOOK_PAGES.length - 1) { showToastMessage('Fin du livre'); return; } 
-                if (direction === 'prev' && currentPageIndex <= 0) { showToastMessage('Début du livre'); return; } 
-                
-                isAnimating = true; 
-                const oldCard = getActiveCardElement(); 
-                const newCard = getInactiveCardElement(); 
-                const newIndex = direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1; 
-                renderPageInto(newCard, BOOK_PAGES[newIndex]); 
-                
-                oldCard.classList.remove('page-active'); 
-                newCard.style.display = ''; 
-                newCard.classList.remove('page-before', 'page-after', 'page-slide-out-left', 'page-slide-out-right'); 
-                
-                if (direction === 'next') { 
-                    oldCard.classList.add('page-slide-out-left'); 
-                    newCard.classList.add('page-after'); 
-                    void newCard.offsetWidth; 
-                    newCard.classList.remove('page-after'); 
-                    newCard.classList.add('page-active'); 
-                } else { 
-                    oldCard.classList.add('page-slide-out-right'); 
-                    newCard.classList.add('page-before'); 
-                    void newCard.offsetWidth; 
-                    newCard.classList.remove('page-before'); 
-                    newCard.classList.add('page-active'); 
-                } 
-                setTimeout(() => { 
-                    oldCard.style.display = 'none'; 
-                    oldCard.classList.remove('page-slide-out-left', 'page-slide-out-right'); 
-                    activeCard = activeCard === 'A' ? 'B' : 'A'; 
-                    currentPageIndex = newIndex; 
-                    updatePageDisplay(); 
-                    isAnimating = false; 
-                }, 400); 
-            } 
-            function goToNextPage() { animateTransition('next'); } 
-            function goToPrevPage() { animateTransition('prev'); } 
-            
-            // ----- GESTES TACTILES & TAP ----- 
-            function handleTouchStart(e) { if (isAnimating) return; touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; swipeHandled = false; } 
-            function handleTouchMove(e) { 
-                if (isAnimating || swipeHandled) return; 
-                const deltaX = e.touches[0].clientX - touchStartX; const deltaY = Math.abs(e.touches[0].clientY - touchStartY); 
-                if (deltaY > Math.abs(deltaX)) return; 
-            } 
-            function handleTouchEnd(e) { 
-                if (isAnimating || swipeHandled) return; 
-                const deltaX = e.changedTouches[0].clientX - touchStartX; 
-                const threshold = 45; 
-                if (deltaX < -threshold) { swipeHandled = true; goToNextPage(); } 
-                else if (deltaX > threshold) { swipeHandled = true; goToPrevPage(); } 
-            } 
-            function handleClickOnStage(e) { 
-                if (isAnimating) return; 
-                const rect = readerStage.getBoundingClientRect(); 
-                const x = e.clientX - rect.left; 
-                if (x < rect.width * 0.3) { goToPrevPage(); } 
-                else if (x > rect.width * 0.7) { goToNextPage(); } 
-            } 
-            
-            // ----- SIGNETS ----- 
-            function getBookmarks() { const raw = safeGet(STORAGE_KEY_BM); return raw ? JSON.parse(raw) : []; } 
-            function saveBookmarks(bookmarks) { safeSet(STORAGE_KEY_BM, JSON.stringify(bookmarks)); } 
-            function isCurrentPageBookmarked() { return getBookmarks().includes(currentPageIndex); } 
-            
-            function toggleBookmark() { 
-                const bookmarks = getBookmarks(); 
-                const index = bookmarks.indexOf(currentPageIndex); 
-                if (index > -1) { bookmarks.splice(index, 1); showToastMessage('Signet retiré'); } 
-                else { bookmarks.push(currentPageIndex); showToastMessage('Page marquée'); } 
-                saveBookmarks(bookmarks); 
-                updateBookmarkButtonState(); 
-            } 
-            
-            function updateBookmarkButtonState() { 
-                const icon = btnBookmarks.querySelector('i'); 
-                if (isCurrentPageBookmarked()) { icon.className = 'fas fa-bookmark'; btnBookmarks.style.color = 'var(--accent)'; } 
-                else { icon.className = 'far fa-bookmark'; btnBookmarks.style.color = ''; } 
-            } 
-            
-            function openBookmarkPanel() { 
-                const bookmarks = getBookmarks(); 
-                bookmarkListContainer.innerHTML = ''; 
-                if (bookmarks.length === 0) { bookmarkListContainer.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-tertiary);">Aucun signet pour le moment.</div>'; } 
-                else { 
-                    bookmarks.sort((a,b) => a-b).forEach(idx => { 
-                        const page = BOOK_PAGES[idx]; const div = document.createElement('div'); div.className = 'bookmark-row'; 
-                        div.innerHTML = `<div><div style="font-weight:600; color:var(--text-primary);">Page ${idx+1}</div><div style="font-size:0.8rem; color:var(--text-secondary); margin-top:4px;">${page.title || 'Sans titre'}</div></div><i class="fas fa-chevron-right" style="color:var(--text-tertiary);"></i>`; 
-                        div.addEventListener('click', () => { navigateToPage(idx); closeBookmarkPanelFn(); }); 
-                        bookmarkListContainer.appendChild(div); 
-                    }); 
-                } 
-                bookmarkPanel.style.display = 'flex'; 
-            } 
-            function closeBookmarkPanelFn() { bookmarkPanel.style.display = 'none'; } 
-            
-            function navigateToPage(index) { 
-                if (index === currentPageIndex || isAnimating) return; 
-                const direction = index > currentPageIndex ? 'next' : 'prev'; 
-                const oldIndex = currentPageIndex; 
-                const newCard = getInactiveCardElement(); 
-                renderPageInto(newCard, BOOK_PAGES[index]); 
-                currentPageIndex = oldIndex; 
-                animateTransition(direction); 
-            } 
-            
-            // ----- THÈMES ----- 
-            function cycleTheme() { 
-                themeIndex = (themeIndex + 1) % themes.length; 
-                const theme = themes[themeIndex]; 
-                document.documentElement.setAttribute('data-theme', theme); 
-                btnTheme.querySelector('i').className = `fas ${themeIcons[themeIndex]}`; 
-                const themeNames = ['Crème', 'Nuit', 'Papier', 'Lavande']; 
-                showToastMessage(`Thème ${themeNames[themeIndex]}`); 
-            } 
-            
-            // ----- TOAST ----- 
-            function showToastMessage(msg) { toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1800); } 
-            
-            // ----- RESTAURATION SESSION ----- 
-            function restoreSession() { 
-                const saved = safeGet(STORAGE_KEY_PAGE); 
-                if (saved !== null) { 
-                    const parsed = parseInt(saved, 10); 
-                    if (!isNaN(parsed) && parsed >= 0 && parsed < BOOK_PAGES.length) { currentPageIndex = parsed; } 
-                } 
-                initialRender(); 
-                updateBookmarkButtonState(); 
-                splashScreen.style.display = 'none'; 
-            } 
-            
-            // ----- ÉVÉNEMENTS ----- 
-            readerStage.addEventListener('touchstart', handleTouchStart, {passive: true}); 
-            readerStage.addEventListener('touchmove', handleTouchMove, {passive: true}); 
-            readerStage.addEventListener('touchend', handleTouchEnd); 
-            readerStage.addEventListener('click', handleClickOnStage); 
-            btnBookmarks.addEventListener('click', (e) => { e.stopPropagation(); openBookmarkPanel(); }); 
-            closeBookmarkPanel.addEventListener('click', (e) => { e.stopPropagation(); closeBookmarkPanelFn(); }); 
-            btnTheme.addEventListener('click', (e) => { e.stopPropagation(); cycleTheme(); }); 
-            btnBookmarks.addEventListener('dblclick', (e) => { e.stopPropagation(); toggleBookmark(); }); 
-            
-            let pressTimer; 
-            btnBookmarks.addEventListener('touchstart', (e) => { pressTimer = setTimeout(() => { toggleBookmark(); }, 600); }); 
-            btnBookmarks.addEventListener('touchend', () => clearTimeout(pressTimer)); 
-            btnBookmarks.addEventListener('touchmove', () => clearTimeout(pressTimer)); 
-            bookmarkPanel.addEventListener('click', (e) => { if (e.target === bookmarkPanel) closeBookmarkPanelFn(); }); 
-            
-            restoreSession(); 
-        })(); 
-    </script> 
-</body> 
+<!DOCTYPE html>
+<html lang="fr" data-theme="creme">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes">
+  <title>Pages. · Livre de Poche</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root[data-theme="creme"] {
+      --bg-app: #faf8f5;
+      --bg-page: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #5e5e5e;
+      --text-tertiary: #8a8a8a;
+      --border-subtle: #eae5df;
+      --shadow-page: 0 20px 40px -20px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.03);
+      --accent: #1a1a1a;
+      --accent-soft: #f0ebe4;
+      --overlay-bg: rgba(250,248,245,0.8);
+      --img-filter: none;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+    :root[data-theme="nuit"] {
+      --bg-app: #0c0c0c;
+      --bg-page: #141414;
+      --text-primary: #e0e0e0;
+      --text-secondary: #9a9a9a;
+      --text-tertiary: #6b6b6b;
+      --border-subtle: #2a2a2a;
+      --shadow-page: 0 20px 40px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+      --accent: #f0f0f0;
+      --accent-soft: #2a2a2a;
+      --overlay-bg: rgba(12,12,12,0.8);
+      --img-filter: brightness(0.9) contrast(1.1);
+    }
+    :root[data-theme="papier"] {
+      --bg-app: #f4ecd6;
+      --bg-page: #fef9e6;
+      --text-primary: #3e3a32;
+      --text-secondary: #6b6457;
+      --text-tertiary: #8e8679;
+      --border-subtle: #e0d5bb;
+      --shadow-page: 0 15px 30px -15px rgba(80,60,30,0.2), 0 0 0 1px #e8ddc0;
+      --accent: #3e3a32;
+      --accent-soft: #efe4ce;
+      --overlay-bg: rgba(244,236,214,0.8);
+      --img-filter: sepia(0.3) contrast(1.05);
+    }
+    :root[data-theme="lavande"] {
+      --bg-app: #f7f5fb;
+      --bg-page: #ffffff;
+      --text-primary: #2b2540;
+      --text-secondary: #5e548e;
+      --text-tertiary: #8b83a8;
+      --border-subtle: #e3dfed;
+      --shadow-page: 0 20px 40px -20px rgba(80,60,130,0.15), 0 0 0 1px rgba(100,80,160,0.05);
+      --accent: #2b2540;
+      --accent-soft: #efe9f7;
+      --overlay-bg: rgba(247,245,251,0.8);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body, html {
+      width: 100vw;
+      height: 100vh;
+      height: -webkit-fill-available;
+      overflow: hidden;
+      background: var(--bg-app);
+      font-family: var(--font-sans);
+      touch-action: pan-x;
+      user-select: none;
+      -webkit-user-select: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    .app-frame {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-app);
+      position: relative;
+    }
+    .app-header {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: transparent;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 20;
+    }
+    .logo-text {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1.8rem;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+      font-style: italic;
+    }
+    .header-tools {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .tool-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.3rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+      cursor: pointer;
+      background: var(--accent-soft);
+    }
+    .tool-btn:active {
+      background: var(--border-subtle);
+    }
+    .reader-stage {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 15px 15px 15px;
+      overflow: hidden;
+    }
+    .page-card {
+      width: 100%;
+      max-width: 480px;
+      height: 100%;
+      background: var(--bg-page);
+      border-radius: 28px;
+      box-shadow: var(--shadow-page);
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.4, 1), opacity 0.4s ease;
+      will-change: transform, opacity;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      border: 1px solid var(--border-subtle);
+    }
+    .page-card::-webkit-scrollbar {
+      display: none;
+    }
+    .page-active {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+      z-index: 5;
+    }
+    .page-before {
+      transform: translateX(-30%) scale(0.96);
+      opacity: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .page-after {
+      transform: translateX(30%) scale(0.96);
+      opacity: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .page-slide-out-left {
+      transform: translateX(-110%) scale(0.92);
+      opacity: 0;
+      z-index: 10;
+    }
+    .page-slide-out-right {
+      transform: translateX(110%) scale(0.92);
+      opacity: 0;
+      z-index: 10;
+    }
+    .page-cover-image {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      display: block;
+      border-radius: 28px 28px 0 0;
+      filter: var(--img-filter);
+      background: var(--border-subtle);
+      flex-shrink: 0;
+    }
+    .page-content {
+      padding: 20px 22px 28px 22px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .page-category {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .page-title {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1.7rem;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      letter-spacing: -0.3px;
+    }
+    .page-text {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      flex: 1;
+      word-spacing: 0.02em;
+      font-weight: 420;
+    }
+    .page-text strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .page-text p {
+      margin-bottom: 12px;
+    }
+    .reader-footer {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      color: var(--text-tertiary);
+      background: transparent;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .bookmark-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--overlay-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+    }
+    .panel-header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .bookmark-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .bookmark-row {
+      background: var(--bg-page);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+    }
+    .toast-message {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-primary);
+      color: var(--bg-page);
+      padding: 8px 22px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      z-index: 200;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .toast-message.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+    .splash {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-app);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+<div class="app-frame" id="appFrame">
+  <div class="splash" id="splashScreen">
+    <div style="font-size: 2.5rem; font-style: italic; font-weight: 600;">Pages.</div>
+    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">Ouverture du livre...</div>
+  </div>
+  <header class="app-header">
+    <span class="logo-text">Pages.</span>
+    <div class="header-tools">
+      <button class="tool-btn" id="btnBookmarks" aria-label="Signets"><i class="far fa-bookmark"></i></button>
+      <button class="tool-btn" id="btnTheme" aria-label="Thème"><i class="fas fa-palette"></i></button>
+    </div>
+  </header>
+  <div class="reader-stage" id="readerStage">
+    <div class="page-card page-active" id="pageCardA"></div>
+    <div class="page-card" id="pageCardB" style="display:none;"></div>
+  </div>
+  <div class="reader-footer">
+    <span id="pageCounter">Page 1</span>
+  </div>
+  <div class="bookmark-panel" id="bookmarkPanel">
+    <div class="panel-header">
+      <span>Marque-pages</span>
+      <button class="tool-btn" id="closeBookmarkPanel"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="bookmark-list" id="bookmarkListContainer"></div>
+  </div>
+  <div class="toast-message" id="toast"></div>
+</div>
+<script>
+  (function() {
+    // Chargement du fichier JSON externe
+    let BOOK_PAGES = [];
+    const DATA_URL = 'livre.txt'; // Nom du fichier à héberger à côté
+
+    const STORAGE_KEY_PAGE = "pgs_current_page";
+    const STORAGE_KEY_BM = "pgs_bookmarks";
+
+    let currentPageIndex = 0;
+    let activeCard = 'A';
+    let isAnimating = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let swipeHandled = false;
+
+    const themes = ['creme', 'nuit', 'papier', 'lavande'];
+    const themeIcons = ['fa-palette', 'fa-moon', 'fa-sun', 'fa-feather'];
+    let themeIndex = 0;
+
+    const pageCardA = document.getElementById('pageCardA');
+    const pageCardB = document.getElementById('pageCardB');
+    const pageCounter = document.getElementById('pageCounter');
+    const toast = document.getElementById('toast');
+    const bookmarkPanel = document.getElementById('bookmarkPanel');
+    const bookmarkListContainer = document.getElementById('bookmarkListContainer');
+    const splashScreen = document.getElementById('splashScreen');
+    const btnBookmarks = document.getElementById('btnBookmarks');
+    const btnTheme = document.getElementById('btnTheme');
+    const closeBookmarkPanel = document.getElementById('closeBookmarkPanel');
+    const readerStage = document.getElementById('readerStage');
+
+    function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
+    function safeSet(key, value) { try { localStorage.setItem(key, value); } catch(e) {} }
+
+    function renderPageInto(cardElement, pageData) {
+      if (!pageData) return;
+      const imageHtml = pageData.image
+        ? `<img class="page-cover-image" src="${pageData.image}" alt="illustration">`
+        : '';
+      cardElement.innerHTML = `
+        ${imageHtml}
+        <div class="page-content">
+          <div class="page-category">${pageData.category || ''}</div>
+          <div class="page-title">${pageData.title || ''}</div>
+          <div class="page-text">${pageData.text || ''}</div>
+        </div>
+      `;
+    }
+
+    function getActiveCardElement() {
+      return activeCard === 'A' ? pageCardA : pageCardB;
+    }
+    function getInactiveCardElement() {
+      return activeCard === 'A' ? pageCardB : pageCardA;
+    }
+
+    function updatePageDisplay() {
+      pageCounter.textContent = `Page ${currentPageIndex + 1} / ${BOOK_PAGES.length}`;
+      safeSet(STORAGE_KEY_PAGE, currentPageIndex);
+      updateBookmarkButtonState();
+    }
+
+    function initialRender() {
+      if (!BOOK_PAGES.length) return;
+      renderPageInto(pageCardA, BOOK_PAGES[currentPageIndex]);
+      pageCardA.className = 'page-card page-active';
+      pageCardB.style.display = 'none';
+      pageCardB.className = 'page-card';
+      activeCard = 'A';
+      pageCounter.textContent = `Page ${currentPageIndex + 1} / ${BOOK_PAGES.length}`;
+    }
+
+    function animateTransition(direction) {
+      if (isAnimating || !BOOK_PAGES.length) return;
+      if (direction === 'next' && currentPageIndex >= BOOK_PAGES.length - 1) {
+        showToastMessage('Fin du livre');
+        return;
+      }
+      if (direction === 'prev' && currentPageIndex <= 0) {
+        showToastMessage('Début du livre');
+        return;
+      }
+      isAnimating = true;
+      const oldCard = getActiveCardElement();
+      const newCard = getInactiveCardElement();
+      const newIndex = direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
+      renderPageInto(newCard, BOOK_PAGES[newIndex]);
+
+      oldCard.classList.remove('page-active');
+      newCard.style.display = '';
+      newCard.classList.remove('page-before', 'page-after', 'page-slide-out-left', 'page-slide-out-right');
+
+      if (direction === 'next') {
+        oldCard.classList.add('page-slide-out-left');
+        newCard.classList.add('page-after');
+        void newCard.offsetWidth;
+        newCard.classList.remove('page-after');
+        newCard.classList.add('page-active');
+      } else {
+        oldCard.classList.add('page-slide-out-right');
+        newCard.classList.add('page-before');
+        void newCard.offsetWidth;
+        newCard.classList.remove('page-before');
+        newCard.classList.add('page-active');
+      }
+
+      setTimeout(() => {
+        oldCard.style.display = 'none';
+        oldCard.classList.remove('page-slide-out-left', 'page-slide-out-right');
+        activeCard = activeCard === 'A' ? 'B' : 'A';
+        currentPageIndex = newIndex;
+        updatePageDisplay();
+        isAnimating = false;
+      }, 400);
+    }
+
+    function goToNextPage() { animateTransition('next'); }
+    function goToPrevPage() { animateTransition('prev'); }
+
+    function handleTouchStart(e) {
+      if (isAnimating) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      swipeHandled = false;
+    }
+    function handleTouchMove(e) {
+      if (isAnimating || swipeHandled) return;
+      const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+      if (deltaY > Math.abs(e.touches[0].clientX - touchStartX)) return;
+    }
+    function handleTouchEnd(e) {
+      if (isAnimating || swipeHandled) return;
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      const threshold = 45;
+      if (deltaX < -threshold) { swipeHandled = true; goToNextPage(); }
+      else if (deltaX > threshold) { swipeHandled = true; goToPrevPage(); }
+    }
+    function handleClickOnStage(e) {
+      if (isAnimating) return;
+      const rect = readerStage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      if (x < rect.width * 0.3) goToPrevPage();
+      else if (x > rect.width * 0.7) goToNextPage();
+    }
+
+    function getBookmarks() {
+      const raw = safeGet(STORAGE_KEY_BM);
+      return raw ? JSON.parse(raw) : [];
+    }
+    function saveBookmarks(bookmarks) { safeSet(STORAGE_KEY_BM, JSON.stringify(bookmarks)); }
+    function isCurrentPageBookmarked() { return getBookmarks().includes(currentPageIndex); }
+
+    function toggleBookmark() {
+      const bookmarks = getBookmarks();
+      const index = bookmarks.indexOf(currentPageIndex);
+      if (index > -1) {
+        bookmarks.splice(index, 1);
+        showToastMessage('Signet retiré');
+      } else {
+        bookmarks.push(currentPageIndex);
+        showToastMessage('Page marquée');
+      }
+      saveBookmarks(bookmarks);
+      updateBookmarkButtonState();
+    }
+
+    function updateBookmarkButtonState() {
+      const icon = btnBookmarks.querySelector('i');
+      if (isCurrentPageBookmarked()) {
+        icon.className = 'fas fa-bookmark';
+        btnBookmarks.style.color = 'var(--accent)';
+      } else {
+        icon.className = 'far fa-bookmark';
+        btnBookmarks.style.color = '';
+      }
+    }
+
+    function openBookmarkPanel() {
+      const bookmarks = getBookmarks();
+      bookmarkListContainer.innerHTML = '';
+      if (bookmarks.length === 0) {
+        bookmarkListContainer.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-tertiary);">Aucun signet pour le moment.</div>';
+      } else {
+        bookmarks.sort((a,b) => a-b).forEach(idx => {
+          const page = BOOK_PAGES[idx];
+          const div = document.createElement('div');
+          div.className = 'bookmark-row';
+          div.innerHTML = `<div><div style="font-weight:600; color:var(--text-primary);">Page ${idx+1}</div><div style="font-size:0.8rem; color:var(--text-secondary); margin-top:4px;">${page.title || 'Sans titre'}</div></div><i class="fas fa-chevron-right" style="color:var(--text-tertiary);"></i>`;
+          div.addEventListener('click', () => {
+            navigateToPage(idx);
+            closeBookmarkPanelFn();
+          });
+          bookmarkListContainer.appendChild(div);
+        });
+      }
+      bookmarkPanel.style.display = 'flex';
+    }
+
+    function closeBookmarkPanelFn() { bookmarkPanel.style.display = 'none'; }
+
+    function navigateToPage(index) {
+      if (index === currentPageIndex || isAnimating || !BOOK_PAGES.length) return;
+      const direction = index > currentPageIndex ? 'next' : 'prev';
+      const oldIndex = currentPageIndex;
+      const newCard = getInactiveCardElement();
+      renderPageInto(newCard, BOOK_PAGES[index]);
+      currentPageIndex = oldIndex;
+      animateTransition(direction);
+    }
+
+    function cycleTheme() {
+      themeIndex = (themeIndex + 1) % themes.length;
+      const theme = themes[themeIndex];
+      document.documentElement.setAttribute('data-theme', theme);
+      btnTheme.querySelector('i').className = `fas ${themeIcons[themeIndex]}`;
+      const themeNames = ['Crème', 'Nuit', 'Papier', 'Lavande'];
+      showToastMessage(`Thème ${themeNames[themeIndex]}`);
+    }
+
+    function showToastMessage(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    function restoreSession() {
+      const saved = safeGet(STORAGE_KEY_PAGE);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < BOOK_PAGES.length) {
+          currentPageIndex = parsed;
+        }
+      }
+      initialRender();
+      updateBookmarkButtonState();
+      splashScreen.style.display = 'none';
+    }
+
+    // Chargement du fichier JSON externe
+    async function loadBookData() {
+      try {
+        const response = await fetch(DATA_URL);
+        if (!response.ok) throw new Error('Fichier introuvable');
+        const data = await response.json();
+        if (data.pages && Array.isArray(data.pages)) {
+          BOOK_PAGES = data.pages;
+        } else if (Array.isArray(data)) {
+          BOOK_PAGES = data;
+        } else {
+          throw new Error('Format JSON invalide');
+        }
+        restoreSession();
+      } catch (err) {
+        console.error('Erreur chargement livre.txt:', err);
+        splashScreen.innerHTML = '<div style="font-size:1.5rem; text-align:center; padding:20px;">Impossible de charger le livre.<br>Vérifiez le fichier livre.txt</div>';
+      }
+    }
+
+    readerStage.addEventListener('touchstart', handleTouchStart, {passive: true});
+    readerStage.addEventListener('touchmove', handleTouchMove, {passive: true});
+    readerStage.addEventListener('touchend', handleTouchEnd);
+    readerStage.addEventListener('click', handleClickOnStage);
+
+    btnBookmarks.addEventListener('click', (e) => { e.stopPropagation(); openBookmarkPanel(); });
+    closeBookmarkPanel.addEventListener('click', (e) => { e.stopPropagation(); closeBookmarkPanelFn(); });
+    btnTheme.addEventListener('click', (e) => { e.stopPropagation(); cycleTheme(); });
+    btnBookmarks.addEventListener('dblclick', (e) => { e.stopPropagation(); toggleBookmark(); });
+
+    let pressTimer;
+    btnBookmarks.addEventListener('touchstart', (e) => { pressTimer = setTimeout(() => { toggleBookmark(); }, 600); });
+    btnBookmarks.addEventListener('touchend', () => clearTimeout(pressTimer));
+    btnBookmarks.addEventListener('touchmove', () => clearTimeout(pressTimer));
+    bookmarkPanel.addEventListener('click', (e) => { if (e.target === bookmarkPanel) closeBookmarkPanelFn(); });
+
+    loadBookData();
+  })();
+</script>
+</body>
 </html>
