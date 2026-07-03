@@ -1,16 +1,64 @@
 {
-  "titre": "Base Essentielle - Collection",
-  "auteur": "Pages. Framework",
-  "pages_pretes": [
-    "<h3>Roman Noir</h3><h2>L'Ombre de la Nation</h2><p>La pluie s'abattait violemment sur les pavés de la place de la Nation. Les lampadaires clignotaient, luttant contre l'obscurité grandissante de cette soirée de novembre. L'inspecteur releva le col de son imperméable. Le corps gisait près de la bouche de métro, un simple bout de papier serré dans la main gauche. Il savait que cette affaire ne ressemblait à aucune autre.</p><br><p>Le lieutenant Vasseur arriva quelques minutes plus tard, essoufflé. « Toujours rien ? » demanda-t-il. L'inspecteur secoua la tête. Trois mots tracés à la hâte sur le papier humide suffisaient pour glacer le sang. Quelque part dans cette ville, quelqu'un savait déjà que le jeu venait de commencer. Cette affaire allait le hanter longtemps.</p>",
-    "<h3>Photographie</h3><h2>Lumières d'Art</h2><img src='https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600'><p>La photographie d'architecture ne consiste pas seulement à capturer des bâtiments. C'est l'art de figer le dialogue silencieux entre les structures créées par l'homme et la lumière naturelle qui les sculpte.</p><br><p>Chaque cliché de cette série a été pensé comme une composition géométrique, où les lignes du béton dialoguent avec les ombres portées par la lumière rasante du matin. L'absence de couleur permet de révéler les textures brutes et les contrastes saisissants entre le plein et le vide. Chaque image invite le visiteur à ralentir, à observer ce que le regard pressé du quotidien ignore trop souvent.</p>",
-    "<h3>Recette</h3><h2>Pancakes au sirop</h2><img src='https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600'><p><strong>Ingrédients :</strong> 250g de farine, 2 oeufs, 30cl de lait, 1 sachet de levure.</p><br><p><strong>Préparation :</strong> Dans un grand saladier, mélangez la farine et la levure. Dans un second bol, battez les oeufs avec le lait jusqu'à obtenir un mélange homogène, puis versez-le progressivement sur les ingrédients secs en fouettant pour éviter les grumeaux.</p><br><p>Faites chauffer une poêle légèrement beurrée. Versez une louche de pâte. Laissez cuire 2 minutes, jusqu'à ce que des bulles apparaissent, puis retournez-le. Servez avec du sirop d'érable.</p>",
-    "<h3>Business</h3><h2>Base Essentielle</h2><p>Notre mission est simple : transformer la complexité du développement web en une expérience fluide et accessible. Base Essentielle n'est pas qu'un catalogue de templates, c'est un écosystème conçu pour les créateurs qui refusent de faire des compromis sur le design.</p><br><p>En utilisant des technologies standards, nous garantissons que chaque interface est légère, rapide et compatible sur n'importe quel support, du smartphone Android TV aux liseuses numériques. Nous croyons en la puissance du code pur, épuré, qui laisse la place au contenu.</p>",
-    "<h3>Enfants</h3><h2>Le Petit Renard</h2><img src='https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600'><p>Il était une fois un petit renard roux nommé Barnabé qui adorait explorer la forêt magique. Un jour, il trouva une étoile tombée du ciel. Elle scintillait doucement et lui chuchota qu'elle avait besoin d'aide pour retrouver le chemin du cosmos.</p><br><p>Barnabé traversa la rivière, grimpa la colline et demanda l'aide du hibou sage. Ensemble, ils construisirent une échelle de rêves pour ramener l'étoile là où elle appartenait. Depuis cette nuit, Barnabé veille sur la forêt, sous la bienveillance de sa petite amie étoilée qui brille chaque soir juste pour lui.</p>",
-    "<h3>Autobiographie</h3><h2>Regard en arrière</h2><img src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'><p>Le temps passe, les visages changent, mais les souvenirs restent gravés dans les contrastes du noir et blanc. En regardant ces photos, je ne vois pas seulement une personne, je vois un parcours semé d'embûches et de joies.</p><br><p>J'ai appris que chaque erreur était une leçon, et chaque succès une étape vers la découverte de soi. Ce récit n'est pas une apologie, mais un miroir tendu vers le passé pour mieux comprendre les choix qui ont forgé l'homme que je suis devenu aujourd'hui.</p>",
-    "<h3>Santé</h3><h2>Crème Apaisante</h2><p>Mode d'emploi : Appliquez une noisette de crème sur une peau propre et sèche. Massez doucement par mouvements circulaires jusqu'à absorption complète.</p><br><p>Composée à 95% d'ingrédients naturels, cette formule a été testée dermatologiquement pour respecter l'équilibre du microbiome cutané. En cas de rougeurs persistantes, suspendez l'utilisation et consultez un spécialiste. Pour un résultat optimal, utilisez matin et soir, idéalement après votre routine de nettoyage habituelle.</p>",
-    "<h3>Science</h3><h2>L'Univers</h2><p>Le cosmos nous réserve des mystères insondables. Des trous noirs aux nébuleuses colorées, chaque découverte spatiale remet en question notre compréhension des lois de la physique. La mission Hubble a changé notre perception de l'âge de l'univers, nous montrant des galaxies formées il y a des milliards d'années.</p><br><p>La recherche de la vie extraterrestre continue d'alimenter les débats scientifiques, transformant la science-fiction en une discipline académique rigoureuse, l'exobiologie.</p>",
-    "<h3>Nature</h3><h2>Jardinage</h2><p>Le secret d'un jardin florissant réside dans la patience et l'observation. Apprenez à écouter vos plantes : le jaunissement des feuilles indique souvent un excès d'eau, tandis que le flétrissement demande un apport immédiat.</p><br><p>Le compostage domestique est également essentiel pour enrichir le sol naturellement. En mélangeant vos déchets organiques, vous créez un terreau fertile qui stimulera la croissance de vos fleurs et légumes sans aucun produit chimique.</p>",
-    "<h3>Voyage</h3><h2>L'Art de l'Aventure</h2><img src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600'><p>Voyager n'est pas seulement se déplacer. C'est accepter de perdre ses repères, de confronter ses préjugés et de s'immerger dans des cultures qui forcent à repenser notre rapport au monde.</p><br><p>Que ce soit au sommet d'une montagne isolée ou au milieu d'un marché bouillonnant d'Asie, l'aventure commence là où s'arrête notre zone de confort. Ceux qui voyagent savent que le retour n'est jamais la fin, mais le début d'une nouvelle réflexion sur ce qu'il reste à explorer.</p>"
+  "pages": [
+    {
+      "category": "Roman",
+      "title": "Le Dernier Quai",
+      "image": "https://images.unsplash.com/photo-1506461883276-594a12b11cf3?w=600&q=80",
+      "text": "<p>Le train entra en gare sous une pluie fine. Elle tenait son billet froissé entre les doigts, le cœur lourd de tout ce qu'elle laissait derrière elle. Les néons blafards se reflétaient sur le quai mouillé, créant des mirages de lumière dans la nuit.</p><p>Un homme au manteau sombre s'approcha, une valise à la main. Leurs regards se croisèrent quelques secondes, assez pour deviner chez l'autre le même sentiment d'abandon. La ville inconnue s'étendait au-delà des voies, promesse silencieuse d'une vie nouvelle à inventer.</p>"
+    },
+    {
+      "category": "Nature",
+      "title": "Forêts Anciennes",
+      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80",
+      "text": "<p>Les forêts primaires abritent les plus vieux êtres vivants de la planète. Certains séquoias dépassent les trois mille ans, témoins silencieux de l'histoire humaine. Sous leur canopée, un écosystème fragile se déploie, où chaque espèce joue un rôle précis.</p><p>Marcher dans ces bois, c'est remonter le temps. Le tapis d'aiguilles amortit les pas, et le parfum de résine imprègne l'air. Protéger ces lieux n'est pas un luxe, mais une nécessité absolue pour maintenir l'équilibre du climat mondial.</p>"
+    },
+    {
+      "category": "Cuisine",
+      "title": "Risotto aux Champignons",
+      "image": "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=600&q=80",
+      "text": "<p><strong>Ingrédients :</strong> 300g de riz arborio, 500g de champignons frais, 1 oignon, 1L de bouillon de légumes, parmesan, beurre.</p><p>Faites revenir l'oignon dans une noix de beurre, ajoutez les champignons émincés. Incorporez le riz et remuez jusqu'à ce qu'il devienne translucide. Versez une louche de bouillon chaud et attendez l'absorption avant d'ajouter la suivante.</p><p>Après 18 minutes, retirez du feu, ajoutez le parmesan râpé et une noisette de beurre. Couvrez deux minutes, puis servez immédiatement.</p>"
+    },
+    {
+      "category": "Architecture",
+      "title": "Lignes et Lumières",
+      "image": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=600&q=80",
+      "text": "<p>L'architecture moderne dialogue avec la nature environnante. Les façades de verre reflètent le ciel, tandis que les structures en acier dessinent des géométries audacieuses contre l'horizon. Chaque bâtiment raconte une intention, un désir de repousser les limites du possible.</p><p>Observer une ville depuis ses toits offre une perspective unique sur cette danse entre l'ombre et la lumière, où l'utilitaire se transforme en œuvre d'art à part entière.</p>"
+    },
+    {
+      "category": "Enfance",
+      "title": "L'Oiseau Bleu",
+      "image": "https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=600&q=80",
+      "text": "<p>Dans un village perché sur une colline, vivait un petit garçon qui rêvait de voler. Chaque soir, il observait les hirondelles tracer des cercles dans le ciel, se demandant ce qu'elles voyaient depuis là-haut.</p><p>Un matin, un oiseau bleu se posa sur le bord de sa fenêtre. Il tenait dans son bec une petite clé dorée. « Cette clé ouvre la porte des songes », semblait-il chanter. Le garçon comprit alors que l'imagination était le plus puissant des voyages.</p>"
+    },
+    {
+      "category": "Voyage",
+      "title": "Routes d'Islande",
+      "image": "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=600&q=80",
+      "text": "<p>La route 1 fait le tour de l'île, serpentant entre les champs de lave et les cascades gelées. L'Islande se découvre au rythme lent des kilomètres, dans une lumière rasante qui semble ne jamais vouloir disparaître.</p><p>Les sources chaudes fument au milieu des paysages désolés, et les glaciers descendent jusqu'à la mer. Voyager ici, c'est accepter de se sentir minuscule face à la puissance brute des éléments.</p>"
+    },
+    {
+      "category": "Bien-être",
+      "title": "Rituel du Matin",
+      "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80",
+      "text": "<p>Commencer la journée par cinq minutes de respiration consciente change tout. Asseyez-vous confortablement, fermez les yeux, et concentrez-vous sur le va-et-vient de l'air dans vos poumons.</p><p>Ce rituel simple réduit le stress et améliore la concentration. Associé à un verre d'eau tiède citronnée et quelques étirements doux, il prépare le corps et l'esprit à affronter la journée avec sérénité.</p>"
+    },
+    {
+      "category": "Science",
+      "title": "Les Exoplanètes",
+      "image": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=600&q=80",
+      "text": "<p>À ce jour, plus de cinq mille exoplanètes ont été confirmées. Certaines orbitent dans la zone habitable de leur étoile, là où l'eau pourrait exister à l'état liquide. Les télescopes spatiaux scrutent leur atmosphère à la recherche de biosignatures.</p><p>Chaque nouvelle découverte nous rapproche d'une réponse à la plus vieille question de l'humanité : sommes-nous seuls dans l'Univers ? La prochaine génération d'instruments pourrait bien apporter une réponse définitive.</p>"
+    },
+    {
+      "category": "Musique",
+      "title": "Notes de Jazz",
+      "image": "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=600&q=80",
+      "text": "<p>Le jazz est une conversation. Le saxophone pose une question, la trompette y répond, le piano tisse la toile de fond. Dans les clubs enfumés de la Nouvelle-Orléans, cette musique a forgé son identité, mêlant racines africaines et harmonies européennes.</p><p>Écouter du jazz, c'est accepter l'imprévu, célébrer l'instant présent et comprendre que la plus belle note est parfois celle qu'on n'attendait pas.</p>"
+    },
+    {
+      "category": "Jardin",
+      "title": "Potager Urbain",
+      "image": "https://images.unsplash.com/photo-1416879598555-220b8f32bea4?w=600&q=80",
+      "text": "<p>Cultiver ses légumes sur un balcon est à la portée de tous. Tomates cerises, basilic, radis : un simple bac de 30 cm suffit pour débuter. L'essentiel est d'assurer un bon drainage et une exposition ensoleillée.</p><p>Rien ne vaut la fierté de cueillir sa propre salade le soir venu. Le jardinage urbain reconnecte à la terre, ralentit le rythme et rappelle la valeur du temps long.</p>"
+    }
   ]
 }
