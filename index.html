@@ -61,7 +61,7 @@
     /* Header Overlay (Bande plus fine) */
     .overlay-header {
       position: absolute; top: 0; left: 0; width: 100%;
-      padding: 8px 20px; /* Marges réduites pour affiner la bande */
+      padding: 8px 20px; 
       display: flex; align-items: center; justify-content: space-between;
       z-index: 50; background: var(--overlay-bg);
       backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -97,7 +97,7 @@
     .page-slide-out-left { transform: translateX(-100%); opacity: 0; z-index: 10; }
     .page-slide-out-right { transform: translateX(100%); opacity: 0; z-index: 10; }
 
-    /* Design 1 : Couverture */
+    /* Format 1 : Couverture */
     .cover-wrapper {
       width: 100%; height: 100vh; position: relative;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -108,7 +108,7 @@
     .cover-title { font-size: 2.8rem; font-weight: 700; line-height: 1.1; margin-bottom: 16px; font-style: italic; }
     .cover-author { font-family: 'Inter', sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 3px; }
 
-    /* Design 2 : Page avec Héro Image */
+    /* Format 2 : Page avec Image */
     .page-hero { position: relative; width: 100%; height: 40vh; min-height: 300px; flex-shrink: 0; }
     .hero-image { width: 100%; height: 100%; object-fit: cover; display: block; }
     .hero-gradient {
@@ -123,7 +123,7 @@
     }
     .page-hero .page-title { font-size: 1.8rem; line-height: 1.25; color: #ffffff; font-weight: 700; }
 
-    /* Design 3 : Page Texte Uniquement */
+    /* Format 3 : Page Texte Uniquement */
     .page-header-text { padding: 85px 24px 10px 24px; max-width: 800px; margin: 0 auto; width: 100%; }
     .page-header-text .page-category {
       font-family: 'Inter', sans-serif; font-size: 0.75rem; text-transform: uppercase;
@@ -131,14 +131,13 @@
     }
     .page-header-text .page-title { font-size: 2.2rem; line-height: 1.15; color: var(--text-primary); font-weight: 700; margin-bottom: 24px; }
 
-    /* Contenu Texte Commun */
     .page-content { padding: 24px 24px 80px 24px; max-width: 800px; margin: 0 auto; width: 100%; }
     .no-image-padding { padding-top: 0px; }
     .page-text { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); text-align: justify; hyphens: auto; }
     .page-text p { margin-bottom: 18px; text-indent: 20px; }
     .page-text p:first-of-type { text-indent: 0; }
 
-    /* Design 4 : Feed / Posts (Nouveau format) */
+    /* Format 4 : Feed / Posts */
     .post-feed { padding: 85px 20px 80px 20px; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
     .feed-header { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; padding-left: 4px; }
     
@@ -158,7 +157,7 @@
     .post-actions i { color: var(--text-tertiary); font-size: 1rem; margin-left: 14px; cursor: pointer; transition: color 0.2s; }
     .post-actions i:active { color: var(--text-primary); }
 
-    /* Pied de page : Numérotation flottante complètement en bas */
+    /* Pied de page : Numérotation flottante */
     .reader-footer {
       position: absolute; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%;
       transform: translateX(-50%); padding: 6px 16px; border-radius: 30px;
@@ -166,7 +165,7 @@
       color: var(--text-primary); background: var(--overlay-bg);
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20;
       border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      pointer-events: none; /* Pour ne pas gêner le toucher */
+      pointer-events: none;
     }
 
     /* Panneau de recherche */
@@ -187,7 +186,7 @@
     .result-title { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
     .result-snippet { font-size: 0.95rem; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-    /* Splash / Loading */
+    /* Loading */
     .splash {
       position: absolute; inset: 0; background: var(--bg-page); display: flex; align-items: center; justify-content: center;
       z-index: 999; color: var(--text-primary); font-size: 2.5rem; font-style: italic; font-weight: 700;
@@ -211,10 +210,9 @@
     <div class="page-card" id="pageCardB" style="display:none;"></div>
   </div>
 
-  <!-- Numéro de page complètement en bas -->
   <div class="reader-footer"><span id="pageCounter">1 / 1</span></div>
 
-  <!-- Modal Recherche -->
+  <!-- Recherche -->
   <div class="search-panel" id="searchPanel">
     <div class="search-header">
       <div class="search-input-wrapper">
@@ -256,97 +254,102 @@
     const btnTheme = document.getElementById('btnTheme');
     const readerStage = document.getElementById('readerStage');
 
+    // Fonction sécurisée pour nettoyer le HTML sans utiliser de Regex qui fâche GitHub
+    function extractTextContent(htmlString) {
+      if (!htmlString) return '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = htmlString;
+      return tmp.textContent || tmp.innerText || '';
+    }
+
     function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
     function safeSet(key, value) { try { localStorage.setItem(key, value); } catch(e) {} }
 
     function renderPageInto(cardElement, pageData) {
       if (!pageData) return;
       
-      // 1. FORMAT COUVERTURE
+      // FORMAT COUVERTURE
       if (pageData.type === 'cover') {
-        cardElement.innerHTML = `
-          <div class="cover-wrapper" style="background-image: url('${pageData.image}')">
-            <div class="cover-overlay"></div>
-            <div class="cover-content">
-              <div class="cover-title">${pageData.title || ''}</div>
-              <div class="cover-author">${pageData.author || ''}</div>
-            </div>
-          </div>
-        `;
+        cardElement.innerHTML = 
+          '<div class="cover-wrapper" style="background-image: url(\'' + pageData.image + '\')">' +
+            '<div class="cover-overlay"></div>' +
+            '<div class="cover-content">' +
+              '<div class="cover-title">' + (pageData.title || '') + '</div>' +
+              '<div class="cover-author">' + (pageData.author || '') + '</div>' +
+            '</div>' +
+          '</div>';
         return;
       }
 
-      // 2. FORMAT POSTS / FEED
+      // FORMAT POSTS / FEED
       if (pageData.type === 'posts' && pageData.items) {
-        let postsHTML = `<div class="post-feed">`;
-        if (pageData.title) postsHTML += `<div class="feed-header">${pageData.title}</div>`;
+        let postsHTML = '<div class="post-feed">';
+        if (pageData.title) {
+           postsHTML += '<div class="feed-header">' + pageData.title + '</div>';
+        }
         
-        pageData.items.forEach(post => {
-          let imageHTML = post.image ? `<img src="${post.image}" class="post-image" alt="illustration">` : '';
-          postsHTML += `
-            <div class="post-card">
-              <div class="post-meta">
-                <span class="post-category">${post.category || ''}</span>
-                <span class="post-date">${post.date || ''}</span>
-              </div>
-              <div class="post-title">${post.title || ''}</div>
-              ${post.author ? `<div class="post-author">${post.author}</div>` : ''}
-              ${imageHTML}
-              <div class="post-body">${post.text || ''}</div>
-              <div class="post-footer">
-                <span class="post-footer-text">${post.footer_text || 'Pages. Créateurs'}</span>
-                <div class="post-actions">
-                  <i class="far fa-heart"></i>
-                  <i class="far fa-bookmark"></i>
-                </div>
-              </div>
-            </div>
-          `;
+        pageData.items.forEach(function(post) {
+          let imageHTML = post.image ? '<img src="' + post.image + '" class="post-image" alt="illustration">' : '';
+          let authorHTML = post.author ? '<div class="post-author">' + post.author + '</div>' : '';
+          
+          postsHTML += 
+            '<div class="post-card">' +
+              '<div class="post-meta">' +
+                '<span class="post-category">' + (post.category || '') + '</span>' +
+                '<span class="post-date">' + (post.date || '') + '</span>' +
+              '</div>' +
+              '<div class="post-title">' + (post.title || '') + '</div>' +
+              authorHTML +
+              imageHTML +
+              '<div class="post-body">' + (post.text || '') + '</div>' +
+              '<div class="post-footer">' +
+                '<span class="post-footer-text">' + (post.footer_text || 'Pages. Créateurs') + '</span>' +
+                '<div class="post-actions">' +
+                  '<i class="far fa-heart"></i> <i class="far fa-bookmark"></i>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
         });
-        postsHTML += `</div>`;
+        postsHTML += '</div>';
         cardElement.innerHTML = postsHTML;
         return;
       }
 
-      // 3. FORMAT CLASSIQUE (Texte pur OU Texte + Image)
+      // FORMAT CLASSIQUE (Texte pur OU Texte + Image)
       let topHTML = '';
       let textPaddingClass = 'no-image-padding';
 
       if (pageData.image) {
-        topHTML = `
-          <div class="page-hero">
-            <img src="${pageData.image}" class="hero-image" alt="illustration">
-            <div class="hero-gradient"></div>
-            <div class="hero-text">
-              <div class="page-category">${pageData.category || ''}</div>
-              <div class="page-title">${pageData.title || ''}</div>
-            </div>
-          </div>
-        `;
+        topHTML = 
+          '<div class="page-hero">' +
+            '<img src="' + pageData.image + '" class="hero-image" alt="illustration">' +
+            '<div class="hero-gradient"></div>' +
+            '<div class="hero-text">' +
+              '<div class="page-category">' + (pageData.category || '') + '</div>' +
+              '<div class="page-title">' + (pageData.title || '') + '</div>' +
+            '</div>' +
+          '</div>';
         textPaddingClass = ''; 
       } else {
-        // Page de texte pur
-        topHTML = `
-          <div class="page-header-text">
-            <div class="page-category">${pageData.category || ''}</div>
-            <div class="page-title">${pageData.title || ''}</div>
-          </div>
-        `;
+        topHTML = 
+          '<div class="page-header-text">' +
+            '<div class="page-category">' + (pageData.category || '') + '</div>' +
+            '<div class="page-title">' + (pageData.title || '') + '</div>' +
+          '</div>';
       }
 
-      cardElement.innerHTML = `
-        ${topHTML}
-        <div class="page-content ${textPaddingClass}">
-          <div class="page-text">${pageData.text || ''}</div>
-        </div>
-      `;
+      cardElement.innerHTML = 
+        topHTML +
+        '<div class="page-content ' + textPaddingClass + '">' +
+          '<div class="page-text">' + (pageData.text || '') + '</div>' +
+        '</div>';
     }
 
     function getActiveCardElement() { return activeCard === 'A' ? pageCardA : pageCardB; }
     function getInactiveCardElement() { return activeCard === 'A' ? pageCardB : pageCardA; }
 
     function updatePageDisplay() {
-      pageCounter.textContent = `${currentPageIndex + 1} / ${BOOK_PAGES.length}`;
+      pageCounter.textContent = (currentPageIndex + 1) + ' / ' + BOOK_PAGES.length;
       safeSet(STORAGE_KEY_PAGE, currentPageIndex);
     }
 
@@ -391,7 +394,7 @@
         newCard.classList.add('page-active');
       }
 
-      setTimeout(() => {
+      setTimeout(function() {
         oldCard.style.display = 'none';
         oldCard.classList.remove('page-slide-out-left', 'page-slide-out-right');
         activeCard = activeCard === 'A' ? 'B' : 'A';
@@ -416,14 +419,16 @@
         return;
       }
       
-      const results = BOOK_PAGES.map((page, index) => {
+      const results = BOOK_PAGES.map(function(page, index) {
         const title = page.title || (page.type === 'cover' ? 'Couverture' : 'Publications');
         let plainText = "";
         
         if (page.type === 'posts' && page.items) {
-           plainText = page.items.map(i => (i.title + " " + i.text)).join(" ").replace(/<[^>]+>/g, '').toLowerCase();
+           plainText = page.items.map(function(i) {
+             return (i.title || "") + " " + extractTextContent(i.text);
+           }).join(" ").toLowerCase();
         } else {
-           plainText = (page.text || "").replace(/<[^>]+>/g, '').toLowerCase();
+           plainText = extractTextContent(page.text).toLowerCase();
         }
         
         if (plainText.includes(query) || title.toLowerCase().includes(query)) {
@@ -434,7 +439,7 @@
              const end = Math.min(plainText.length, matchIndex + 50);
              snippet = (start > 0 ? '...' : '') + plainText.substring(start, end) + (end < plainText.length ? '...' : '');
           }
-          return { index, title, snippet };
+          return { index: index, title: title, snippet: snippet };
         }
         return null;
       }).filter(Boolean);
@@ -442,11 +447,11 @@
       if (results.length === 0) {
         searchResults.innerHTML = '<div style="text-align:center; color:var(--text-tertiary); margin-top:30px;">Aucun résultat trouvé.</div>';
       } else {
-        results.forEach(res => {
+        results.forEach(function(res) {
           const div = document.createElement('div');
           div.className = 'result-item';
-          div.innerHTML = `<div class="result-title">Page ${res.index + 1} - ${res.title}</div><div class="result-snippet">${res.snippet}</div>`;
-          div.addEventListener('click', () => {
+          div.innerHTML = '<div class="result-title">Page ' + (res.index + 1) + ' - ' + res.title + '</div><div class="result-snippet">' + res.snippet + '</div>';
+          div.addEventListener('click', function() {
             searchPanel.style.display = 'none';
             navigateToPage(res.index);
           });
@@ -455,14 +460,14 @@
       }
     }
 
-    btnSearch.addEventListener('click', () => {
+    btnSearch.addEventListener('click', function() {
       searchPanel.style.display = 'flex';
       searchInput.value = '';
       searchResults.innerHTML = '<div style="text-align:center; color:var(--text-tertiary); margin-top:30px;">Tapez un mot pour chercher.</div>';
-      setTimeout(() => searchInput.focus(), 100);
+      setTimeout(function() { searchInput.focus(); }, 100);
     });
 
-    closeSearchPanel.addEventListener('click', () => { searchPanel.style.display = 'none'; });
+    closeSearchPanel.addEventListener('click', function() { searchPanel.style.display = 'none'; });
     searchInput.addEventListener('input', handleSearch);
 
     function handleTouchStart(e) {
@@ -492,7 +497,7 @@
       themeIndex = (themeIndex + 1) % themes.length;
       const theme = themes[themeIndex];
       document.documentElement.setAttribute('data-theme', theme);
-      btnTheme.querySelector('i').className = `fas ${themeIcons[themeIndex]}`;
+      btnTheme.querySelector('i').className = 'fas ' + themeIcons[themeIndex];
     }
 
     function restoreSession() {
@@ -504,7 +509,7 @@
         }
       }
       initialRender();
-      setTimeout(() => splashScreen.style.display = 'none', 400);
+      setTimeout(function() { splashScreen.style.display = 'none'; }, 400);
     }
 
     async function loadBookData() {
