@@ -2,45 +2,70 @@
   "pages": [
     {
       "type": "cover",
-      "title": "Au-delà des Horizons",
-      "author": "Éditions Pages",
-      "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80"
+      "title": "Au cœur de la Création",
+      "author": "Le Réseau des Indépendants",
+      "image": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=800&q=80"
     },
     {
-      "category": "Roman Noir",
-      "title": "Le Dernier Quai",
-      "image": "https://images.unsplash.com/photo-1506461883276-594a12b11cf3?w=800&q=80",
-      "text": "<p>Le train entra en gare sous une pluie fine et glaciale, crachant des volutes de vapeur qui s'emmêlaient aux ombres de la nuit. Elle tenait son billet froissé entre les doigts, le cœur lourd de tout ce qu'elle laissait derrière elle. Les néons blafards se reflétaient sur le quai mouillé, créant des mirages de lumière jaune qui tremblotaient sur l'asphalte irrégulier. L'horloge de la gare, rouillée par les années d'abandon, affichait minuit passé de quelques minutes.</p><p>Un homme au manteau sombre s'approcha lentement, une lourde valise en cuir à la main. Le bruit de ses semelles résonnait dans le silence de mort qui enveloppait les lieux. Leurs regards se croisèrent l'espace de quelques secondes. C'était un échange furtif, mais suffisant pour deviner chez l'autre la même fatigue, le même instinct de fuite. Il avait les traits tirés, l'air de quelqu'un qui a trop marché et trop peu dormi.</p><p>La ville inconnue s'étendait au-delà des voies ferrées, tel un monstre de béton endormi. Elle offrait la promesse silencieuse d'une vie nouvelle, un endroit où effacer son nom et recommencer à zéro. Elle resserra le col de son manteau, inspira l'air chargé d'odeur de rouille et de charbon, et fit son premier pas vers l'inconnu, laissant derrière elle les fantômes de son passé.</p>"
+      "type": "text",
+      "category": "Notre Vision",
+      "title": "Donner une voix aux talents",
+      "text": "<p>Dans un monde où l'attention est devenue la ressource la plus rare, il est parfois difficile pour les petites entreprises, les artisans et les créateurs indépendants de faire entendre leur voix. Qu'il s'agisse d'un studio de photographie cherchant à capturer l'éphémère, d'un chef cuisinier élaborant une nouvelle carte, ou d'un thérapeute partageant ses conseils de bien-être, chaque professionnel possède une histoire unique qui mérite d'être racontée.</p><p>Cette plateforme a été pensée spécifiquement pour vous. Nous croyons profondément que le format long, immersif et dénué de distractions est le meilleur moyen de transmettre une passion. Ici, il n'y a pas de publicités clignotantes ni de fils d'actualité infinis conçus pour vous faire perdre la notion du temps. Il n'y a que les mots, l'image, et le lecteur.</p><p>Que vous choisissiez de publier de courts billets d'humeur sous forme de posts rapides, ou de véritables essais narratifs pour plonger vos clients dans l'univers de votre marque, vous avez désormais l'outil parfait. Prenez le temps de lire, prenez le temps d'écrire. Bienvenue dans l'édition moderne.</p>"
     },
     {
-      "category": "Écologie",
-      "title": "Le Souffle des Forêts Anciennes",
-      "image": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80",
-      "text": "<p>Les forêts primaires abritent les plus vieux et les plus massifs êtres vivants de notre planète. Contrairement aux plantations humaines, rectilignes et monotones, ces sanctuaires végétaux sont le théâtre d'une harmonie chaotique. Certains séquoias géants, qui dépassent allègrement les trois mille ans d'âge, se dressent tels des piliers soutenant le ciel, témoins silencieux de l'aube de la civilisation humaine.</p><p>Sous leur canopée impénétrable, un écosystème d'une complexité fascinante se déploie. Le sol, épais tapis d'humus et de feuilles mortes, abrite un réseau mycorhizien invisible. Ces fils de champignons agissent comme le système nerveux de la forêt, permettant aux arbres de communiquer entre eux, d'échanger des nutriments et même d'envoyer des signaux d'alarme lorsqu'un parasite attaque une partie du bois.</p><p>Marcher dans ces bois millénaires, c'est littéralement remonter le temps. La lumière y est filtrée, prenant une teinte vert émeraude, et l'air est saturé d'odeurs de résine, de mousse humide et de terre riche. La préservation de ces poumons verts n'est plus un simple débat écologique ou une affaire de romantisme naturel ; c'est une nécessité impérieuse pour le maintien de l'équilibre climatique et la survie des espèces qui en dépendent.</p>"
+      "type": "posts",
+      "title": "Brèves & Actualités",
+      "items": [
+        {
+          "category": "Photographie",
+          "date": "14 Juillet 2026",
+          "title": "Maîtriser la lumière naturelle en portrait",
+          "author": "Studio Lumière - Agence Créative",
+          "text": "La lumière douce du matin offre des ombres subtiles et des tons chauds, parfaits pour la peau. Ne sous-estimez jamais la puissance d'une simple fenêtre orientée au nord pour vos shootings en intérieur. C'est le secret des grands maîtres de la peinture flamande !",
+          "footer_text": "Astuce Pro"
+        },
+        {
+          "category": "Art & Design",
+          "date": "12 Juillet 2026",
+          "title": "L'importance des espaces blancs",
+          "author": "Atelier Minimal",
+          "image": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&q=80",
+          "text": "Le vide n'est pas une absence de contenu, c'est un élément de design à part entière. En laissant respirer vos compositions, vous guidez naturellement l'œil vers l'essentiel. Less is truly more.",
+          "footer_text": "Inspiration"
+        },
+        {
+          "category": "Bien-être",
+          "date": "10 Juillet 2026",
+          "title": "Micro-pauses : le secret de la productivité",
+          "author": "Centre Holistique",
+          "text": "Prendre 3 minutes toutes les heures pour fermer les yeux, relâcher les épaules et respirer profondément par le ventre permet de faire chuter le taux de cortisol de 20%. Essayez dès aujourd'hui dans votre entreprise.",
+          "footer_text": "Santé au travail"
+        }
+      ]
     },
     {
-      "category": "Art Culinaire",
-      "title": "La Maîtrise du Risotto",
-      "image": "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=800&q=80",
-      "text": "<p>La préparation d'un risotto authentique ne s'improvise pas ; elle exige de la patience, de l'attention, et une véritable connexion avec les ingrédients. Contrairement à une simple cuisson de riz à l'eau, le risotto demande que l'on prenne soin du grain, que l'on libère son amidon progressivement pour obtenir cette texture crémeuse si caractéristique des grandes tables de Milan ou de Venise.</p><p>La première étape est cruciale : la <em>tostatura</em>. Dans une cocotte en fonte ou une grande poêle à fond épais, faites revenir un demi-oignon blanc très finement ciselé dans un mélange d'huile d'olive et de beurre. Lorsque l'oignon devient translucide sans jamais dorer, ajoutez le riz Carnaroli ou Arborio. Laissez-le nacrer pendant deux minutes, jusqu'à ce que les grains chantent sous la cuillère en bois. Déglacez ensuite avec un verre de vin blanc sec dont l'acidité viendra équilibrer la richesse du plat.</p><p>C'est ici que commence le rituel : l'incorporation du bouillon de légumes chaud, louche après louche. Il faut remuer continuellement, en formant des \"8\" pour masser le riz, ajoutant du liquide seulement lorsque le précédent a été absorbé. Après exactement dix-huit minutes de cette danse au-dessus des fourneaux, retirez la casserole du feu. Vient alors l'étape finale, la <em>mantecatura</em> : ajoutez une noix de beurre froid et une généreuse poignée de Parmigiano Reggiano fraîchement râpé. Couvrez, laissez reposer deux minutes, puis servez immédiatement.</p>"
+      "category": "Photographie",
+      "title": "L'Art de Capturer l'Instant",
+      "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80",
+      "text": "<p>Être photographe indépendant, c'est bien plus qu'appuyer sur un déclencheur. C'est développer une vision unique du monde, une capacité à voir la beauté dans l'ordinaire et à figer des émotions fugaces pour les rendre éternelles. Pour une PME dans le domaine de l'image, le véritable défi réside dans la narration visuelle : comment raconter l'histoire d'un mariage, l'âme d'une entreprise ou la douceur d'une naissance à travers un objectif ?</p><p>La clé du succès repose sur la connexion humaine. Avant même de parler d'ouverture de diaphragme ou de vitesse d'obturation, il faut instaurer un climat de confiance avec son sujet. C'est dans ces moments d'authenticité pure que le masque tombe et que le portrait prend toute sa dimension. La technique n'est qu'un outil au service de l'empathie.</p><p>Dans une ère saturée par des millions de photos générées chaque seconde sur les smartphones, l'artisan photographe se démarque par son intention. Chaque tirage livré est l'aboutissement d'un processus minutieux, du repérage de la lumière à la post-production colorimétrique, offrant ainsi à ses clients un héritage visuel inestimable.</p>"
     },
     {
-      "category": "Architecture Urbaine",
-      "title": "Lignes, Verre et Lumières",
-      "image": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&q=80",
-      "text": "<p>L'architecture moderne du 21e siècle se trouve à la croisée des chemins entre l'audace structurelle et le respect de l'environnement. Finis les blocs de béton brutalisants des années 70 ; l'heure est au dialogue entre le bâtiment et la nature environnante. Les architectes contemporains conçoivent leurs édifices non plus comme des forteresses isolées, mais comme des entités poreuses qui respirent au rythme de la cité.</p><p>Les façades de verre, longtemps décriées pour leur consommation énergétique, sont aujourd'hui devenues intelligentes. Elles captent la chaleur du soleil en hiver et se teintent automatiquement en été. Elles reflètent les nuages, faisant disparaître la structure massive de l'édifice dans l'azur du ciel, tandis que les armatures en acier dessinent des géométries complexes, presque fractales, défiant les lois de la gravité.</p><p>Observer une mégalopole depuis ses toits-terrasses offre une perspective vertigineuse. On y voit un réseau vasculaire de rues éclairées, des canyons de verre et d'acier où la lumière rebondit à l'infini. Chaque nouvel immeuble qui s'érige raconte une intention particulière, un désir obsessionnel de l'humanité de repousser les limites du possible, de s'élever toujours plus haut, tout en cherchant désespérément à y réintégrer le vert, à travers des balcons végétalisés et des fermes urbaines suspendues.</p>"
+      "category": "Gastronomie",
+      "title": "Le Retour aux Sources",
+      "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+      "text": "<p>La restauration de proximité connaît une véritable mutation. Les chefs d'aujourd'hui, à la tête de petits bistrots ou d'ateliers culinaires, délaissent les longues cartes complexes au profit de menus courts, sourcés localement et dictés par les saisons. C'est un retour aux fondamentaux, où le produit dicte sa loi et où le maraîcher du coin devient le véritable partenaire de création.</p><p>Ouvrir un restaurant de nos jours est un acte de bravoure, mais c'est aussi une déclaration d'amour à la terre. En réduisant les intermédiaires, non seulement l'empreinte carbone est minimisée, mais l'économie locale est directement soutenue. L'assiette devient alors un manifeste politique et écologique à part entière.</p><p>Pour fidéliser une clientèle de plus en plus exigeante, la transparence est de mise. Les cuisines s'ouvrent sur la salle, les recettes sont partagées sur les réseaux, et l'histoire de chaque ingrédient est racontée avec passion. Manger ne relève plus seulement du besoin physiologique, c'est devenu une expérience culturelle forte, ancrée dans un terroir.</p>"
     },
     {
-      "category": "Conte pour Enfants",
-      "title": "La Quête de l'Oiseau Bleu",
-      "image": "https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=800&q=80",
-      "text": "<p>Dans un tout petit village perché au sommet d'une colline aride, vivait un petit garçon prénommé Léo. Léo ne parlait pas beaucoup, mais il avait un secret : il rêvait, avec une intensité folle, de pouvoir voler. Chaque soir, à l'heure où le soleil rougissait l'horizon, il grimpait sur le toit de sa maisonnette pour observer les hirondelles qui traçaient d'élégants cercles dans les courants d'air chaud, se demandant quels mondes secrets elles pouvaient bien apercevoir de là-haut.</p><p>Un beau matin de printemps, alors que Léo jouait avec des morceaux de bois, un oiseau au plumage d'un bleu électrique, presque irréel, vint se poser délicatement sur le rebord de sa fenêtre. L'animal ne s'enfuit pas quand Léo s'approcha. Il pencha la tête, ouvrit le bec et déposa sur le rebord de pierre une minuscule clé dorée, incrustée de minuscules rubis.</p><p>L'oiseau ne parlait pas avec des mots, mais Léo entendit une voix claire résonner directement dans son esprit : « Cette clé n'ouvre aucune serrure faite de métal ou de bois. Elle ouvre la porte de ton propre esprit, la porte des songes sans fin ». Léo prit la clé, la serra contre son cœur, et comprit soudain que le voyage le plus lointain qu'il ferait jamais ne nécessiterait pas d'ailes de plumes, mais simplement la force infinie de son imagination.</p>"
+      "category": "Voyage",
+      "title": "Slow Tourisme et Évasion",
+      "image": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80",
+      "text": "<p>Face à la frénésie du tourisme de masse, une nouvelle approche s'impose : le slow tourisme. Les agences de voyage indépendantes l'ont bien compris. Il ne s'agit plus de cocher frénétiquement des monuments sur une liste, mais de s'immerger véritablement dans une culture, de prendre le temps de s'égarer et de favoriser les rencontres imprévues.</p><p>Cette philosophie séduit particulièrement ceux qui cherchent à donner du sens à leurs vacances. Louer un gîte éco-responsable, apprendre l'artisanat local avec des habitants, ou traverser une région à vélo sont autant de manières de se reconnecter au monde réel. C'est une invitation à ralentir le rythme imposé par nos vies citadines.</p><p>Les petites entreprises du secteur touristique ont une carte maîtresse à jouer. En proposant des expériences sur mesure, intimes et respectueuses de l'environnement, elles offrent un luxe que les grands complexes hôteliers ne peuvent reproduire : l'authenticité absolue. Le véritable voyageur cherche aujourd'hui l'inattendu, la faille poétique dans l'organisation parfaite.</p>"
     },
     {
-      "category": "Récit de Voyage",
-      "title": "La Solitude des Routes d'Islande",
-      "image": "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=800&q=80",
-      "text": "<p>La fameuse Route 1, qui fait le tour de l'Islande, est bien plus qu'une simple étendue d'asphalte ; c'est un fil d'Ariane déroulé au milieu d'un paysage qui semble avoir été forgé aux premiers jours de la Création. Le ruban noir serpente entre des champs de lave recouverts de mousse fluo, des cascades à demi gelées dont le fracas assourdissant rompt le silence polaire, et des fjords où l'océan vient s'écraser avec une force titanesque.</p><p>Ici, le voyage se vit au rythme lent des kilomètres et des caprices de la météo. En hiver, la lumière rasante du soleil, qui effleure à peine l'horizon, étire les ombres et plonge la terre dans un crépuscule perpétuel. En été, le jour ne s'éteint jamais vraiment, offrant aux voyageurs solitaires l'illusion d'un temps suspendu, d'une nuit blanche où tout devient possible.</p><p>S'arrêter au bord d'une route islandaise, c'est accepter de se sentir infiniment petit. Au loin, les sources thermales crachent d'épaisses colonnes de fumée sulfureuse, tandis que les immenses langues des glaciers descendent lentement de la montagne pour venir mourir sur des plages de sable noir corbeau. C'est une terre de contrastes extrêmes, où le feu couve juste sous la glace, rappelant à l'humain la puissance brute et indomptable de la nature.</p>"
+      "category": "Roman",
+      "title": "Chapitre 1 : L'Aube Nouvelle",
+      "image": "https://images.unsplash.com/photo-1455390582262-044cdead2708?w=800&q=80",
+      "text": "<p>Le bruit de la machine à écrire résonnait dans la petite pièce mansardée, rythmant la chute de la pluie sur les tuiles en zinc. Élise venait d'achever sa dernière ligne. Elle repoussa sa chaise en arrière, laissant échapper un long soupir d'épuisement et de soulagement mêlés. L'aube pointait tout juste au-dessus des toits parisiens, teintant le ciel d'un gris violacé percé de quelques lueurs orangées.</p><p>Elle s'approcha de la fenêtre, une tasse de café brûlant entre les mains. En bas, la ville dormait encore. Seul le balai mécanique des éboueurs brisait le silence ouaté de ce petit matin d'octobre. Son manuscrit, empilé avec soin sur le coin du bureau, représentait deux années de sacrifices, de doutes incessants et de nuits blanches. C'était l'histoire d'une fuite en avant, mais aussi, d'une certaine manière, l'histoire de sa propre renaissance.</p><p>Le téléphone se mit soudain à sonner, une stridence insupportable dans ce calme naissant. Elle hésita une fraction de seconde, le cœur battant la chamade. Personne n'appelait à cinq heures du matin à moins d'avoir une nouvelle qui change une vie. Elle posa sa tasse, prit une grande inspiration, et décrocha lentement le combiné.</p>"
     }
   ]
 }
