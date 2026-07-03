@@ -12,24 +12,20 @@
     :root[data-theme="creme"] {
       --bg-page: #faf8f5;
       --text-primary: #1a1a1a;
-      --text-secondary: #3a3a3a;
+      --text-secondary: #333333;
       --text-tertiary: #8a8a8a;
       --border-subtle: #eae5df;
-      --accent: #1a1a1a;
-      --accent-soft: #f0ebe4;
-      --overlay-bg: rgba(250,248,245,0.9);
-      --img-filter: none;
+      --accent-soft: rgba(0, 0, 0, 0.05);
+      --overlay-bg: rgba(250, 248, 245, 0.85);
     }
     :root[data-theme="nuit"] {
       --bg-page: #121212;
       --text-primary: #f0f0f0;
-      --text-secondary: #b3b3b3;
+      --text-secondary: #c4c4c4;
       --text-tertiary: #6b6b6b;
       --border-subtle: #2a2a2a;
-      --accent: #ffffff;
-      --accent-soft: #222222;
-      --overlay-bg: rgba(18,18,18,0.9);
-      --img-filter: brightness(0.85) contrast(1.1);
+      --accent-soft: rgba(255, 255, 255, 0.1);
+      --overlay-bg: rgba(18, 18, 18, 0.85);
     }
     :root[data-theme="papier"] {
       --bg-page: #fdf6e3;
@@ -37,10 +33,8 @@
       --text-secondary: #5a5446;
       --text-tertiary: #8e8679;
       --border-subtle: #e0d5bb;
-      --accent: #3e3a32;
-      --accent-soft: #f4ecd6;
-      --overlay-bg: rgba(253,246,227,0.9);
-      --img-filter: sepia(0.2) contrast(1.05);
+      --accent-soft: rgba(0, 0, 0, 0.06);
+      --overlay-bg: rgba(253, 246, 227, 0.85);
     }
     :root[data-theme="lavande"] {
       --bg-page: #f7f5fb;
@@ -48,10 +42,8 @@
       --text-secondary: #4a4266;
       --text-tertiary: #8b83a8;
       --border-subtle: #e3dfed;
-      --accent: #2b2540;
-      --accent-soft: #efe9f7;
-      --overlay-bg: rgba(247,245,251,0.9);
-      --img-filter: none;
+      --accent-soft: rgba(43, 37, 64, 0.08);
+      --overlay-bg: rgba(247, 245, 251, 0.85);
     }
 
     * {
@@ -63,11 +55,10 @@
     body, html {
       width: 100vw;
       height: 100vh;
-      height: -webkit-fill-available;
       overflow: hidden;
       background: var(--bg-page);
       font-family: 'Newsreader', Georgia, serif;
-      touch-action: pan-y; /* Permet le défilement vertical natif */
+      touch-action: pan-y;
       position: fixed;
       top: 0;
       left: 0;
@@ -76,25 +67,29 @@
     .app-frame {
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-direction: column;
       position: relative;
     }
 
-    /* En-tête plein écran */
-    .app-header {
-      padding: 16px 24px;
+    /* Header en Overlay (Flottant au-dessus du texte) */
+    .overlay-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-shrink: 0;
-      background: var(--bg-page);
-      z-index: 20;
+      z-index: 50;
+      background: var(--overlay-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
     }
     .logo-text {
       font-family: 'Newsreader', Georgia, serif;
       font-weight: 600;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       letter-spacing: -0.5px;
       color: var(--text-primary);
       font-style: italic;
@@ -102,35 +97,32 @@
     .header-tools {
       display: flex;
       gap: 12px;
-      align-items: center;
     }
     .tool-btn {
-      background: transparent;
-      border: none;
+      background: var(--accent-soft);
+      border: 1px solid var(--border-subtle);
       color: var(--text-primary);
-      font-size: 1.2rem;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+      font-size: 1.1rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%; /* Boutons ronds modernes */
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.1s;
       cursor: pointer;
     }
     .tool-btn:active {
-      background: var(--accent-soft);
+      transform: scale(0.92);
+      background: var(--border-subtle);
     }
 
-    /* Scène du lecteur : prend tout l'espace restant */
+    /* Scène du lecteur */
     .reader-stage {
-      flex: 1;
+      width: 100%;
+      height: 100%;
       position: relative;
-      overflow: hidden;
-      background: var(--bg-page);
     }
-
-    /* Disparition du style "carte" -> Rendu "Page" de liseuse */
     .page-card {
       width: 100%;
       height: 100%;
@@ -139,177 +131,184 @@
       left: 0;
       display: flex;
       flex-direction: column;
-      transition: transform 0.35s ease, opacity 0.35s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease;
       overflow-y: auto;
       background: var(--bg-page);
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: none;
     }
-    .page-card::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+    .page-card::-webkit-scrollbar { display: none; }
 
-    /* Animations fluides comme un swipe d'application native */
+    /* Animations de navigation */
     .page-active { transform: translateX(0); opacity: 1; z-index: 5; }
     .page-before { transform: translateX(-100%); opacity: 0; z-index: 2; pointer-events: none; }
     .page-after { transform: translateX(100%); opacity: 0; z-index: 2; pointer-events: none; }
     .page-slide-out-left { transform: translateX(-100%); opacity: 0; z-index: 10; }
     .page-slide-out-right { transform: translateX(100%); opacity: 0; z-index: 10; }
 
-    /* Image pleine largeur (façon Article) */
-    .page-cover-image {
-      width: 100%;
-      height: 35vh; /* Prend environ un tiers de l'écran */
-      object-fit: cover;
-      display: block;
-      filter: var(--img-filter);
-      flex-shrink: 0;
-    }
-
-    /* Contenu du texte façon Livre */
+    /* Contenu du texte (Marges pour ne pas être caché par le header) */
     .page-content {
-      padding: 24px 24px 40px 24px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+      padding: 90px 24px 60px 24px; /* 90px top pour éviter l'overlay */
+      max-width: 800px;
+      margin: 0 auto;
     }
     .page-category {
       font-family: 'Inter', sans-serif;
       font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       color: var(--text-tertiary);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       font-weight: 500;
     }
     .page-title {
-      font-size: 1.4rem; /* Plus petit, adapté mobile */
-      line-height: 1.25;
+      font-size: 1.8rem;
+      line-height: 1.2;
       color: var(--text-primary);
-      margin-bottom: 20px;
-      letter-spacing: -0.2px;
+      margin-bottom: 24px;
       font-weight: 600;
     }
     .page-text {
-      font-size: 0.95rem; /* Taille standard pour lecture de livre */
-      line-height: 1.65;
+      font-size: 1.05rem; /* Taille idéale pour lecture prolongée */
+      line-height: 1.7;
       color: var(--text-secondary);
-      flex: 1;
-      text-align: justify; /* Justifié comme un vrai livre */
-      hyphens: auto; /* Coupure des mots */
-    }
-    .page-text strong {
-      color: var(--text-primary);
-      font-weight: 600;
+      text-align: justify;
+      hyphens: auto;
     }
     .page-text p {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
+      text-indent: 20px; /* Alinéa classique de livre */
+    }
+    .page-text p:first-of-type {
+      text-indent: 0;
     }
 
-    /* Pied de page discret */
+    /* Pied de page discret (numéro de page) */
     .reader-footer {
-      height: 50px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Inter', sans-serif;
       font-size: 0.7rem;
-      letter-spacing: 1px;
       color: var(--text-tertiary);
-      background: var(--bg-page);
-      flex-shrink: 0;
-      text-transform: uppercase;
-    }
-
-    /* Menu Marque-pages */
-    .bookmark-panel {
-      position: absolute;
-      inset: 0;
       background: var(--overlay-bg);
       backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      z-index: 20;
+    }
+
+    /* Panneau de recherche (Modal) */
+    .search-panel {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-page);
       z-index: 100;
       display: none;
       flex-direction: column;
     }
-    .panel-header {
-      padding: 20px 24px;
+    .search-header {
+      padding: 16px 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 12px;
       border-bottom: 1px solid var(--border-subtle);
-      font-family: 'Inter', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-primary);
     }
-    .bookmark-list {
+    .search-input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+    .search-input-wrapper i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 40px;
+      border-radius: 30px;
+      border: 1px solid var(--border-subtle);
+      background: var(--accent-soft);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .search-results {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 24px;
+      padding: 16px 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    .bookmark-row {
-      background: transparent;
-      padding: 12px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-subtle);
+    .result-item {
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--accent-soft);
       cursor: pointer;
     }
-    .bookmark-row:last-child {
-      border-bottom: none;
+    .result-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .result-snippet {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
-    /* Notifications (Toast) */
     .toast-message {
       position: absolute;
-      bottom: 80px;
+      bottom: 60px;
       left: 50%;
       transform: translateX(-50%);
       background: var(--text-primary);
       color: var(--bg-page);
-      padding: 10px 24px;
+      padding: 8px 20px;
       border-radius: 30px;
       font-family: 'Inter', sans-serif;
       font-size: 0.8rem;
-      font-weight: 500;
       opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
+      transition: opacity 0.3s;
       z-index: 200;
-      white-space: nowrap;
       pointer-events: none;
     }
-    .toast-message.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-10px);
-    }
-
-    /* Écran de chargement */
+    .toast-message.show { opacity: 1; }
+    
     .splash {
       position: absolute;
       inset: 0;
       background: var(--bg-page);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 999;
       color: var(--text-primary);
+      font-size: 2rem;
+      font-style: italic;
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
 <div class="app-frame" id="appFrame">
-  <div class="splash" id="splashScreen">
-    <div style="font-size: 2.2rem; font-style: italic; font-weight: 600;">Pages.</div>
-    <div style="margin-top: 12px; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text-secondary);">Chargement...</div>
-  </div>
+  <div class="splash" id="splashScreen">Pages.</div>
   
-  <header class="app-header">
+  <header class="overlay-header">
     <span class="logo-text">Pages.</span>
     <div class="header-tools">
-      <button class="tool-btn" id="btnBookmarks" aria-label="Signets"><i class="far fa-bookmark"></i></button>
+      <button class="tool-btn" id="btnSearch" aria-label="Rechercher"><i class="fas fa-search"></i></button>
       <button class="tool-btn" id="btnTheme" aria-label="Thème"><i class="fas fa-moon"></i></button>
     </div>
   </header>
@@ -320,15 +319,18 @@
   </div>
 
   <div class="reader-footer">
-    <span id="pageCounter">Page 1</span>
+    <span id="pageCounter">1 / 1</span>
   </div>
 
-  <div class="bookmark-panel" id="bookmarkPanel">
-    <div class="panel-header">
-      <span>Marque-pages</span>
-      <button class="tool-btn" id="closeBookmarkPanel"><i class="fas fa-times"></i></button>
+  <div class="search-panel" id="searchPanel">
+    <div class="search-header">
+      <div class="search-input-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un mot..." autocomplete="off">
+      </div>
+      <button class="tool-btn" id="closeSearchPanel" style="background:transparent; border:none;"><i class="fas fa-times"></i></button>
     </div>
-    <div class="bookmark-list" id="bookmarkListContainer"></div>
+    <div class="search-results" id="searchResults"></div>
   </div>
 
   <div class="toast-message" id="toast"></div>
@@ -340,8 +342,6 @@
     const DATA_URL = 'livre.txt';
 
     const STORAGE_KEY_PAGE = "pgs_current_page";
-    const STORAGE_KEY_BM = "pgs_bookmarks";
-
     let currentPageIndex = 0;
     let activeCard = 'A';
     let isAnimating = false;
@@ -349,7 +349,6 @@
     let touchStartY = 0;
     let swipeHandled = false;
 
-    // Ordre des thèmes
     const themes = ['nuit', 'creme', 'papier', 'lavande'];
     const themeIcons = ['fa-moon', 'fa-sun', 'fa-leaf', 'fa-feather'];
     let themeIndex = 0;
@@ -358,12 +357,16 @@
     const pageCardB = document.getElementById('pageCardB');
     const pageCounter = document.getElementById('pageCounter');
     const toast = document.getElementById('toast');
-    const bookmarkPanel = document.getElementById('bookmarkPanel');
-    const bookmarkListContainer = document.getElementById('bookmarkListContainer');
+    
+    // UI Recherche
+    const searchPanel = document.getElementById('searchPanel');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const btnSearch = document.getElementById('btnSearch');
+    const closeSearchPanel = document.getElementById('closeSearchPanel');
+    
     const splashScreen = document.getElementById('splashScreen');
-    const btnBookmarks = document.getElementById('btnBookmarks');
     const btnTheme = document.getElementById('btnTheme');
-    const closeBookmarkPanel = document.getElementById('closeBookmarkPanel');
     const readerStage = document.getElementById('readerStage');
 
     function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
@@ -371,11 +374,7 @@
 
     function renderPageInto(cardElement, pageData) {
       if (!pageData) return;
-      const imageHtml = pageData.image
-        ? `<img class="page-cover-image" src="${pageData.image}" alt="illustration">`
-        : '';
       cardElement.innerHTML = `
-        ${imageHtml}
         <div class="page-content">
           <div class="page-category">${pageData.category || ''}</div>
           <div class="page-title">${pageData.title || ''}</div>
@@ -388,9 +387,8 @@
     function getInactiveCardElement() { return activeCard === 'A' ? pageCardB : pageCardA; }
 
     function updatePageDisplay() {
-      pageCounter.textContent = `Page ${currentPageIndex + 1} sur ${BOOK_PAGES.length}`;
+      pageCounter.textContent = `${currentPageIndex + 1} / ${BOOK_PAGES.length}`;
       safeSet(STORAGE_KEY_PAGE, currentPageIndex);
-      updateBookmarkButtonState();
     }
 
     function initialRender() {
@@ -406,12 +404,10 @@
     function animateTransition(direction) {
       if (isAnimating || !BOOK_PAGES.length) return;
       if (direction === 'next' && currentPageIndex >= BOOK_PAGES.length - 1) {
-        showToastMessage('Fin du livre');
-        return;
+        showToastMessage('Fin du livre'); return;
       }
       if (direction === 'prev' && currentPageIndex <= 0) {
-        showToastMessage('Début du livre');
-        return;
+        showToastMessage('Début du livre'); return;
       }
       isAnimating = true;
       const oldCard = getActiveCardElement();
@@ -419,7 +415,7 @@
       const newIndex = direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
       
       renderPageInto(newCard, BOOK_PAGES[newIndex]);
-      newCard.scrollTop = 0; // Remet la nouvelle page en haut
+      newCard.scrollTop = 0;
 
       oldCard.classList.remove('page-active');
       newCard.style.display = 'flex';
@@ -446,12 +442,72 @@
         currentPageIndex = newIndex;
         updatePageDisplay();
         isAnimating = false;
-      }, 350); // Vitesse de l'animation ajustée
+      }, 300);
     }
 
-    function goToNextPage() { animateTransition('next'); }
-    function goToPrevPage() { animateTransition('prev'); }
+    function navigateToPage(index) {
+      if (index === currentPageIndex || isAnimating || !BOOK_PAGES.length) return;
+      const direction = index > currentPageIndex ? 'next' : 'prev';
+      currentPageIndex = direction === 'next' ? index - 1 : index + 1;
+      animateTransition(direction);
+    }
 
+    // Gestion de la recherche
+    function handleSearch() {
+      const query = searchInput.value.toLowerCase().trim();
+      searchResults.innerHTML = '';
+      if (!query) {
+        searchResults.innerHTML = '<div style="text-align:center; color:var(--text-tertiary); margin-top:20px;">Tapez un mot pour chercher.</div>';
+        return;
+      }
+      
+      const results = BOOK_PAGES.map((page, index) => {
+        // Enlever les balises HTML pour la recherche
+        const plainText = page.text.replace(/<[^>]+>/g, '').toLowerCase();
+        if (plainText.includes(query) || (page.title && page.title.toLowerCase().includes(query))) {
+          // Extraire un extrait
+          const matchIndex = plainText.indexOf(query);
+          const start = Math.max(0, matchIndex - 40);
+          const end = Math.min(plainText.length, matchIndex + 40);
+          let snippet = plainText.substring(start, end);
+          if (start > 0) snippet = '...' + snippet;
+          if (end < plainText.length) snippet = snippet + '...';
+          
+          return { index, title: page.title, snippet };
+        }
+        return null;
+      }).filter(Boolean);
+
+      if (results.length === 0) {
+        searchResults.innerHTML = '<div style="text-align:center; color:var(--text-tertiary); margin-top:20px;">Aucun résultat trouvé.</div>';
+      } else {
+        results.forEach(res => {
+          const div = document.createElement('div');
+          div.className = 'result-item';
+          div.innerHTML = `
+            <div class="result-title">Page ${res.index + 1} - ${res.title}</div>
+            <div class="result-snippet">${res.snippet}</div>
+          `;
+          div.addEventListener('click', () => {
+            searchPanel.style.display = 'none';
+            navigateToPage(res.index);
+          });
+          searchResults.appendChild(div);
+        });
+      }
+    }
+
+    btnSearch.addEventListener('click', () => {
+      searchPanel.style.display = 'flex';
+      searchInput.value = '';
+      searchResults.innerHTML = '<div style="text-align:center; color:var(--text-tertiary); margin-top:20px;">Tapez un mot pour chercher.</div>';
+      setTimeout(() => searchInput.focus(), 100);
+    });
+
+    closeSearchPanel.addEventListener('click', () => { searchPanel.style.display = 'none'; });
+    searchInput.addEventListener('input', handleSearch);
+
+    // Gestes tactiles pour tourner la page
     function handleTouchStart(e) {
       if (isAnimating) return;
       touchStartX = e.touches[0].clientX;
@@ -460,7 +516,6 @@
     }
     function handleTouchMove(e) {
       if (isAnimating || swipeHandled) return;
-      // Permet le scroll vertical (si l'utilisateur scrolle le texte, on ne change pas de page)
       const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
       const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
       if (deltaY > deltaX) return; 
@@ -469,81 +524,11 @@
       if (isAnimating || swipeHandled) return;
       const deltaX = e.changedTouches[0].clientX - touchStartX;
       const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
-      
-      // On s'assure que c'est un swipe horizontal clair, pas un scroll
       if (deltaY < 30) {
         const threshold = 50;
-        if (deltaX < -threshold) { swipeHandled = true; goToNextPage(); }
-        else if (deltaX > threshold) { swipeHandled = true; goToPrevPage(); }
+        if (deltaX < -threshold) { swipeHandled = true; animateTransition('next'); }
+        else if (deltaX > threshold) { swipeHandled = true; animateTransition('prev'); }
       }
-    }
-
-    function getBookmarks() {
-      const raw = safeGet(STORAGE_KEY_BM);
-      return raw ? JSON.parse(raw) : [];
-    }
-    function saveBookmarks(bookmarks) { safeSet(STORAGE_KEY_BM, JSON.stringify(bookmarks)); }
-    function isCurrentPageBookmarked() { return getBookmarks().includes(currentPageIndex); }
-
-    function toggleBookmark() {
-      const bookmarks = getBookmarks();
-      const index = bookmarks.indexOf(currentPageIndex);
-      if (index > -1) {
-        bookmarks.splice(index, 1);
-        showToastMessage('Signet retiré');
-      } else {
-        bookmarks.push(currentPageIndex);
-        showToastMessage('Page marquée');
-      }
-      saveBookmarks(bookmarks);
-      updateBookmarkButtonState();
-    }
-
-    function updateBookmarkButtonState() {
-      const icon = btnBookmarks.querySelector('i');
-      if (isCurrentPageBookmarked()) {
-        icon.className = 'fas fa-bookmark';
-      } else {
-        icon.className = 'far fa-bookmark';
-      }
-    }
-
-    function openBookmarkPanel() {
-      const bookmarks = getBookmarks();
-      bookmarkListContainer.innerHTML = '';
-      if (bookmarks.length === 0) {
-        bookmarkListContainer.innerHTML = '<div style="padding:20px;text-align:center;font-family:\'Inter\', sans-serif;color:var(--text-tertiary);">Aucun signet enregistré.</div>';
-      } else {
-        bookmarks.sort((a,b) => a-b).forEach(idx => {
-          const page = BOOK_PAGES[idx];
-          const div = document.createElement('div');
-          div.className = 'bookmark-row';
-          div.innerHTML = `
-            <div>
-              <div style="font-family:'Inter', sans-serif; font-size:0.85rem; font-weight:600; color:var(--text-primary); text-transform:uppercase; letter-spacing:1px;">Page ${idx+1}</div>
-              <div style="font-family:'Newsreader', serif; font-size:1.1rem; color:var(--text-secondary); margin-top:4px;">${page.title || 'Sans titre'}</div>
-            </div>
-          `;
-          div.addEventListener('click', () => {
-            navigateToPage(idx);
-            closeBookmarkPanelFn();
-          });
-          bookmarkListContainer.appendChild(div);
-        });
-      }
-      bookmarkPanel.style.display = 'flex';
-    }
-
-    function closeBookmarkPanelFn() { bookmarkPanel.style.display = 'none'; }
-
-    function navigateToPage(index) {
-      if (index === currentPageIndex || isAnimating || !BOOK_PAGES.length) return;
-      const direction = index > currentPageIndex ? 'next' : 'prev';
-      const oldIndex = currentPageIndex;
-      const newCard = getInactiveCardElement();
-      renderPageInto(newCard, BOOK_PAGES[index]);
-      currentPageIndex = oldIndex;
-      animateTransition(direction);
     }
 
     function cycleTheme() {
@@ -570,7 +555,7 @@
         }
       }
       initialRender();
-      splashScreen.style.display = 'none';
+      setTimeout(() => splashScreen.style.display = 'none', 300);
     }
 
     async function loadBookData() {
@@ -587,27 +572,14 @@
         }
         restoreSession();
       } catch (err) {
-        console.error('Erreur chargement livre.txt:', err);
-        splashScreen.innerHTML = '<div style="font-size:1.2rem; text-align:center; padding:30px; font-family:\'Inter\', sans-serif;">Impossible de charger le livre.<br><span style="font-size:0.9rem; color:var(--text-secondary); margin-top:10px; display:block;">Vérifiez que livre.txt est bien hébergé au même endroit.</span></div>';
+        splashScreen.innerHTML = '<div style="font-size:1.2rem; text-align:center; padding:30px; font-family:\'Inter\', sans-serif;">Impossible de charger le livre.<br><span style="font-size:0.9rem; color:gray; margin-top:10px; display:block;">Vérifiez le fichier livre.txt</span></div>';
       }
     }
 
     readerStage.addEventListener('touchstart', handleTouchStart, {passive: true});
     readerStage.addEventListener('touchmove', handleTouchMove, {passive: true});
     readerStage.addEventListener('touchend', handleTouchEnd);
-
-    btnBookmarks.addEventListener('click', (e) => { e.stopPropagation(); openBookmarkPanel(); });
-    closeBookmarkPanel.addEventListener('click', (e) => { e.stopPropagation(); closeBookmarkPanelFn(); });
-    btnTheme.addEventListener('click', (e) => { e.stopPropagation(); cycleTheme(); });
-    
-    // Tap long ou double tap sur le signet pour l'ajouter/retirer rapidement
-    btnBookmarks.addEventListener('dblclick', (e) => { e.stopPropagation(); toggleBookmark(); });
-    let pressTimer;
-    btnBookmarks.addEventListener('touchstart', (e) => { pressTimer = setTimeout(() => { toggleBookmark(); }, 600); }, {passive: true});
-    btnBookmarks.addEventListener('touchend', () => clearTimeout(pressTimer));
-    btnBookmarks.addEventListener('touchmove', () => clearTimeout(pressTimer));
-
-    bookmarkPanel.addEventListener('click', (e) => { if (e.target === bookmarkPanel) closeBookmarkPanelFn(); });
+    btnTheme.addEventListener('click', cycleTheme);
 
     loadBookData();
   })();
