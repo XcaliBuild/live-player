@@ -1,394 +1,294 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Writer. · Le Studio</title>
-    <!-- Bibliothèques nécessaires pour créer/lire des PDF et EPUB -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!DOCTYPE html> 
+<html lang="fr" data-theme="creme"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"> 
+    <title>Pages. · App Engine</title> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+    <style> 
+        :root[data-theme="creme"] { 
+            --bg-page: #faf8f5; --text-primary: #1a1a1a; --text-secondary: #333333; --text-tertiary: #8a8a8a; 
+            --border-subtle: #eae5df; --accent-soft: rgba(0, 0, 0, 0.04); --overlay-bg: rgba(250, 248, 245, 0.85); 
+        } 
+        :root[data-theme="nuit"] { 
+            --bg-page: #121212; --text-primary: #f0f0f0; --text-secondary: #c4c4c4; --text-tertiary: #888888; 
+            --border-subtle: #2a2a2a; --accent-soft: #1e1e1e; --overlay-bg: rgba(18, 18, 18, 0.85); 
+        } 
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
+        body, html { width: 100vw; height: 100vh; overflow: hidden; background: var(--bg-page); font-family: 'Newsreader', serif; position: fixed; top: 0; left: 0; transition: background 0.3s; } 
+        
+        .app-frame { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; } 
+        
+        .overlay-header { position: absolute; top: 0; left: 0; width: 100%; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 50; background: var(--overlay-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-subtle); } 
+        .logo-text { font-family: 'Newsreader', serif; font-weight: 700; font-size: 1.6rem; letter-spacing: -0.5px; color: var(--text-primary); font-style: italic; } 
+        .tool-btn { background: var(--accent-soft); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; } 
+        
+        .reader-stage { flex: 1; width: 100%; position: relative; padding-top: 65px; padding-bottom: 70px; } 
+        .page-card { width: 100%; height: 100%; position: absolute; top: 65px; left: 0; display: flex; flex-direction: column; transition: transform 0.35s ease, opacity 0.35s ease; overflow-y: auto; background: var(--bg-page); padding: 24px; padding-bottom: 100px; scrollbar-width: none; } 
+        .page-card::-webkit-scrollbar { display: none; } 
+        
+        .page-active { transform: translateX(0); opacity: 1; z-index: 5; } 
+        .page-before { transform: translateX(-100%); opacity: 0; z-index: 2; } 
+        .page-after { transform: translateX(100%); opacity: 0; z-index: 2; } 
+        .page-slide-out-left { transform: translateX(-100%); opacity: 0; z-index: 10; } 
+        .page-slide-out-right { transform: translateX(100%); opacity: 0; z-index: 10; } 
+        
+        /* STYLES PAR FORMAT */
+        /* Format Book/Magazine */
+        .fmt-text h3 { font-family: 'Inter', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-tertiary); margin-bottom: 12px; } 
+        .fmt-text h2 { font-size: 2.2rem; line-height: 1.15; color: var(--text-primary); margin-bottom: 24px; } 
+        .fmt-text p { font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); text-align: justify; margin-bottom: 18px; text-indent: 20px; } 
+        .fmt-text p:first-of-type { text-indent: 0; }
+        .fmt-text img { width: 100%; max-height: 35vh; object-fit: cover; border-radius: 12px; margin-bottom: 20px; }
+        
+        /* Format BD */
+        .fmt-bd { padding: 0 !important; background: #000; }
+        .fmt-bd img { width: 100%; height: 100%; object-fit: contain; }
+        .fmt-bd .bd-text { position: absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(0,0,0,0.7); color: white; padding: 15px; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 0.9rem; text-align: center;}
+
+        /* Format Post / Scroll */
+        .post-feed { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; } 
+        .post-card { background: var(--accent-soft); border-radius: 16px; padding: 20px; border: 1px solid var(--border-subtle); } 
+        .post-meta { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 10px; } 
+        .post-title { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; } 
+        
+        .page-indicator { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); padding: 6px 16px; border-radius: 30px; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; color: var(--text-primary); background: var(--overlay-bg); border: 1px solid var(--border-subtle); z-index: 20; pointer-events: none; } 
+        
+        /* BOTTOM NAV DYNAMIQUE */
+        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--bg-page); border-top: 1px solid var(--border-subtle); display: none; align-items: center; justify-content: space-evenly; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-tertiary); font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: 0.2s; gap: 4px; }
+        .nav-item i { font-size: 1.4rem; }
+        .nav-item.active { color: var(--text-primary); }
+
+        .splash { position: absolute; inset: 0; background: var(--bg-page); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; color: var(--text-primary); font-size: 2.5rem; font-style: italic; font-weight: 700; transition: 0.4s; } 
+    </style> 
+</head> 
+<body> 
+    <div class="app-frame"> 
+        <div class="splash" id="splashScreen">Pages.<br><span style="font-size:0.9rem; font-family:'Inter'; color:var(--text-tertiary); margin-top:10px; font-style:normal;">Initialisation de l'App...</span></div> 
+        
+        <header class="overlay-header"> 
+            <span class="logo-text" id="appTitle">Pages.</span> 
+            <div class="header-tools"> 
+                <button class="tool-btn" onclick="cycleTheme()"><i class="fa-solid fa-circle-half-stroke"></i></button> 
+            </div> 
+        </header> 
+        
+        <div class="reader-stage" id="readerStage"> 
+            <div class="page-card page-active" id="pageCardA"></div> 
+            <div class="page-card" id="pageCardB" style="display:none;"></div> 
+        </div> 
+        
+        <div class="page-indicator" id="pageCounter" style="display:none;">1 / 1</div> 
+        
+        <div class="bottom-nav" id="bottomNav"></div>
+    </div> 
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,600;1,400&family=Courier+Prime&family=Lora&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <style>
-        :root {
-            --bg-dark: #0f1115; --bg-panel: #1a1d24; --text-main: #f0f0f0; --text-muted: #888888;
-            --accent: #3b82f6; --border-color: #2a2d35;
-            --sheet-bg-clair: #ffffff; --sheet-text-clair: #111111;
-            --sheet-bg-sombre: #121212; --sheet-text-sombre: #e0e0e0;
-            --sheet-bg-papier: #f4ecd8; --sheet-text-papier: #433422;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
-        
-        /* SIDEBAR (Responsive) */
-        .sidebar { width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; transition: left 0.3s; z-index: 100; }
-        .logo-area { padding: 20px; font-family: 'Newsreader', serif; font-size: 26px; font-weight: 700; font-style: italic; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;}
-        .logo-area span { font-family: 'Inter', sans-serif; font-size: 11px; font-style: normal; color: var(--accent); display: block; text-transform: uppercase; letter-spacing: 2px;}
-        .menu-list { flex: 1; padding: 15px 0; overflow-y: auto; }
-        .menu-item { padding: 12px 20px; display: flex; align-items: center; gap: 12px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 14px; }
-        .menu-item:hover { color: var(--text-main); background: rgba(255,255,255,0.03); }
-        .menu-item.active { color: var(--accent); background: rgba(59, 130, 246, 0.1); border-right: 3px solid var(--accent); }
-        .close-sidebar { display: none; background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+    <script> 
+        // ===============================================
+        // MOTEUR INTELLIGENT DE LECTURE JSON
+        // ===============================================
 
-        /* MAIN CONTENT */
-        .main-content { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; overflow: hidden; }
+        let availableApps = {}; // Stockera les données téléchargées
+        let currentMode = ''; 
+        let currentPages = [];
+        let currentPageIndex = 0; 
         
-        /* TOPBAR & OUTILS */
-        .topbar { padding: 12px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); background: var(--bg-dark); gap: 10px; }
-        .toolbar-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .mobile-menu-btn { display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        let activeCard = 'A'; 
+        let isAnimating = false; 
+        let touchStartX = 0; let touchStartY = 0;
         
-        select, .btn { background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 8px; font-family: 'Inter', sans-serif; outline: none; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        const pageCardA = document.getElementById('pageCardA'); 
+        const pageCardB = document.getElementById('pageCardB'); 
+        const pageCounter = document.getElementById('pageCounter'); 
+        const bottomNav = document.getElementById('bottomNav');
         
-        /* Boutons de téléchargement personnalisés */
-        .btn-pdf { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.2); }
-        .btn-pdf:hover { background: #ef4444; color: white; }
-        .btn-epub { background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.2); }
-        .btn-epub:hover { background: #10b981; color: white; }
-        
-        .btn-icon { padding: 8px; border-radius: 50%; justify-content: center; width: 36px; height: 36px; }
-        .btn-danger { color: #ef4444; }
+        // 1. CHERCHER TOUS LES FICHIERS DE L'AUTEUR
+        async function loadContent() {
+            const filesToTry = [
+                { name: 'Livre', file: 'livre.json', icon: 'fa-book' },
+                { name: 'BD', file: 'bd.json', icon: 'fa-mask' },
+                { name: 'Magazine', file: 'magazine.json', icon: 'fa-th-large' },
+                { name: 'Actus', file: 'post.json', icon: 'fa-layer-group' }
+            ];
 
-        /* ZONE D'ÉDITION */
-        .editor-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; justify-content: center; }
-        .writing-sheet { width: 100%; max-width: 800px; background: var(--sheet-bg-sombre); color: var(--sheet-text-sombre); border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 20px; transition: 0.3s; }
-        
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; font-weight: 600; }
-        input.text-input { background: transparent; border: none; border-bottom: 1px solid rgba(128,128,128,0.3); color: inherit; font-size: 22px; font-weight: 700; padding: 5px 0; outline: none; }
-        textarea.main-textarea { width: 100%; flex: 1; min-height: 50vh; background: transparent; border: none; color: inherit; font-family: 'Newsreader', serif; font-size: 18px; line-height: 1.6; resize: none; outline: none; }
+            // Tente de tout télécharger
+            const promises = filesToTry.map(f => fetch(f.file).then(res => {
+                if(!res.ok) throw new Error(); return res.json();
+            }).then(data => ({ meta: f, data: data })).catch(() => null));
 
-        /* UPLOAD CACHÉ */
-        input[type="file"] { display: none; }
-
-        /* RESPONSIVE MOBILE TACTILE */
-        @media (max-width: 850px) {
-            .sidebar { position: fixed; left: -260px; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
-            .sidebar.open { left: 0; }
-            .close-sidebar { display: block; }
-            .mobile-menu-btn { display: block; }
-            .topbar { padding: 10px; }
-            .writing-sheet { padding: 20px; }
-            .btn span { display: none; /* Cache le texte des boutons sur petit écran, garde l'icône */ }
-            .btn-pdf span, .btn-epub span { display: inline; /* Garde le texte pour PDF et EPUB */ }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="sidebar" id="sidebar">
-        <div class="logo-area">
-            <div>Writer.<span>Le Studio</span></div>
-            <button class="close-sidebar" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="menu-list">
-            <div class="menu-item active" onclick="switchFormat('mybook')"><i class="fas fa-book"></i> Livre (Poche)</div>
-            <div class="menu-item" onclick="switchFormat('magazine')"><i class="fas fa-th-large"></i> Magazine</div>
-            <div class="menu-item" onclick="switchFormat('journal')"><i class="far fa-newspaper"></i> Journal</div>
-            <div class="menu-item" onclick="switchFormat('bd')"><i class="fas fa-comment-dots"></i> Bande Dessinée</div>
-            <div class="menu-item" onclick="switchFormat('enfant')"><i class="fas fa-child"></i> Livre pour enfants</div>
-            <div class="menu-item" onclick="switchFormat('recette')"><i class="fas fa-utensils"></i> Recettes</div>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="topbar">
-            <div class="toolbar-group">
-                <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-                <select id="pageSelector" onchange="loadEditorData()"></select>
-                <button class="btn" onclick="addNewElement()" title="Nouvelle Page"><i class="fas fa-plus"></i></button>
-                <button class="btn btn-danger btn-icon" onclick="deleteElement()" title="Supprimer la page"><i class="fas fa-trash"></i></button>
-            </div>
+            const results = await Promise.all(promises);
             
-            <div class="toolbar-group">
-                <!-- Selecteur de Font -->
-                <select id="fontSelector" onchange="changeFont()">
-                    <option value="'Newsreader', serif">Police: Classique</option>
-                    <option value="'Inter', sans-serif">Police: Moderne</option>
-                    <option value="'Courier Prime', monospace">Police: Machine à écrire</option>
-                    <option value="'Lora', serif">Police: Poésie</option>
-                </select>
-                <!-- Ajouter une police -->
-                <label class="btn" title="Importer une police (.ttf)"><i class="fas fa-font"></i><input type="file" accept=".ttf,.otf,.woff" onchange="loadCustomFont(event)"></label>
-                
-                <!-- Thème visuel -->
-                <button class="btn btn-icon" onclick="cycleTheme()" title="Changer le thème d'écriture"><i class="fas fa-palette"></i></button>
-                
-                <!-- Importer EPUB -->
-                <label class="btn" title="Ouvrir un EPUB existant pour le modifier"><i class="fas fa-folder-open"></i><span>Ouvrir EPUB</span><input type="file" accept=".epub" onchange="importEPUB(event)"></label>
-                
-                <!-- Exports -->
-                <button class="btn btn-pdf" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> <span>PDF</span></button>
-                <button class="btn btn-epub" onclick="exportEPUB()"><i class="fas fa-file-epub"></i> <span>EPUB</span></button>
-            </div>
-        </div>
+            // On filtre ceux qui ont réussi
+            const validResults = results.filter(r => r !== null);
 
-        <div class="editor-container">
-            <div class="writing-sheet" id="writingSheet">
-                
-                <div class="input-group" style="margin-bottom: 10px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 15px;">
-                    <label id="globalTitleLabel">Titre de l'Oeuvre</label>
-                    <input type="text" id="globalTitle" class="text-input" placeholder="Titre de votre projet..." oninput="autoSave()">
-                </div>
+            if(validResults.length === 0) {
+                document.getElementById('splashScreen').innerHTML = "Aucun JSON trouvé.<br><span style='font-size:14px;font-family:Inter;'>Ajoutez livre.json ou bd.json</span>";
+                return;
+            }
 
-                <div class="input-group">
-                    <label id="titleLabel">Titre de la Page / Chapitre</label>
-                    <input type="text" id="elementTitle" class="text-input" placeholder="Entrez le titre..." oninput="autoSave()">
-                </div>
-                
-                <div class="input-group" style="flex: 1; margin-top: 10px;">
-                    <label>Contenu du texte</label>
-                    <textarea id="elementText" class="main-textarea" placeholder="Il était une fois..." oninput="autoSave()"></textarea>
-                </div>
-            </div>
-        </div>
-    </div>
+            // On stocke et on construit le menu du bas
+            validResults.forEach(res => {
+                availableApps[res.data.format] = res.data;
+            });
 
-    <!-- Div invisible utilisée pour la génération propre du PDF -->
-    <div id="pdf-render-area" style="display: none; padding: 40px; color: black; background: white; width: 800px;"></div>
+            buildBottomNav(validResults);
+            
+            // On lance le premier format trouvé
+            switchFormat(validResults[0].data.format);
 
-    <script>
-        // --- ÉTATS ET DONNÉES ---
-        let bookPages = [{ id: '0', title: 'Chapitre 1', text: '' }];
-        let currentId = '0';
-        let themes = ['sombre', 'clair', 'papier'];
-        let currentThemeIndex = 0;
-
-        // --- GESTION DE L'INTERFACE TACTILE ---
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
+            setTimeout(() => {
+                document.getElementById('splashScreen').style.opacity = '0';
+                setTimeout(() => document.getElementById('splashScreen').style.display = 'none', 400);
+            }, 500);
         }
 
+        // 2. CRÉATION DU MENU (S'il y a plusieurs fichiers)
+        function buildBottomNav(results) {
+            if(results.length <= 1) return; // Pas besoin de menu pour 1 seul fichier
+            
+            bottomNav.style.display = 'flex';
+            results.forEach(res => {
+                const div = document.createElement('div');
+                div.className = 'nav-item';
+                div.id = `nav-${res.data.format}`;
+                div.innerHTML = `<i class="fas ${res.meta.icon}"></i><span>${res.meta.name}</span>`;
+                div.onclick = () => switchFormat(res.data.format);
+                bottomNav.appendChild(div);
+            });
+        }
+
+        // 3. LOGIQUE D'AFFICHAGE SELON LE FORMAT (L'Intelligence de Pages.)
         function switchFormat(format) {
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            toggleSidebar(); // Ferme le menu sur mobile après un clic
-        }
+            currentMode = format;
+            currentPageIndex = 0;
+            const data = availableApps[format];
+            
+            document.getElementById('appTitle').innerText = data.titre;
 
-        // --- GESTION DES PAGES ---
-        function refreshSelector() {
-            const selector = document.getElementById('pageSelector');
-            selector.innerHTML = '';
-            bookPages.forEach((item, index) => {
-                const opt = document.createElement('option');
-                opt.value = item.id;
-                opt.text = item.title ? item.title : `Page ${index + 1}`;
-                selector.appendChild(opt);
-            });
-            if(!bookPages.find(p => p.id === currentId) && bookPages.length > 0) currentId = bookPages[0].id;
-            selector.value = currentId;
-        }
+            // Mise à jour visuelle du menu
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(document.getElementById(`nav-${format}`)) document.getElementById(`nav-${format}`).classList.add('active');
 
-        function loadEditorData() {
-            currentId = document.getElementById('pageSelector').value;
-            const item = bookPages.find(i => i.id === currentId);
-            if(item) {
-                document.getElementById('elementTitle').value = item.title || '';
-                document.getElementById('elementText').value = item.text || '';
+            // Génération du HTML selon le paramètre "format" du JSON
+            if (format === 'post') {
+                // Flux vertical
+                currentPages = [generatePostsHTML(data.items)];
+                pageCounter.style.display = 'none';
+            } else if (format === 'bd') {
+                // Planches d'images pleines
+                document.documentElement.setAttribute('data-theme', 'nuit'); // Force Dark mode pour BD
+                currentPages = data.items.map(item => `
+                    <div class="fmt-bd" style="height:100%; position:relative;">
+                        ${item.image ? `<img src="${item.image}">` : ''}
+                        ${item.text ? `<div class="bd-text">${item.text}</div>` : ''}
+                    </div>
+                `);
+                pageCounter.style.display = 'block';
+            } else {
+                // Standard Livre / Magazine / Recette (Cartes avec texte formaté)
+                currentPages = data.items.map(item => `
+                    <div class="fmt-text">
+                        ${item.category ? `<h3>${item.category}</h3>` : ''}
+                        <h2>${item.title}</h2>
+                        ${item.image ? `<img src="${item.image}">` : ''}
+                        ${item.text ? `<p>${item.text.replace(/\n/g, '<br>')}</p>` : ''}
+                    </div>
+                `);
+                pageCounter.style.display = 'block';
             }
-        }
-
-        function autoSave() {
-            if(!currentId) return;
-            let item = bookPages.find(i => i.id === currentId);
-            if(item) {
-                item.title = document.getElementById('elementTitle').value;
-                item.text = document.getElementById('elementText').value;
-                document.getElementById('pageSelector').querySelector(`option[value="${currentId}"]`).text = item.title || `Page`;
-            }
-        }
-
-        function addNewElement() {
-            let maxId = -1;
-            bookPages.forEach(i => maxId = Math.max(maxId, parseInt(i.id)));
-            const newId = (maxId + 1).toString();
-            bookPages.push({ id: newId, title: '', text: '' });
-            refreshSelector();
-            document.getElementById('pageSelector').value = newId;
-            loadEditorData();
-        }
-
-        function deleteElement() {
-            if(bookPages.length <= 1) return alert("Vous ne pouvez pas supprimer la dernière page.");
-            if(confirm("Supprimer cette page ?")) {
-                bookPages = bookPages.filter(i => i.id !== currentId);
-                refreshSelector();
-                loadEditorData();
-            }
-        }
-
-        // --- GESTION DU THÈME ET POLICES ---
-        function cycleTheme() {
-            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-            const theme = themes[currentThemeIndex];
-            const sheet = document.getElementById('writingSheet');
-            if(theme === 'clair') { sheet.style.background = 'var(--sheet-bg-clair)'; sheet.style.color = 'var(--sheet-text-clair)'; }
-            else if (theme === 'papier') { sheet.style.background = 'var(--sheet-bg-papier)'; sheet.style.color = 'var(--sheet-text-papier)'; }
-            else { sheet.style.background = 'var(--sheet-bg-sombre)'; sheet.style.color = 'var(--sheet-text-sombre)'; }
-        }
-
-        function changeFont() {
-            const font = document.getElementById('fontSelector').value;
-            document.getElementById('elementText').style.fontFamily = font;
-            document.getElementById('elementTitle').style.fontFamily = font;
-        }
-
-        function loadCustomFont(event) {
-            const file = event.target.files[0];
-            if(!file) return;
-            const fontUrl = URL.createObjectURL(file);
-            const newStyle = document.createElement('style');
-            newStyle.appendChild(document.createTextNode(`
-                @font-face { font-family: 'CustomUserFont'; src: url('${fontUrl}'); }
-                .custom-font-active { font-family: 'CustomUserFont', sans-serif !important; }
-            `));
-            document.head.appendChild(newStyle);
-            document.getElementById('elementText').classList.add('custom-font-active');
-            document.getElementById('elementTitle').classList.add('custom-font-active');
-            alert("Votre police a été appliquée avec succès !");
-        }
-
-        // ===============================================
-        // 📚 MOTEUR D'IMPORTATION EPUB
-        // ===============================================
-        async function importEPUB(event) {
-            const file = event.target.files[0];
-            if(!file) return;
             
-            alert("Lecture de l'EPUB en cours... Cela peut prendre quelques secondes.");
-            try {
-                const zip = await JSZip.loadAsync(file);
-                bookPages = []; // On réinitialise le livre
-                let pageIndex = 0;
-
-                // Parcours simple pour trouver les fichiers HTML/XHTML dans l'EPUB
-                for (let filename of Object.keys(zip.files)) {
-                    if(filename.endsWith('.html') || filename.endsWith('.xhtml')) {
-                        const content = await zip.file(filename).async("string");
-                        
-                        // Nettoyage basique du HTML pour récupérer le texte
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(content, "text/html");
-                        
-                        // Essayer de trouver un titre (h1, h2, ou la balise title)
-                        let title = doc.querySelector('h1, h2, title');
-                        let pageTitle = title ? title.innerText.trim() : `Chapitre ${pageIndex + 1}`;
-                        
-                        // Récupérer tout le texte des paragraphes
-                        let paragraphs = Array.from(doc.querySelectorAll('p')).map(p => p.innerText.trim()).filter(p => p.length > 0);
-                        let text = paragraphs.join('\n\n');
-                        
-                        if(text.length > 0) {
-                            bookPages.push({ id: pageIndex.toString(), title: pageTitle, text: text });
-                            pageIndex++;
-                        }
-                    }
-                }
-                
-                if(bookPages.length === 0) {
-                    bookPages = [{ id: '0', title: 'Erreur', text: "Impossible de lire le texte de cet EPUB." }];
-                }
-                
-                document.getElementById('globalTitle').value = file.name.replace('.epub', '');
-                refreshSelector();
-                loadEditorData();
-                alert("EPUB importé avec succès ! Vous pouvez maintenant le corriger.");
-                
-            } catch (e) {
-                alert("Erreur lors de l'ouverture de l'EPUB. Le fichier est peut-être corrompu ou protégé.");
-            }
+            initialRender();
         }
 
-        // ===============================================
-        // 📄 MOTEUR D'EXPORTATION PDF
-        // ===============================================
-        function exportPDF() {
-            autoSave();
-            const title = document.getElementById('globalTitle').value || "Livre";
-            const renderArea = document.getElementById('pdf-render-area');
-            
-            // On construit le HTML du livre pour le PDF
-            let htmlContent = `<div style="text-align: center; margin-bottom: 200px; margin-top: 100px;"><h1>${title}</h1></div>`;
-            bookPages.forEach(page => {
-                htmlContent += `<div style="page-break-before: always; margin-bottom: 20px;"><h2>${page.title}</h2><p style="text-align: justify; line-height: 1.6; font-size: 14px;">${page.text.replace(/\n/g, '<br><br>')}</p></div>`;
+        function generatePostsHTML(items) {
+            let html = '<div class="post-feed">';
+            items.forEach(post => {
+                html += `
+                    <div class="post-card">
+                        <div class="post-meta"><span style="color:var(--text-primary); font-weight:600; text-transform:uppercase;">${post.category || 'Info'}</span></div>
+                        <div class="post-title">${post.title || ''}</div>
+                        ${post.image ? `<img src="${post.image}" style="width:100%; border-radius:10px; margin-bottom:15px;">` : ''}
+                        <div style="font-family:'Inter'; color:var(--text-secondary); line-height:1.6;">${post.text ? post.text.replace(/\n/g, '<br>') : ''}</div>
+                    </div>`;
             });
-            
-            renderArea.innerHTML = htmlContent;
-            renderArea.style.display = 'block';
-
-            // Options du PDF
-            const opt = {
-                margin:       20,
-                filename:     `${title}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            // Création et téléchargement
-            html2pdf().set(opt).from(renderArea).save().then(() => {
-                renderArea.style.display = 'none'; // On recache la zone
-            });
+            return html + '</div>';
         }
 
-        // ===============================================
-        // 📗 MOTEUR D'EXPORTATION EPUB (Générateur)
-        // ===============================================
-        async function exportEPUB() {
-            autoSave();
-            const title = document.getElementById('globalTitle').value || "Livre";
-            const zip = new JSZip();
+        // 4. MOTEUR DE TRANSITION PAGES
+        function initialRender() { 
+            const card = activeCard === 'A' ? pageCardA : pageCardB;
+            card.innerHTML = currentPages[currentPageIndex] || ""; 
+            card.scrollTop = 0;
             
-            // 1. Déclaration MIME (Obligatoire pour EPUB)
-            zip.file("mimetype", "application/epub+zip");
+            pageCardA.className = activeCard === 'A' ? 'page-card page-active' : 'page-card'; 
+            pageCardB.className = activeCard === 'B' ? 'page-card page-active' : 'page-card'; 
+            pageCardA.style.display = activeCard === 'A' ? 'flex' : 'none';
+            pageCardB.style.display = activeCard === 'B' ? 'flex' : 'none';
             
-            // 2. Dossier META-INF
-            const metaInf = zip.folder("META-INF");
-            metaInf.file("container.xml", `<?xml version="1.0" encoding="UTF-8"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>`);
+            if(currentMode !== 'post') pageCounter.textContent = `${currentPageIndex + 1} / ${currentPages.length}`; 
+        } 
+        
+        function animateTransition(direction) { 
+            if (currentMode === 'post' || isAnimating || currentPages.length === 0) return; 
+            if (direction === 'next' && currentPageIndex >= currentPages.length - 1) return; 
+            if (direction === 'prev' && currentPageIndex <= 0) return; 
             
-            // 3. Dossier OEBPS (Le contenu)
-            const oebps = zip.folder("OEBPS");
-            let manifest = ''; 
-            let spine = '';
+            isAnimating = true; 
+            const oldCard = activeCard === 'A' ? pageCardA : pageCardB; 
+            const newCard = activeCard === 'A' ? pageCardB : pageCardA; 
+            const newIndex = direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1; 
             
-            bookPages.forEach((page, i) => {
-                let html = `<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml"><head><title>${page.title}</title></head><body><h2>${page.title}</h2><p>${page.text.replace(/\n/g, '<br/>')}</p></body></html>`;
-                oebps.file(`page${i}.xhtml`, html);
-                manifest += `<item id="page${i}" href="page${i}.xhtml" media-type="application/xhtml+xml"/>\n`;
-                spine += `<itemref idref="page${i}"/>\n`;
-            });
+            newCard.innerHTML = currentPages[newIndex]; 
+            newCard.scrollTop = 0;
             
-            // Fichier de configuration du livre (content.opf)
-            let opf = `<?xml version="1.0" encoding="UTF-8"?>
-            <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="pub-id">
-                <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
-                    <dc:title>${title}</dc:title>
-                    <dc:language>fr</dc:language>
-                </metadata>
-                <manifest>
-                    ${manifest}
-                </manifest>
-                <spine>
-                    ${spine}
-                </spine>
-            </package>`;
-            oebps.file("content.opf", opf);
+            oldCard.classList.remove('page-active'); 
+            newCard.style.display = 'flex'; 
+            newCard.classList.remove('page-before', 'page-after', 'page-slide-out-left', 'page-slide-out-right'); 
             
-            // Compilation et téléchargement
-            const content = await zip.generateAsync({type:"blob"});
-            const url = URL.createObjectURL(content);
-            const a = document.createElement("a"); 
-            a.href = url; 
-            a.download = `${title}.epub`;
-            a.click(); 
-            URL.revokeObjectURL(url);
-        }
+            if (direction === 'next') { 
+                oldCard.classList.add('page-slide-out-left'); 
+                newCard.classList.add('page-after'); 
+                void newCard.offsetWidth; 
+                newCard.classList.remove('page-after'); 
+                newCard.classList.add('page-active'); 
+            } else { 
+                oldCard.classList.add('page-slide-out-right'); 
+                newCard.classList.add('page-before'); 
+                void newCard.offsetWidth; 
+                newCard.classList.remove('page-before'); 
+                newCard.classList.add('page-active'); 
+            } 
+            
+            setTimeout(() => { 
+                oldCard.style.display = 'none'; 
+                oldCard.classList.remove('page-slide-out-left', 'page-slide-out-right'); 
+                activeCard = activeCard === 'A' ? 'B' : 'A'; 
+                currentPageIndex = newIndex; 
+                pageCounter.textContent = `${currentPageIndex + 1} / ${currentPages.length}`; 
+                isAnimating = false; 
+            }, 350); 
+        } 
+        
+        // Tactile
+        const stage = document.getElementById('readerStage');
+        stage.addEventListener('touchstart', e => { if(isAnimating) return; touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; }, {passive: true}); 
+        stage.addEventListener('touchend', e => { 
+            if (isAnimating || currentMode === 'post') return; 
+            const deltaX = e.changedTouches[0].clientX - touchStartX; 
+            const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+            if(deltaY > 50) return; // Si on scrolle verticalement, on n'anime pas
+            if (deltaX < -50) animateTransition('next'); else if (deltaX > 50) animateTransition('prev'); 
+        }); 
 
-        // Démarrage initial
-        refreshSelector();
-        loadEditorData();
-    </script>
-</body>
+        function cycleTheme() { 
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'creme' ? 'nuit' : 'creme');
+        } 
+        
+        window.onload = loadContent;
+    </script> 
+</body> 
 </html>
