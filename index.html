@@ -1,540 +1,299 @@
-<!DOCTYPE html>
-<html lang="fr" data-theme="nuit">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Pages. · Édition Moderne</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    :root[data-theme="creme"] {
-      --bg-page: #faf8f5;
-      --text-primary: #1a1a1a;
-      --text-secondary: #333333;
-      --text-tertiary: #8a8a8a;
-      --border-subtle: #eae5df;
-      --accent-soft: rgba(0, 0, 0, 0.04);
-      --overlay-bg: rgba(250, 248, 245, 0.75);
-    }
-    :root[data-theme="nuit"] {
-      --bg-page: #121212;
-      --text-primary: #f0f0f0;
-      --text-secondary: #c4c4c4;
-      --text-tertiary: #888888;
-      --border-subtle: #2a2a2a;
-      --accent-soft: #1e1e1e;
-      --overlay-bg: rgba(18, 18, 18, 0.75);
-    }
-    :root[data-theme="papier"] {
-      --bg-page: #fdf6e3;
-      --text-primary: #3e3a32;
-      --text-secondary: #5a5446;
-      --text-tertiary: #8e8679;
-      --border-subtle: #e0d5bb;
-      --accent-soft: rgba(0, 0, 0, 0.05);
-      --overlay-bg: rgba(253, 246, 227, 0.75);
-    }
-    :root[data-theme="lavande"] {
-      --bg-page: #f7f5fb;
-      --text-primary: #2b2540;
-      --text-secondary: #4a4266;
-      --text-tertiary: #8b83a8;
-      --border-subtle: #e3dfed;
-      --accent-soft: #ede8f5;
-      --overlay-bg: rgba(247, 245, 251, 0.75);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
-    body, html {
-      width: 100vw; height: 100vh; overflow: hidden;
-      background: var(--bg-page);
-      font-family: 'Newsreader', Georgia, serif;
-      touch-action: pan-y;
-      position: fixed; top: 0; left: 0;
-    }
-    
-    .app-frame { width: 100%; height: 100%; position: relative; }
-
-    /* Header Overlay (Bande plus fine) */
-    .overlay-header {
-      position: absolute; top: 0; left: 0; width: 100%;
-      padding: 8px 20px; 
-      display: flex; align-items: center; justify-content: space-between;
-      z-index: 50; background: var(--overlay-bg);
-      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-      border-bottom: 1px solid rgba(128,128,128,0.1);
-    }
-    .logo-text {
-      font-family: 'Newsreader', Georgia, serif; font-weight: 700; font-size: 1.6rem;
-      letter-spacing: -0.5px; color: var(--text-primary); font-style: italic;
-    }
-    .header-tools { display: flex; gap: 10px; }
-    .tool-btn {
-      background: var(--accent-soft); border: 1px solid var(--border-subtle);
-      color: var(--text-primary); font-size: 1.05rem;
-      width: 38px; height: 38px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.1s; cursor: pointer;
-    }
-    .tool-btn:active { transform: scale(0.92); }
-
-    /* Lecteur et Cartes */
-    .reader-stage { width: 100%; height: 100%; position: relative; }
-    .page-card {
-      width: 100%; height: 100%; position: absolute; top: 0; left: 0;
-      display: flex; flex-direction: column;
-      transition: transform 0.35s ease, opacity 0.35s ease;
-      overflow-y: auto; background: var(--bg-page); scrollbar-width: none;
-    }
-    .page-card::-webkit-scrollbar { display: none; }
-
-    .page-active { transform: translateX(0); opacity: 1; z-index: 5; }
-    .page-before { transform: translateX(-100%); opacity: 0; z-index: 2; pointer-events: none; }
-    .page-after { transform: translateX(100%); opacity: 0; z-index: 2; pointer-events: none; }
-    .page-slide-out-left { transform: translateX(-100%); opacity: 0; z-index: 10; }
-    .page-slide-out-right { transform: translateX(100%); opacity: 0; z-index: 10; }
-
-    /* Format 1 : Couverture */
-    .cover-wrapper {
-      width: 100%; height: 100vh; position: relative;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background-size: cover; background-position: center;
-    }
-    .cover-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 1; }
-    .cover-content { position: relative; z-index: 2; text-align: center; color: #ffffff; padding: 0 24px; }
-    .cover-title { font-size: 2.8rem; font-weight: 700; line-height: 1.1; margin-bottom: 16px; font-style: italic; }
-    .cover-author { font-family: 'Inter', sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 3px; }
-
-    /* Format 2 : Page avec Image */
-    .page-hero { position: relative; width: 100%; height: 40vh; min-height: 300px; flex-shrink: 0; }
-    .hero-image { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hero-gradient {
-      position: absolute; bottom: 0; left: 0; width: 100%; height: 70%;
-      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
-      pointer-events: none;
-    }
-    .hero-text { position: absolute; bottom: 20px; left: 24px; right: 24px; z-index: 2; }
-    .page-hero .page-category {
-      font-family: 'Inter', sans-serif; font-size: 0.75rem; text-transform: uppercase;
-      letter-spacing: 2px; color: rgba(255,255,255,0.8); margin-bottom: 8px; font-weight: 600;
-    }
-    .page-hero .page-title { font-size: 1.8rem; line-height: 1.25; color: #ffffff; font-weight: 700; }
-
-    /* Format 3 : Page Texte Uniquement */
-    .page-header-text { padding: 85px 24px 10px 24px; max-width: 800px; margin: 0 auto; width: 100%; }
-    .page-header-text .page-category {
-      font-family: 'Inter', sans-serif; font-size: 0.75rem; text-transform: uppercase;
-      letter-spacing: 2px; color: var(--text-tertiary); margin-bottom: 12px; font-weight: 600;
-    }
-    .page-header-text .page-title { font-size: 2.2rem; line-height: 1.15; color: var(--text-primary); font-weight: 700; margin-bottom: 24px; }
-
-    .page-content { padding: 24px 24px 80px 24px; max-width: 800px; margin: 0 auto; width: 100%; }
-    .no-image-padding { padding-top: 0px; }
-    .page-text { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); text-align: justify; hyphens: auto; }
-    .page-text p { margin-bottom: 18px; text-indent: 20px; }
-    .page-text p:first-of-type { text-indent: 0; }
-
-    /* Format 4 : Feed / Posts */
-    .post-feed { padding: 85px 20px 80px 20px; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-    .feed-header { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; padding-left: 4px; }
-    
-    .post-card {
-      background: var(--accent-soft); border-radius: 16px; padding: 20px;
-      border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-    }
-    .post-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .post-category { font-family: 'Inter', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); font-weight: 600; }
-    .post-date { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--text-tertiary); }
-    .post-title { font-size: 1.35rem; font-weight: 700; color: var(--text-primary); line-height: 1.25; margin-bottom: 8px; }
-    .post-author { font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 14px; }
-    .post-body { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
-    .post-image { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 16px; border: 1px solid var(--border-subtle); }
-    .post-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-subtle); }
-    .post-footer-text { font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--text-tertiary); }
-    .post-actions i { color: var(--text-tertiary); font-size: 1rem; margin-left: 14px; cursor: pointer; transition: color 0.2s; }
-    .post-actions i:active { color: var(--text-primary); }
-
-    /* Pied de page : Numérotation flottante */
-    .reader-footer {
-      position: absolute; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%;
-      transform: translateX(-50%); padding: 6px 16px; border-radius: 30px;
-      font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;
-      color: var(--text-primary); background: var(--overlay-bg);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20;
-      border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      pointer-events: none;
-    }
-
-    /* Panneau de recherche */
-    .search-panel {
-      position: absolute; inset: 0; background: var(--bg-page); z-index: 100;
-      display: none; flex-direction: column;
-    }
-    .search-header { padding: 12px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-subtle); }
-    .search-input-wrapper { flex: 1; position: relative; }
-    .search-input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); }
-    .search-input {
-      width: 100%; padding: 12px 16px 12px 45px; border-radius: 30px; border: 1px solid var(--border-subtle);
-      background: var(--accent-soft); color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 1rem; outline: none;
-    }
-    .search-results { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
-    .result-item { padding: 16px; border-radius: 16px; background: var(--accent-soft); cursor: pointer; border: 1px solid transparent;}
-    .result-item:active { border-color: var(--border-subtle); }
-    .result-title { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
-    .result-snippet { font-size: 0.95rem; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-
-    /* Loading */
-    .splash {
-      position: absolute; inset: 0; background: var(--bg-page); display: flex; align-items: center; justify-content: center;
-      z-index: 999; color: var(--text-primary); font-size: 2.5rem; font-style: italic; font-weight: 700;
-    }
-  </style>
-</head>
-<body>
-<div class="app-frame" id="appFrame">
-  <div class="splash" id="splashScreen">Pages.</div>
-  
-  <header class="overlay-header">
-    <span class="logo-text">Pages.</span>
-    <div class="header-tools">
-      <button class="tool-btn" id="btnSearch" aria-label="Rechercher"><i class="fas fa-search"></i></button>
-      <button class="tool-btn" id="btnTheme" aria-label="Thème"><i class="fas fa-moon"></i></button>
-    </div>
-  </header>
-
-  <div class="reader-stage" id="readerStage">
-    <div class="page-card page-active" id="pageCardA"></div>
-    <div class="page-card" id="pageCardB" style="display:none;"></div>
-  </div>
-
-  <div class="reader-footer"><span id="pageCounter">1 / 1</span></div>
-
-  <!-- Recherche -->
-  <div class="search-panel" id="searchPanel">
-    <div class="search-header">
-      <div class="search-input-wrapper">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="Rechercher..." autocomplete="off">
-      </div>
-      <button class="tool-btn" id="closeSearchPanel" style="background:transparent; border:none;"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="search-results" id="searchResults"></div>
-  </div>
-</div>
-
-<script>
-  (function() {
-    let BOOK_PAGES = [];
-    const DATA_URL = 'livre.txt';
-    const STORAGE_KEY_PAGE = "pgs_current_page";
-    
-    let currentPageIndex = 0;
-    let activeCard = 'A';
-    let isAnimating = false;
-    let touchStartX = 0; let touchStartY = 0; let swipeHandled = false;
-
-    const themes = ['nuit', 'creme', 'papier', 'lavande'];
-    const themeIcons = ['fa-moon', 'fa-sun', 'fa-leaf', 'fa-feather'];
-    let themeIndex = 0;
-
-    const pageCardA = document.getElementById('pageCardA');
-    const pageCardB = document.getElementById('pageCardB');
-    const pageCounter = document.getElementById('pageCounter');
-    
-    const searchPanel = document.getElementById('searchPanel');
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    const btnSearch = document.getElementById('btnSearch');
-    const closeSearchPanel = document.getElementById('closeSearchPanel');
-    
-    const splashScreen = document.getElementById('splashScreen');
-    const btnTheme = document.getElementById('btnTheme');
-    const readerStage = document.getElementById('readerStage');
-
-    // Fonction sécurisée pour nettoyer le HTML sans utiliser de Regex qui fâche GitHub
-    function extractTextContent(htmlString) {
-      if (!htmlString) return '';
-      const tmp = document.createElement('div');
-      tmp.innerHTML = htmlString;
-      return tmp.textContent || tmp.innerText || '';
-    }
-
-    function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
-    function safeSet(key, value) { try { localStorage.setItem(key, value); } catch(e) {} }
-
-    function renderPageInto(cardElement, pageData) {
-      if (!pageData) return;
-      
-      // FORMAT COUVERTURE
-      if (pageData.type === 'cover') {
-        cardElement.innerHTML = 
-          '<div class="cover-wrapper" style="background-image: url(\'' + pageData.image + '\')">' +
-            '<div class="cover-overlay"></div>' +
-            '<div class="cover-content">' +
-              '<div class="cover-title">' + (pageData.title || '') + '</div>' +
-              '<div class="cover-author">' + (pageData.author || '') + '</div>' +
-            '</div>' +
-          '</div>';
-        return;
-      }
-
-      // FORMAT POSTS / FEED
-      if (pageData.type === 'posts' && pageData.items) {
-        let postsHTML = '<div class="post-feed">';
-        if (pageData.title) {
-           postsHTML += '<div class="feed-header">' + pageData.title + '</div>';
-        }
+<!DOCTYPE html> 
+<html lang="fr" data-theme="creme"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"> 
+    <title>Pages. · Lecteur Mobile</title> 
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+    <style> 
+        :root[data-theme="creme"] { 
+            --bg-page: #faf8f5; --text-primary: #1a1a1a; --text-secondary: #333333; --text-tertiary: #8a8a8a; 
+            --border-subtle: #eae5df; --accent-soft: rgba(0, 0, 0, 0.04); --overlay-bg: rgba(250, 248, 245, 0.75); 
+        } 
+        :root[data-theme="nuit"] { 
+            --bg-page: #121212; --text-primary: #f0f0f0; --text-secondary: #c4c4c4; --text-tertiary: #888888; 
+            --border-subtle: #2a2a2a; --accent-soft: #1e1e1e; --overlay-bg: rgba(18, 18, 18, 0.75); 
+        } 
         
-        pageData.items.forEach(function(post) {
-          let imageHTML = post.image ? '<img src="' + post.image + '" class="post-image" alt="illustration">' : '';
-          let authorHTML = post.author ? '<div class="post-author">' + post.author + '</div>' : '';
-          
-          postsHTML += 
-            '<div class="post-card">' +
-              '<div class="post-meta">' +
-                '<span class="post-category">' + (post.category || '') + '</span>' +
-                '<span class="post-date">' + (post.date || '') + '</span>' +
-              '</div>' +
-              '<div class="post-title">' + (post.title || '') + '</div>' +
-              authorHTML +
-              imageHTML +
-              '<div class="post-body">' + (post.text || '') + '</div>' +
-              '<div class="post-footer">' +
-                '<span class="post-footer-text">' + (post.footer_text || 'Pages. Créateurs') + '</span>' +
-                '<div class="post-actions">' +
-                  '<i class="far fa-heart"></i> <i class="far fa-bookmark"></i>' +
-                '</div>' +
-              '</div>' +
-            '</div>';
-        });
-        postsHTML += '</div>';
-        cardElement.innerHTML = postsHTML;
-        return;
-      }
-
-      // FORMAT CLASSIQUE (Texte pur OU Texte + Image)
-      let topHTML = '';
-      let textPaddingClass = 'no-image-padding';
-
-      if (pageData.image) {
-        topHTML = 
-          '<div class="page-hero">' +
-            '<img src="' + pageData.image + '" class="hero-image" alt="illustration">' +
-            '<div class="hero-gradient"></div>' +
-            '<div class="hero-text">' +
-              '<div class="page-category">' + (pageData.category || '') + '</div>' +
-              '<div class="page-title">' + (pageData.title || '') + '</div>' +
-            '</div>' +
-          '</div>';
-        textPaddingClass = ''; 
-      } else {
-        topHTML = 
-          '<div class="page-header-text">' +
-            '<div class="page-category">' + (pageData.category || '') + '</div>' +
-            '<div class="page-title">' + (pageData.title || '') + '</div>' +
-          '</div>';
-      }
-
-      cardElement.innerHTML = 
-        topHTML +
-        '<div class="page-content ' + textPaddingClass + '">' +
-          '<div class="page-text">' + (pageData.text || '') + '</div>' +
-        '</div>';
-    }
-
-    function getActiveCardElement() { return activeCard === 'A' ? pageCardA : pageCardB; }
-    function getInactiveCardElement() { return activeCard === 'A' ? pageCardB : pageCardA; }
-
-    function updatePageDisplay() {
-      pageCounter.textContent = (currentPageIndex + 1) + ' / ' + BOOK_PAGES.length;
-      safeSet(STORAGE_KEY_PAGE, currentPageIndex);
-    }
-
-    function initialRender() {
-      if (!BOOK_PAGES.length) return;
-      renderPageInto(pageCardA, BOOK_PAGES[currentPageIndex]);
-      pageCardA.className = 'page-card page-active';
-      pageCardB.style.display = 'none';
-      pageCardB.className = 'page-card';
-      activeCard = 'A';
-      updatePageDisplay();
-    }
-
-    function animateTransition(direction) {
-      if (isAnimating || !BOOK_PAGES.length) return;
-      if (direction === 'next' && currentPageIndex >= BOOK_PAGES.length - 1) return;
-      if (direction === 'prev' && currentPageIndex <= 0) return;
-      
-      isAnimating = true;
-      const oldCard = getActiveCardElement();
-      const newCard = getInactiveCardElement();
-      const newIndex = direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
-      
-      renderPageInto(newCard, BOOK_PAGES[newIndex]);
-      newCard.scrollTop = 0;
-
-      oldCard.classList.remove('page-active');
-      newCard.style.display = 'flex';
-      newCard.classList.remove('page-before', 'page-after', 'page-slide-out-left', 'page-slide-out-right');
-
-      if (direction === 'next') {
-        oldCard.classList.add('page-slide-out-left');
-        newCard.classList.add('page-after');
-        void newCard.offsetWidth;
-        newCard.classList.remove('page-after');
-        newCard.classList.add('page-active');
-      } else {
-        oldCard.classList.add('page-slide-out-right');
-        newCard.classList.add('page-before');
-        void newCard.offsetWidth;
-        newCard.classList.remove('page-before');
-        newCard.classList.add('page-active');
-      }
-
-      setTimeout(function() {
-        oldCard.style.display = 'none';
-        oldCard.classList.remove('page-slide-out-left', 'page-slide-out-right');
-        activeCard = activeCard === 'A' ? 'B' : 'A';
-        currentPageIndex = newIndex;
-        updatePageDisplay();
-        isAnimating = false;
-      }, 350);
-    }
-
-    function navigateToPage(index) {
-      if (index === currentPageIndex || isAnimating || !BOOK_PAGES.length) return;
-      const direction = index > currentPageIndex ? 'next' : 'prev';
-      currentPageIndex = direction === 'next' ? index - 1 : index + 1;
-      animateTransition(direction);
-    }
-
-    function handleSearch() {
-      const query = searchInput.value.toLowerCase().trim();
-      searchResults.innerHTML = '';
-      if (!query) {
-        searchResults.innerHTML = '<div style="text-align:center; color:var(--text-tertiary); margin-top:30px;">Tapez un mot pour chercher.</div>';
-        return;
-      }
-      
-      const results = BOOK_PAGES.map(function(page, index) {
-        const title = page.title || (page.type === 'cover' ? 'Couverture' : 'Publications');
-        let plainText = "";
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
+        body, html { width: 100vw; height: 100vh; overflow: hidden; background: var(--bg-page); font-family: 'Newsreader', Georgia, serif; position: fixed; top: 0; left: 0; } 
         
-        if (page.type === 'posts' && page.items) {
-           plainText = page.items.map(function(i) {
-             return (i.title || "") + " " + extractTextContent(i.text);
-           }).join(" ").toLowerCase();
-        } else {
-           plainText = extractTextContent(page.text).toLowerCase();
-        }
+        .app-frame { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; } 
         
-        if (plainText.includes(query) || title.toLowerCase().includes(query)) {
-          const matchIndex = plainText.indexOf(query);
-          let snippet = "Section trouvée";
-          if (matchIndex !== -1 && plainText.length > 0) {
-             const start = Math.max(0, matchIndex - 50);
-             const end = Math.min(plainText.length, matchIndex + 50);
-             snippet = (start > 0 ? '...' : '') + plainText.substring(start, end) + (end < plainText.length ? '...' : '');
-          }
-          return { index: index, title: title, snippet: snippet };
+        /* Header */ 
+        .overlay-header { position: absolute; top: 0; left: 0; width: 100%; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 50; background: var(--overlay-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-subtle); } 
+        .logo-text { font-family: 'Newsreader', serif; font-weight: 700; font-size: 1.6rem; letter-spacing: -0.5px; color: var(--text-primary); font-style: italic; } 
+        .tool-btn { background: var(--accent-soft); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; } 
+        
+        /* Lecteur Stage */ 
+        .reader-stage { flex: 1; width: 100%; position: relative; padding-top: 65px; /* Espace pour le header */ padding-bottom: 70px; /* Espace pour navigation si présente */ } 
+        .page-card { width: 100%; height: 100%; position: absolute; top: 65px; left: 0; display: flex; flex-direction: column; transition: transform 0.35s ease, opacity 0.35s ease; overflow-y: auto; background: var(--bg-page); padding: 24px; padding-bottom: 100px; scrollbar-width: none; } 
+        .page-card::-webkit-scrollbar { display: none; } 
+        
+        /* Animations de changement de page (Livre) */
+        .page-active { transform: translateX(0); opacity: 1; z-index: 5; } 
+        .page-before { transform: translateX(-100%); opacity: 0; z-index: 2; pointer-events: none; } 
+        .page-after { transform: translateX(100%); opacity: 0; z-index: 2; pointer-events: none; } 
+        .page-slide-out-left { transform: translateX(-100%); opacity: 0; z-index: 10; } 
+        .page-slide-out-right { transform: translateX(100%); opacity: 0; z-index: 10; } 
+        
+        /* Styles du Contenu HTML formaté par Writer */
+        .page-card h3 { font-family: 'Inter', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-tertiary); margin-bottom: 12px; } 
+        .page-card h2 { font-size: 2.2rem; line-height: 1.15; color: var(--text-primary); font-weight: 700; margin-bottom: 24px; } 
+        .page-card p { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); text-align: justify; margin-bottom: 18px; text-indent: 20px; } 
+        .page-card p:first-of-type { text-indent: 0; }
+        .page-card img { width: 100%; max-height: 35vh; object-fit: cover; border-radius: 12px; margin-bottom: 20px; }
+        
+        /* Styles Format Posts/Feed */
+        .post-feed { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; } 
+        .post-card { background: var(--accent-soft); border-radius: 16px; padding: 20px; border: 1px solid var(--border-subtle); } 
+        .post-meta { display: flex; justify-content: space-between; margin-bottom: 10px; font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--text-tertiary); } 
+        .post-category { color: var(--text-primary); font-weight: 600; text-transform: uppercase; } 
+        .post-title { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; } 
+        .post-author { font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 14px; } 
+        .post-body { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; font-family: 'Inter', sans-serif; } 
+        
+        /* Indicateur de page flottant */ 
+        .page-indicator { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); padding: 6px 16px; border-radius: 30px; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; color: var(--text-primary); background: var(--overlay-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-subtle); z-index: 20; pointer-events: none; } 
+        
+        /* ----- BOTTOM NAVIGATION BAR (Conditionnelle) ----- */
+        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--bg-page); border-top: 1px solid var(--border-subtle); display: none; align-items: center; justify-content: center; gap: 40px; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-tertiary); font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.2s; gap: 6px; }
+        .nav-item i { font-size: 1.4rem; }
+        .nav-item.active { color: var(--text-primary); }
+
+        .splash { position: absolute; inset: 0; background: var(--bg-page); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; color: var(--text-primary); font-size: 2.5rem; font-style: italic; font-weight: 700; transition: 0.4s; } 
+        .splash span { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 400; font-style: normal; color: var(--text-tertiary); margin-top: 10px; }
+    </style> 
+</head> 
+<body> 
+    <div class="app-frame" id="appFrame"> 
+        <div class="splash" id="splashScreen">Pages.<br><span id="splashText">Recherche de contenus...</span></div> 
+        
+        <header class="overlay-header"> 
+            <!-- Ton client pourra changer ce nom dans le HTML -->
+            <span class="logo-text" id="appTitle">Pages.</span> 
+            <div class="header-tools"> 
+                <button class="tool-btn" onclick="cycleTheme()"><i class="fas fa-moon"></i></button> 
+            </div> 
+        </header> 
+        
+        <div class="reader-stage" id="readerStage"> 
+            <div class="page-card page-active" id="pageCardA"></div> 
+            <div class="page-card" id="pageCardB" style="display:none;"></div> 
+        </div> 
+        
+        <div class="page-indicator" id="pageCounter">1 / 1</div> 
+        
+        <!-- BARRE DE NAVIGATION (S'affiche si Livre ET Post existent) -->
+        <div class="bottom-nav" id="bottomNav">
+            <div class="nav-item active" id="navLivre" onclick="switchMode('book')">
+                <i class="fas fa-book-open"></i>Livre
+            </div>
+            <div class="nav-item" id="navPost" onclick="switchMode('posts')">
+                <i class="fas fa-layer-group"></i>Actualités
+            </div>
+        </div>
+    </div> 
+    
+    <script> 
+        // ===============================================
+        // MOTEUR DU LECTEUR PAGES.
+        // ===============================================
+
+        let bookData = null;  // Données de livre.json
+        let postData = null;  // Données de post.json
+        
+        let currentMode = 'book'; // 'book' ou 'posts'
+        let currentPages = [];
+        let currentPageIndex = 0; 
+        
+        let activeCard = 'A'; 
+        let isAnimating = false; 
+        let touchStartX = 0; let touchStartY = 0;
+        let swipeHandled = false; 
+        
+        const pageCardA = document.getElementById('pageCardA'); 
+        const pageCardB = document.getElementById('pageCardB'); 
+        const pageCounter = document.getElementById('pageCounter'); 
+        
+        // --- 1. TÉLÉCHARGEMENT DES FICHIERS JSON ---
+        async function loadContent() {
+            // Tente de charger les deux fichiers simultanément
+            const [livreRes, postRes] = await Promise.allSettled([
+                fetch('livre.json').then(r => r.json()),
+                fetch('post.json').then(r => r.json())
+            ]);
+
+            if (livreRes.status === 'fulfilled') bookData = livreRes.value;
+            if (postRes.status === 'fulfilled') postData = postRes.value;
+
+            // Si les deux fichiers sont présents, afficher la barre de navigation
+            if (bookData && postData) {
+                document.getElementById('bottomNav').style.display = 'flex';
+            }
+
+            // Déterminer quoi afficher en premier
+            if (bookData) {
+                switchMode('book');
+            } else if (postData) {
+                switchMode('posts');
+            } else {
+                document.getElementById('splashText').innerText = "Aucun fichier (livre.json ou post.json) trouvé.";
+                return;
+            }
+            
+            // Cacher l'écran de chargement
+            setTimeout(() => {
+                document.getElementById('splashScreen').style.opacity = '0';
+                setTimeout(() => document.getElementById('splashScreen').style.display = 'none', 400);
+            }, 500);
         }
-        return null;
-      }).filter(Boolean);
 
-      if (results.length === 0) {
-        searchResults.innerHTML = '<div style="text-align:center; color:var(--text-tertiary); margin-top:30px;">Aucun résultat trouvé.</div>';
-      } else {
-        results.forEach(function(res) {
-          const div = document.createElement('div');
-          div.className = 'result-item';
-          div.innerHTML = '<div class="result-title">Page ' + (res.index + 1) + ' - ' + res.title + '</div><div class="result-snippet">' + res.snippet + '</div>';
-          div.addEventListener('click', function() {
-            searchPanel.style.display = 'none';
-            navigateToPage(res.index);
-          });
-          searchResults.appendChild(div);
-        });
-      }
-    }
-
-    btnSearch.addEventListener('click', function() {
-      searchPanel.style.display = 'flex';
-      searchInput.value = '';
-      searchResults.innerHTML = '<div style="text-align:center; color:var(--text-tertiary); margin-top:30px;">Tapez un mot pour chercher.</div>';
-      setTimeout(function() { searchInput.focus(); }, 100);
-    });
-
-    closeSearchPanel.addEventListener('click', function() { searchPanel.style.display = 'none'; });
-    searchInput.addEventListener('input', handleSearch);
-
-    function handleTouchStart(e) {
-      if (isAnimating) return;
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      swipeHandled = false;
-    }
-    function handleTouchMove(e) {
-      if (isAnimating || swipeHandled) return;
-      const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
-      const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
-      if (deltaY > deltaX) return; 
-    }
-    function handleTouchEnd(e) {
-      if (isAnimating || swipeHandled) return;
-      const deltaX = e.changedTouches[0].clientX - touchStartX;
-      const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
-      if (deltaY < 40) { 
-        const threshold = 60;
-        if (deltaX < -threshold) { swipeHandled = true; animateTransition('next'); }
-        else if (deltaX > threshold) { swipeHandled = true; animateTransition('prev'); }
-      }
-    }
-
-    function cycleTheme() {
-      themeIndex = (themeIndex + 1) % themes.length;
-      const theme = themes[themeIndex];
-      document.documentElement.setAttribute('data-theme', theme);
-      btnTheme.querySelector('i').className = 'fas ' + themeIcons[themeIndex];
-    }
-
-    function restoreSession() {
-      const saved = safeGet(STORAGE_KEY_PAGE);
-      if (saved !== null) {
-        const parsed = parseInt(saved, 10);
-        if (!isNaN(parsed) && parsed >= 0 && parsed < BOOK_PAGES.length) {
-          currentPageIndex = parsed;
+        // --- 2. GESTION DE L'AFFICHAGE (Livre vs Post) ---
+        function switchMode(mode) {
+            currentMode = mode;
+            currentPageIndex = 0;
+            
+            if (mode === 'book' && bookData) {
+                document.getElementById('appTitle').innerText = bookData.titre || "Livre";
+                currentPages = bookData.pages_pretes || [];
+                pageCounter.style.display = 'block';
+                if(document.getElementById('navLivre')) {
+                    document.getElementById('navLivre').classList.add('active');
+                    document.getElementById('navPost').classList.remove('active');
+                }
+            } 
+            else if (mode === 'posts' && postData) {
+                document.getElementById('appTitle').innerText = postData.titre || "Actualités";
+                // Les posts s'affichent sur UNE seule longue page pour scroller
+                currentPages = [generatePostsHTML(postData.items)];
+                pageCounter.style.display = 'none'; // Pas de numérotation pour les posts continus
+                if(document.getElementById('navPost')) {
+                    document.getElementById('navPost').classList.add('active');
+                    document.getElementById('navLivre').classList.remove('active');
+                }
+            }
+            
+            initialRender();
         }
-      }
-      initialRender();
-      setTimeout(function() { splashScreen.style.display = 'none'; }, 400);
-    }
 
-    async function loadBookData() {
-      try {
-        const response = await fetch(DATA_URL);
-        if (!response.ok) throw new Error('Fichier introuvable');
-        const data = await response.json();
-        if (data.pages && Array.isArray(data.pages)) {
-          BOOK_PAGES = data.pages;
-        } else {
-          throw new Error('Format JSON invalide');
+        function generatePostsHTML(items) {
+            if(!items || items.length === 0) return "<p>Aucune publication.</p>";
+            let html = '<div class="post-feed">';
+            items.forEach(post => {
+                html += `
+                    <div class="post-card">
+                        <div class="post-meta">
+                            <span class="post-category">${post.category || 'Information'}</span>
+                            <span>${post.date || ''}</span>
+                        </div>
+                        <div class="post-title">${post.title || ''}</div>
+                        ${post.author ? `<div class="post-author">Par ${post.author}</div>` : ''}
+                        ${post.image ? `<img src="${post.image}" style="width:100%; border-radius:10px; margin-bottom:15px;">` : ''}
+                        <div class="post-body">${post.text ? post.text.replace(/\n/g, '<br>') : ''}</div>
+                    </div>`;
+            });
+            html += '</div>';
+            return html;
         }
-        restoreSession();
-      } catch (err) {
-        splashScreen.innerHTML = '<div style="font-size:1.2rem; text-align:center; padding:30px; font-family:\'Inter\', sans-serif;">Impossible de charger le livre.<br><span style="font-size:0.9rem; color:gray; margin-top:10px; display:block;">Vérifiez le fichier livre.txt</span></div>';
-      }
-    }
 
-    readerStage.addEventListener('touchstart', handleTouchStart, {passive: true});
-    readerStage.addEventListener('touchmove', handleTouchMove, {passive: true});
-    readerStage.addEventListener('touchend', handleTouchEnd);
-    btnTheme.addEventListener('click', cycleTheme);
+        // --- 3. MOTEUR DE RENDU DU LECTEUR ---
+        function getActiveCard() { return activeCard === 'A' ? pageCardA : pageCardB; } 
+        function getInactiveCard() { return activeCard === 'A' ? pageCardB : pageCardA; } 
 
-    loadBookData();
-  })();
-</script>
-</body>
+        function initialRender() { 
+            const card = getActiveCard();
+            card.innerHTML = currentPages[currentPageIndex] || "<p>Page vide.</p>"; 
+            card.scrollTop = 0;
+            
+            pageCardA.className = activeCard === 'A' ? 'page-card page-active' : 'page-card'; 
+            pageCardB.className = activeCard === 'B' ? 'page-card page-active' : 'page-card'; 
+            pageCardA.style.display = activeCard === 'A' ? 'flex' : 'none';
+            pageCardB.style.display = activeCard === 'B' ? 'flex' : 'none';
+            
+            if(currentMode === 'book') pageCounter.textContent = `${currentPageIndex + 1} / ${currentPages.length}`; 
+        } 
+        
+        function animateTransition(direction) { 
+            // Ne pas tourner de page si on est en mode "posts" (car tout est sur 1 page verticale)
+            if (currentMode === 'posts') return;
+            if (isAnimating || currentPages.length === 0) return; 
+            if (direction === 'next' && currentPageIndex >= currentPages.length - 1) return; 
+            if (direction === 'prev' && currentPageIndex <= 0) return; 
+            
+            isAnimating = true; 
+            const oldCard = getActiveCard(); 
+            const newCard = getInactiveCard(); 
+            const newIndex = direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1; 
+            
+            newCard.innerHTML = currentPages[newIndex]; 
+            newCard.scrollTop = 0;
+            
+            oldCard.classList.remove('page-active'); 
+            newCard.style.display = 'flex'; 
+            newCard.classList.remove('page-before', 'page-after', 'page-slide-out-left', 'page-slide-out-right'); 
+            
+            if (direction === 'next') { 
+                oldCard.classList.add('page-slide-out-left'); 
+                newCard.classList.add('page-after'); 
+                void newCard.offsetWidth; 
+                newCard.classList.remove('page-after'); 
+                newCard.classList.add('page-active'); 
+            } else { 
+                oldCard.classList.add('page-slide-out-right'); 
+                newCard.classList.add('page-before'); 
+                void newCard.offsetWidth; 
+                newCard.classList.remove('page-before'); 
+                newCard.classList.add('page-active'); 
+            } 
+            
+            setTimeout(() => { 
+                oldCard.style.display = 'none'; 
+                oldCard.classList.remove('page-slide-out-left', 'page-slide-out-right'); 
+                activeCard = activeCard === 'A' ? 'B' : 'A'; 
+                currentPageIndex = newIndex; 
+                if(currentMode === 'book') pageCounter.textContent = `${currentPageIndex + 1} / ${currentPages.length}`; 
+                isAnimating = false; 
+            }, 350); 
+        } 
+        
+        // --- 4. GESTES TACTILES ---
+        const readerStage = document.getElementById('readerStage');
+        
+        readerStage.addEventListener('touchstart', e => { 
+            if (isAnimating) return; 
+            touchStartX = e.touches[0].clientX; 
+            touchStartY = e.touches[0].clientY; 
+            swipeHandled = false; 
+        }, {passive: true}); 
+        
+        readerStage.addEventListener('touchmove', e => { 
+            if (isAnimating || swipeHandled) return; 
+            const deltaY = Math.abs(e.touches[0].clientY - touchStartY); 
+            const deltaX = Math.abs(e.touches[0].clientX - touchStartX); 
+            // Si le défilement est vertical, on annule le swipe pour laisser l'utilisateur lire
+            if (deltaY > deltaX) swipeHandled = true; 
+        }, {passive: true}); 
+        
+        readerStage.addEventListener('touchend', e => { 
+            if (isAnimating || swipeHandled || currentMode === 'posts') return; 
+            const deltaX = e.changedTouches[0].clientX - touchStartX; 
+            if (deltaX < -50) animateTransition('next'); 
+            else if (deltaX > 50) animateTransition('prev'); 
+        }); 
+
+        // --- 5. THEME ---
+        function cycleTheme() { 
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'creme' ? 'nuit' : 'creme');
+        } 
+        
+        // Lancement
+        window.onload = loadContent;
+    </script> 
+</body> 
 </html>
